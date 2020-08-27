@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-  Hi {{ user.username }}!
-  Your role is "{{ user.getRole() }}"
+  Hi {{ user.username }}! <br>
+  Your role is "{{ user.getRole() }}" <br>
+  <a href="{{ url_for('users.logout') }}">Logout</a>
 {% endblock %}
