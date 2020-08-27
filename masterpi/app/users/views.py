@@ -7,6 +7,7 @@ from app.users.models import User
 from app.users.decorators import requires_login
 
 mod = Blueprint('users', __name__, url_prefix='/users')
+api_mod = Blueprint('users_api', __name__, url_prefix='/api/users')
 
 @mod.route('/me/')
 @requires_login
@@ -63,3 +64,14 @@ def register():
         # redirect user to the 'home' method of the user module.
         return redirect(url_for('users.home'))
     return render_template("users/register.html", form=form)
+    
+@api_mod.route('/login/', methods=['POST'])
+def api_login():
+    user = User.query.filter_by(email=request.form['email']).first()
+    if user and check_password_hash(user.password, request.form['password']):
+        return user.serialize(), 200
+    else:
+        return '{}', 401
+
+def api_logout():
+    pass

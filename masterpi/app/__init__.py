@@ -11,8 +11,10 @@ def not_found(error):
     return render_template('404.html'), 404
 
 from app.users.views import mod as usersModule
+from app.users.views import api_mod as usersAPIModule
 from app.cars.views import mod as carsModule
 from app.bookings.views import mod as bookingsModule
 app.register_blueprint(usersModule)
+app.register_blueprint(usersAPIModule)
 app.register_blueprint(carsModule)
 app.register_blueprint(bookingsModule)
