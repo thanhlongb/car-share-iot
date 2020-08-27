@@ -1,4 +1,5 @@
 from app import db
+from sqlalchemy.inspection import inspect
 from app.users import constants as USER
 
 class User(db.Model):
@@ -20,6 +21,11 @@ class User(db.Model):
 
     def getRole(self):
         return USER.ROLE[self.role]
+
+    def serialize(self):
+        data = {c: getattr(self, c) for c in inspect(self).attrs.keys()}
+        del data['password']
+        return data
 
     def __repr__(self):
         return '<User %r>' % (self.username)
