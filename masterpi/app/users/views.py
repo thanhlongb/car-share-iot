@@ -14,6 +14,13 @@ api_mod = Blueprint('users_api', __name__, url_prefix='/api/users')
 def home():
     return render_template("users/profile.html", user=g.user)
 
+@mod.route('/logout/')
+@requires_login
+def logout():
+    session['user_id'] = None
+    return redirect(url_for('users.login'))
+    
+
 @mod.before_request
 def before_request():
     """
