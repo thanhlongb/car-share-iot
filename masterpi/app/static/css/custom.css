@@ -1,5 +1,4 @@
 body {
-    padding-top: 120px
 }
 
 pre {
@@ -308,4 +307,17 @@ pre {
         margin-bottom: 2em;
         text-align: center
     }
+}
+
+.login-form, .register-form {
+    max-width: 400px;
+    border-radius: 15px;
+    padding: 30px;
+    background: #ffffff;
+    box-shadow:  20px 20px 60px #d9d9d9, 
+             -20px -20px 60px #ffffff;
+}
+
+.btn-google {
+    background-color:#1a73e8
 }
