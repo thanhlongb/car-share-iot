@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 class Booking(db.Model):
     __tablename__ = 'Booking'
@@ -7,6 +8,7 @@ class Booking(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('User.id'))
     car_id = db.Column(db.Integer, db.ForeignKey('Car.id'))
     duration = db.Column(db.Integer)
+    actions = relationship("BookingAction")
 
     def __init__(self, user_id, car_id, duration=0):
         self.user_id = user_id

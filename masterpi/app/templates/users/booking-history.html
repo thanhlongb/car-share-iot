@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<table style="width:100%">
+    <tr>
+      <th>car id</th>
+      <th>duration</th>
+      <th>time</th>
+    </tr>
+    {% for booking in bookings %}
+        <tr>
+            <td><a href={{ url_for('cars.details', id=booking.car_id) }}>{{ booking.car_id }}</a></td>
+            <td>{{ booking.duration }}</td>
+            <td>{{ booking.actions[0].creation_time }}</td>
+        </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
