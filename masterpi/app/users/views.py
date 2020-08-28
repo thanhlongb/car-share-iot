@@ -39,7 +39,7 @@ def login():
     form = LoginForm(request.form)
     # make sure data are valid, but doesn't validate password is right
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(username=form.username.data).first()
         # we use werzeug to validate user's password
         if user and check_password_hash(user.password, form.password.data):
             # the session can't be modified as it's signed, 
@@ -47,7 +47,7 @@ def login():
             session['user_id'] = user.id
             flash('Welcome %s' % user.username)
             return redirect(url_for('users.home'))
-        flash('Wrong email or password', 'error-message')
+        flash('Wrong username or password', 'error-message')
     return render_template("users/login.html", form=form)
 
 @mod.route('/register/', methods=['GET', 'POST'])
@@ -58,7 +58,7 @@ def register():
     form = RegisterForm(request.form)
     if form.validate_on_submit():
     # create an user instance not yet stored in the database
-        user = User(username=form.name.data, email=form.email.data, \
+        user = User(username=form.username.data, email=form.email.data, \
             password=generate_password_hash(form.password.data))
         # Insert the record in our database and commit it
         db.session.add(user)
@@ -81,7 +81,7 @@ def booking_history():
 
 @api_mod.route('/login/', methods=['POST'])
 def api_login():
-    user = User.query.filter_by(email=request.form['email']).first()
+    user = User.query.filter_by(username=request.form['username']).first()
     if user and check_password_hash(user.password, request.form['password']):
         return user.serialize(), 200
     else:
