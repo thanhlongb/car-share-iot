@@ -4,3 +4,11 @@ from app import db
 from app.cars.models import Car, CarLocation, CarReport
 
 mod = Blueprint('cars', __name__, url_prefix='/cars')
+
+@mod.route('/details/<id>', methods=['GET'])
+def detailsx`(id):
+    car = Car.query.filter_by(id=id).first()
+    if car:
+        return render_template("cars/details.html", car=car)
+    return render_template("404.html")
+

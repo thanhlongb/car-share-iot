@@ -4,6 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
 from app.users.forms import RegisterForm, LoginForm
 from app.users.models import User
+from app.bookings.models import Booking
 from app.users.decorators import requires_login
 
 mod = Blueprint('users', __name__, url_prefix='/users')
@@ -72,6 +73,12 @@ def register():
         return redirect(url_for('users.home'))
     return render_template("users/register.html", form=form)
     
+@mod.route('/booking-history/', methods=['GET'])
+@requires_login
+def booking_history():
+    bookings = Booking.query.filter_by(user_id=session['user_id']).all()
+    return render_template("users/booking-history.html", bookings=bookings)
+
 @api_mod.route('/login/', methods=['POST'])
 def api_login():
     user = User.query.filter_by(email=request.form['email']).first()
