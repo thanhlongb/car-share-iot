@@ -3,11 +3,11 @@ from wtforms import TextField, PasswordField, BooleanField
 from wtforms.validators import Required, EqualTo, Email
 
 class LoginForm(Form):
-    email = TextField('Email address', [Required(), Email()])
+    username = TextField('Username', [Required()])
     password = PasswordField('Password', [Required()])
 
 class RegisterForm(Form):
-    name = TextField('NickName', [Required()])
+    username = TextField('Username', [Required()])
     email = TextField('Email address', [Required(), Email()])
     password = PasswordField('Password', [Required()])
     confirm = PasswordField('Repeat Password', [
