@@ -1,11 +1,39 @@
-{% extends "base.html" %}
-{% block content %}
-  {% from "forms/macros.html" import render_field %}
-  <form method="POST" action="." class="form">
-    {{ form.csrf_token }}
-    {{ render_field(form.username, class="input text") }}
-    {{ render_field(form.password, class="input text") }}
-    <input type="submit" value="Login" class="button green">
-  </form>
-  <a href="{{ url_for('users.register') }}">Register</a>
-{% endblock %}
+{% include "layouts/header.html" %}
+
+<div class="container">
+  <div class="bs-docs-section">
+     <div class="row">
+        <div class="col-lg-6 d-none d-lg-block">
+           <div class="page-header">
+              <h1 id="forms">Car Share IOT</h1>
+              <img src="{{ url_for('static', filename='img/hero.svg') }}" class="img-fluid hero-img" alt="hero">
+           </div>
+        </div>
+        <div class="col-lg-6 mx-auto login-form">
+           <div class="bs-component">
+              <fieldset>
+                 <legend><b>Login</b> / <a href="{{ url_for('users.register') }}">Register</a></legend>
+                 <hr class="my-4">
+                 <button type="button" class="btn btn-info btn-block btn-google">
+                 <i class="fa fa-google" aria-hidden="true"></i> Sign in with Google
+                 </button>
+                 <hr class="my-4">
+                 {% from "forms/macros.html" import render_field, render_checkbox %}
+                 <form method="POST" action="." class="form">
+                    {{ form.csrf_token }}
+                    <div class="form-group">
+                      <p class="text-danger">{{ get_flashed_messages()[-1] }}</p>
+                    </div>
+                    {{ render_field(form.username, class="form-control") }}
+                    {{ render_field(form.password, class="form-control") }}
+                    {{ render_checkbox(form.remember_me, class="custom-control-input") }}
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                 </form>
+              </fieldset>
+           </div>
+        </div>
+     </div>
+  </div>
+</div>
+
+{% include "layouts/footer.html" %}

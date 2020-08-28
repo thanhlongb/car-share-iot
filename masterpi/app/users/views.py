@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy import or_
 
 from app import db
 from app.users.forms import RegisterForm, LoginForm
@@ -57,20 +58,29 @@ def register():
     """
     form = RegisterForm(request.form)
     if form.validate_on_submit():
-    # create an user instance not yet stored in the database
-        user = User(username=form.username.data, email=form.email.data, \
-            password=generate_password_hash(form.password.data))
-        # Insert the record in our database and commit it
-        db.session.add(user)
-        db.session.commit()
+        # check whether if there is user with the same username/email
+        user = User.query.filter(
+            or_(
+                User.username == form.username.data,
+                User.email == form.email.data
+            )
+        ).first()
+        if not user:
+            # create an user instance not yet stored in the database
+            user = User(username=form.username.data, email=form.email.data, \
+                password=generate_password_hash(form.password.data))
+            # Insert the record in our database and commit it
+            db.session.add(user)
+            db.session.commit()
 
-        # Log the user in, as he now has an id
-        session['user_id'] = user.id
+            # Log the user in, as he now has an id
+            session['user_id'] = user.id
 
-        # flash will display a message to the user
-        flash('Thanks for registering')
-        # redirect user to the 'home' method of the user module.
-        return redirect(url_for('users.home'))
+            # flash will display a message to the user
+            flash('Thanks for registering')
+            # redirect user to the 'home' method of the user module.
+            return redirect(url_for('users.home'))
+        flash('Email address or username is taken.')
     return render_template("users/register.html", form=form)
     
 @mod.route('/booking-history/', methods=['GET'])
