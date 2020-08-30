@@ -2,9 +2,9 @@
 <div class="form-group">
     {{ field.label(class="label") }}
     {% if field.errors %}
-        {% set css_class = 'has_error ' + kwargs.pop('class', '') %}
+        {% set css_class = ' is-invalid ' + kwargs.pop('class', '') %}
         {{ field(class=css_class, **kwargs) }}
-        <ul class="errors">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+        <div class="invalid-feedback">{% for error in field.errors %}{{ error|e }}. {% endfor %}</div>
     {% else %}
         {{ field(**kwargs) }}
     {% endif %}
@@ -15,9 +15,9 @@
 <div class="form-group">
     <div class="custom-control custom-checkbox">
         {% if field.errors %}
-            {% set css_class = 'has_error ' + kwargs.pop('class', '') %}
+            {% set css_class = ' is-invalid ' + kwargs.pop('class', '') %}
             {{ field(class=css_class, **kwargs) }}
-            <ul class="errors">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+            <div class="invalid-feedback">{% for error in field.errors %}{{ error|e }}. {% endfor %}</div>
         {% else %}
             {{ field(**kwargs) }}
         {% endif %}
