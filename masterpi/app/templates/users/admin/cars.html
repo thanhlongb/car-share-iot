@@ -120,6 +120,7 @@
               success: function(res) {
                   $('#delete-modal').modal('hide');
                   $('#row' + car_id).fadeOut();
+                  $('#row' + car_id).remove();
               },
               error: function(error) {
                   $('#delete-modal').modal('hide');

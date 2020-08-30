@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="form-group justify-content-between">
+  <h1 class="d-inline">Users</h1> 
+  <a href="{{ url_for('users.admin_users_create') }}" target="_blank" type="button" class="btn btn-secondary float-right">Add new user</a>
+</div>
+<div class="form-group">
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text">Search:</span>
+    </div>
+    <input type="text" class="form-control" id="search-text" aria-label="Enter your query here..." placeholder="Enter your query here...">
+  </div>
+</div>
+<table class="table table-hover" style="width:100%">
+  <thead>
+    <tr class="table-secondary">
+      <th>ID</th>
+      <th>Username</th>
+      <th>Role</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Email</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="search-table">
+    {% for user in users %}
+        <tr id="row{{ user.id }}">
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.getRole() }}</td>
+            <td>{{ user.first_name }}</td>
+            <td>{{ user.last_name }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <a href="{{ url_for('users.admin_users_edit', user_id=user.id) }}" target="_blank" class="btn btn-sm btn-info" title="Edit">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              </a>
+              <button onclick='delete_user({{ user.id }})' type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-modal" title="Delete">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </button>
+            </td>
+          </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+
+
+  <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmation</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete user with ID: <strong id="delete-item">10</strong>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="delete-btn">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/admin/table-search.js') }}" type="text/javascript"></script>
+<script>
+  function delete_user(user_id) {
+    $('#delete-item').text(user_id);
+  }
+  $(document).ready(function(){
+      $("#delete-btn").click(function(){    
+          user_id = $('#delete-item').text();
+          $.ajax({
+              url: '{{ url_for("users.admin_users_delete") }}',
+              data: {
+                  user_id: user_id,
+              },
+              type: 'POST',
+              beforeSend: function() {
+                $('#row' + user_id).addClass('table-danger');
+              },
+              success: function(res) {
+                  $('#delete-modal').modal('hide');
+                  $('#row' + user_id).fadeOut();
+                  $('#row' + user_id).remove();
+              },
+              error: function(error) {
+                  $('#delete-modal').modal('hide');
+                  $('#row' + user_id).removeClass('table-danger');
+              }
+          })
+      });
+  });
+  </script>
+{% endblock %}
