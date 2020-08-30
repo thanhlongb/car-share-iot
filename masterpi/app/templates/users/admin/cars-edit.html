@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+     <div class="row">
+        <div class="col-lg-12">
+            <h1><a href="{{ url_for('users.admin_cars') }}">Cars</a><small class="lead"> / edit</small></h1>
+            <div class="form-group">
+                <p class="text-info">{{ get_flashed_messages()[-1] }}</p>
+              </div>     
+           <div class="bs-component">
+              <fieldset>
+                 {% from "forms/macros.html" import render_field, render_checkbox %}
+                 <form method="POST" action="" class="form">
+                    {{ form.csrf_token }}
+                    {{ render_field(form.make, class="form-control") }}
+                    {{ render_field(form.body_type, class="form-control") }}
+                    {{ render_field(form.color, class="form-control") }}
+                    {{ render_field(form.seats, class="form-control") }}
+                    {{ render_field(form.cost_per_hour, class="form-control") }}
+                    <button type="submit" class="btn btn-primary btn-block">Save</button>
+                 </form>
+              </fieldset>
+           </div>
+        </div>
+     </div>
+</div>
+{% endblock %}
