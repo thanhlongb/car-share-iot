@@ -2,8 +2,11 @@ from flask import Blueprint, request, render_template, flash, g, session, redire
 
 from app import db
 from app.cars.models import Car, CarLocation, CarReport
+from app.cars.forms import searchForm
+
 
 mod = Blueprint('cars', __name__, url_prefix='/cars')
+
 
 @mod.route('/details/<id>', methods=['GET'])
 def details(id):
@@ -11,3 +14,22 @@ def details(id):
     if car:
         return render_template("cars/details.html", car=car)
     return render_template("404.html")
+
+
+mod.route('/show-cars', methods=['GET'])
+def show_all_cars(): 
+    car = Car.query.filter_by(available=True).all()
+    if car:
+        return render_template("cars/details.html", car=car)
+    return render_template("404.html")
+
+
+mod.route('/search-cars', methods=['GET', 'POST'])
+#TODO: implement https://sqlalchemy-searchable.readthedocs.io/en/latest/integrations.html or https://pythonhosted.org/Flask-WhooshAlchemy/
+def search_cars():
+    form = searchForm(request.form)
+    car = Car.query.search(form.keyWord).all()
+    if car:
+        return render_template("cars/details.html", car=car)
+    return render_template("404.html")
+
