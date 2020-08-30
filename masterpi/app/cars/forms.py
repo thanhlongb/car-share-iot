@@ -1,5 +1,5 @@
 from flask_wtf import Form, RecaptchaField
-from wtforms import TextField, PasswordField, BooleanField
+from wtforms import TextField, PasswordField, BooleanField, IntegerField
 from wtforms.validators import Required, EqualTo, Email
 
 class searchForm(Form):
