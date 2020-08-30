@@ -5,6 +5,8 @@ from sqlalchemy import or_
 from app import db
 from app.users.forms import RegisterForm, LoginForm
 from app.users.models import User
+from app.cars.models import Car, CarReport
+from app.cars.forms import CarForm
 from app.bookings.models import Booking
 from app.users.decorators import requires_login
 
@@ -88,6 +90,74 @@ def register():
 def booking_history():
     bookings = Booking.query.filter_by(user_id=session['user_id']).all()
     return render_template("users/booking-history.html", bookings=bookings)
+
+@mod.route('/admin/cars', methods=['GET'])
+@requires_login
+def admin_cars():
+    if not g.user.isAdmin():
+        return "503 Not sufficent permission"
+    cars = Car.query.all()
+    return render_template("users/admin/cars.html", cars=cars)
+
+@mod.route('/admin/cars/edit/<car_id>', methods=['GET', 'POST'])
+@requires_login
+def admin_cars_edit(car_id):
+    if not g.user.isAdmin():
+        return "503 Not sufficent permission"
+    car = Car.query.filter_by(id=car_id).first()
+    if not car: 
+        return "400 car not exists"
+    form = CarForm(obj=car)
+    if form.validate_on_submit():
+        form.populate_obj(car)
+        db.session.commit()
+        flash('Car information updated.')
+    return render_template("users/admin/cars-edit.html", form=form)
+
+@mod.route('/admin/cars/create', methods=['GET', 'POST'])
+@requires_login
+def admin_cars_create():
+    if not g.user.isAdmin():
+        return "503 Not sufficent permission"
+    form = CarForm(request.form)
+    if form.validate_on_submit():
+        car = Car(make=form.make.data, 
+                  color=form.color.data,
+                  body_type=form.body_type.data,
+                  seats=form.seats.data,
+                  cost_per_hour=form.cost_per_hour.data)
+        # Insert the record in our database and commit it
+        db.session.add(car)
+        db.session.commit()
+        flash('Car added.')
+        return redirect(url_for('users.admin_cars_create'))
+        # redirect user to the 'home' method of the user module.    
+    return render_template("users/admin/cars-create.html", form=form)    
+
+@mod.route('/admin/cars/delete', methods=['POST'])
+@requires_login
+def admin_cars_delete():
+    if not g.user.isAdmin():
+        return "503 Not sufficent permission", 503
+    car = Car.query.filter_by(id=request.form['car_id']).first()
+    if car:
+        db.session.delete(car)
+        db.session.commit()
+        return '', 200
+    return 'car not exist.', 404
+
+@mod.route('/admin/cars/report', methods=['POST'])
+@requires_login
+def admin_cars_report():
+    if not g.user.isAdmin():
+        return "503 Not sufficent permission", 503
+    car = Car.query.filter_by(id=request.form['car_id']).first()
+    if car:
+        car_report = CarReport(car.id)
+        db.session.add(car_report)
+        db.session.commit()
+        return '', 200
+    return 'car not exist.', 404
 
 @api_mod.route('/login/', methods=['POST'])
 def api_login():
