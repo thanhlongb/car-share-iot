@@ -9,14 +9,16 @@ class Car(db.Model):
     body_type = db.Column(db.String(100))
     seats = db.Column(db.Integer)
     cost_per_hour = db.Column(db.Integer, nullable=False)
+    available = db.Column(db.Boolean, nullable=False)
 
     def __init__(self, make=None, color=None, body_type=None, 
-                 seats=None, cost_per_hour=0):
+                 seats=None, cost_per_hour=0, available=True):
         self.make = make
         self.color = color
         self.body_type = body_type
         self.seats = seats
         self.cost_per_hour = cost_per_hour
+        self.available = available
 
     def __repr__(self):
         return '<Car %r>' % (self.id)

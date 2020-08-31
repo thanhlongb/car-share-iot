@@ -1,7 +1,6 @@
 from app import db
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-
 class Booking(db.Model):
     __tablename__ = 'Booking'
     id = db.Column(db.Integer, primary_key=True)
