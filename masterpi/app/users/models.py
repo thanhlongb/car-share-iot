@@ -19,6 +19,18 @@ class User(db.Model):
         self.email = email
         self.password = password
 
+    def isAdmin(self):
+        return self.role == 0
+
+    def isManager(self):
+        return self.role == 1
+
+    def isManager(self):
+        return self.role == 2 
+
+    def isCustomer(self):
+        return self.role == 3
+
     def getRole(self):
         return USER.ROLE[self.role]
 
