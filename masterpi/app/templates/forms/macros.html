@@ -25,3 +25,10 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro render_select(field) %}
+<div class="form-group">
+        {{ field.label(class="label") }}
+        {{ field(class="custom-select", **kwargs) }}
+</div>
+{% endmacro %}

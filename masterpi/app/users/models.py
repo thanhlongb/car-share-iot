@@ -7,17 +7,21 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
     role = db.Column(db.SmallInteger, default=USER.CUSTOMER)
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
-    email = db.Column(db.String(100), unique=True, nullable=False)
     facial_recognition = db.Column(db.Boolean, default=False)
     google_login = db.Column(db.Boolean, default=False)
 
-    def __init__(self, username=None, email=None, password=None):
+    def __init__(self, username, email, password, 
+                       role=None, first_name=None, last_name=None):
         self.username = username
         self.email = email
         self.password = password
+        self.role = role
+        self.first_name = first_name
+        self.last_name = last_name
 
     def isAdmin(self):
         return self.role == 0
