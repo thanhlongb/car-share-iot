@@ -1,15 +1,18 @@
+import os
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import or_
+from werkzeug.utils import secure_filename
 
 from app import db
-from app.users.forms import RegisterForm, LoginForm
+from app.users.forms import RegisterForm, LoginForm, PhotosForm
 from app.users.models import User
 from app.bookings.models import Booking
 from app.users.decorators import requires_login
 
 mod = Blueprint('users', __name__, url_prefix='/users')
 api_mod = Blueprint('users_api', __name__, url_prefix='/api/users')
+UPLOAD_FOLDER_URL = 'app/facial_recognition/dataset'
 
 @mod.route('/me/')
 @requires_login
@@ -22,7 +25,6 @@ def logout():
     session['user_id'] = None
     return redirect(url_for('users.login'))
     
-
 @mod.before_request
 def before_request():
     """
@@ -99,3 +101,23 @@ def api_login():
 
 def api_logout():
     pass
+
+@mod.route('/photos-upload/', methods=['GET', 'POST'])
+@requires_login
+def photos_upload():
+    """
+    Upload photos
+    """
+    form = PhotosForm()
+    if request.method == 'POST':
+        print('ccccccccccccccccccccccccccccccccc')
+        if form.validate_on_submit():
+            user = User.query.filter_by(id=session['user_id']).first()
+            username = user.username
+            directory = os.path.join(UPLOAD_FOLDER_URL, username)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            for f in request.files.getlist('images'):
+                filename = secure_filename(f.filename)
+                f.save(os.path.join(directory, filename))
+    return render_template("users/photos-upload.html", form=form)

@@ -1,6 +1,8 @@
-from flask_wtf import Form, RecaptchaField
-from wtforms import TextField, PasswordField, BooleanField
+from flask_wtf import Form, RecaptchaField, FlaskForm
+from wtforms import TextField, PasswordField, BooleanField, MultipleFileField, SubmitField
 from wtforms.validators import Required, EqualTo, Email
+from flask_wtf.file import FileAllowed, FileRequired
+from wtforms import FileField
 
 class LoginForm(Form):
     username = TextField('Username', [Required()])
@@ -16,3 +18,10 @@ class RegisterForm(Form):
         EqualTo('password', message='Passwords must match')
         ])
     accept_tos = BooleanField('I accept the TOS', [Required()])
+
+class PhotosForm(FlaskForm):
+    images = FileField('Images', render_kw={'multiple':True},
+    validators=[
+        FileRequired(),
+        FileAllowed(['jpg', 'png'], 'jpg, png files only!')
+    ])
