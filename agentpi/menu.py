@@ -42,8 +42,10 @@ def create_main_menu():
     return menu
 
 def create_user_menu():
-    menu = ConsoleMenu("", formatter=FORMAT)
-    logout_item = FunctionItem("Call for repair!!!", action._pass)
+    menu = ConsoleMenu("", formatter=FORMAT, show_exit_option=False)
+    call_for_repair_item = FunctionItem("Call for repair!!!", action._pass)
+    logout_item = FunctionItem("Logout", action.user_logout)
+    menu.append_item(call_for_repair_item)
     menu.append_item(logout_item)
     return menu
 
