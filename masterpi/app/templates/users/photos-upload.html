@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-    Please upload at least 3 portrait images for successful facial recognition.
-    {% from "forms/macros.html" import render_field, render_checkbox %}
-    <form method="POST" action="." enctype="multipart/form-data">
-        {{ form.csrf_token }}
-        <!-- {{ form.images }} -->
-        {{ render_field(form.images, class="form-control") }}
-        <button type="submit">Upload</button>
-    </form>
+    {% if uploaded == False %}
+        Please upload at least 3 portrait images for successful facial recognition.
+        {% from "forms/macros.html" import render_field, render_checkbox %}
+        <form method="POST" action="." enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            {{ render_field(form.images, class="form-control") }}
+            <button type="submit">Upload</button>
+        </form>
+    {% else %}
+        <p>Upload completed</p>
+    {% endif %}
 {% endblock %}
