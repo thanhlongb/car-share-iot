@@ -1,5 +1,5 @@
 import os
-# _basedir = os.path.abspath(os.path.dirname(__file__))
+_basedir = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = True
 SECRET_KEY = '''wrg)_4')@(<VcJxc37"lG;.hC^LT.7X_+Flv2X0w7W&je3>HDTXA*)Ff'xk#D*5'''
@@ -22,6 +22,7 @@ DATABASE_CONNECT_OPTIONS = {}
 
 CSRF_ENABLED = True
 CSRF_SESSION_KEY = '''lur$F1de)*Cxy;SA>fxvwqF=!R`F?m`PPO4~a;>,4t:yLEr*n6~0aStU:?;?x6n'''
+
 
 # RECAPTCHA_USE_SSL = False
 # RECAPTCHA_PUBLIC_KEY = '6LeYIbsSAAAAACRPIllxA7wvXjIE411PfdB2gt2J'
