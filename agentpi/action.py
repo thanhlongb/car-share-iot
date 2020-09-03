@@ -11,8 +11,7 @@ def _pass():
 
 def user_logout():
     #TODO: change availability of the car in the db
-    menu.user_menu.pause()
-    menu.main_menu.show()
+    menu.user_menu.exit()
 
 def handle_fail_user_login(use_credentials):
     print("Wrong username/password! Please try again.")
