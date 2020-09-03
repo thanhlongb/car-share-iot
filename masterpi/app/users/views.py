@@ -110,7 +110,6 @@ def photos_upload():
     """
     form = PhotosForm()
     if request.method == 'POST':
-        print('ccccccccccccccccccccccccccccccccc')
         if form.validate_on_submit():
             user = User.query.filter_by(id=session['user_id']).first()
             username = user.username
@@ -120,4 +119,5 @@ def photos_upload():
             for f in request.files.getlist('images'):
                 filename = secure_filename(f.filename)
                 f.save(os.path.join(directory, filename))
-    return render_template("users/photos-upload.html", form=form)
+            return render_template("users/photos-upload.html", form=form, uploaded=True)
+    return render_template("users/photos-upload.html", form=form, uploaded=False)

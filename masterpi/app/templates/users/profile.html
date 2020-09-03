@@ -2,5 +2,6 @@
 {% block content %}
   Hi {{ user.username }}! <br>
   Your role is "{{ user.getRole() }}" <br>
+  <a href="{{ url_for('users.photos_upload') }}">Upload photos for facial recognition</a><br>
   <a href="{{ url_for('users.logout') }}">Logout</a>
 {% endblock %}
