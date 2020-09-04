@@ -1,4 +1,6 @@
 import os
+from multiprocessing import Process
+from ..facial_recognition.encode_faces import encode
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import or_
@@ -119,5 +121,7 @@ def photos_upload():
             for f in request.files.getlist('images'):
                 filename = secure_filename(f.filename)
                 f.save(os.path.join(directory, filename))
+            thread = Process(target=encode)
+            thread.run()
             return render_template("users/photos-upload.html", form=form, uploaded=True)
     return render_template("users/photos-upload.html", form=form, uploaded=False)
