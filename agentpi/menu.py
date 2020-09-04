@@ -25,7 +25,7 @@ def create_main_menu():
     face_login_item = FunctionItem("Use username/password", 
         action.user_login_with_credentials)
     credentials_login_item = FunctionItem("Use facial recognition", 
-        action._pass)
+        action.user_login_with_facial_recognition)
     customer_login_submenu.append_item(face_login_item)
     customer_login_submenu.append_item(credentials_login_item)
 
