@@ -14,6 +14,10 @@ class Booking(db.Model):
         self.car_id = car_id
         self.duration = duration
 
+    @property
+    def booked(self):
+        return self.actions and self.actions[-1].action == "created"
+
     def __repr__(self):
         return '<Booking %r>' % (self.id)
 

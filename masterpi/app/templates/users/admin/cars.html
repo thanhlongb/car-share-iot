@@ -21,7 +21,7 @@
       <th>Body Type</th>
       <th>Seats</th>
       <th>Cost Per Hour</th>
-      <th>Availability</th>
+      <th>Available</th>
       <th>Action</th>
     </tr>
   </thead>
@@ -34,7 +34,7 @@
             <td>{{ car.body_type }}</td>
             <td>{{ car.seats }}</td>
             <td>{{ car.cost_per_hour }}</td>
-            <td>{{ car.availability }}</td>
+            <td>{{ "yes" if car.available else "no" }}</td>
             <td>
               <a href="{{ url_for('users.admin_cars_edit', car_id=car.id) }}" target="_blank" class="btn btn-sm btn-info" title="Edit">
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
@@ -42,9 +42,11 @@
               <button onclick='delete_car({{ car.id }})' type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-modal" title="Delete">
                 <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
+              {% if not car.fixing %}
               <button onclick='report_car({{ car.id }})' type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#report-modal"  title="Report">
                 <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
               </button>
+              {% endif %}
             </td>
           </tr>
     {% endfor %}
