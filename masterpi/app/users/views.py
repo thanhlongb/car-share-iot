@@ -1,4 +1,8 @@
 import os
+import pickle
+import json
+import numpy as np
+from json import JSONEncoder
 from multiprocessing import Process
 from ..facial_recognition.encode_faces import encode
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
@@ -15,6 +19,17 @@ from app.users.decorators import requires_login
 mod = Blueprint('users', __name__, url_prefix='/users')
 api_mod = Blueprint('users_api', __name__, url_prefix='/api/users')
 UPLOAD_FOLDER_URL = 'app/facial_recognition/dataset'
+
+class NumpyArrayEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(NumpyArrayEncoder, self).default(obj)
 
 @mod.route('/me/')
 @requires_login
@@ -103,6 +118,12 @@ def api_login():
 
 def api_logout():
     pass
+
+@api_mod.route('/face_encodings/', methods=['GET'])
+def face_encodings():
+    encodings = pickle.loads(open('app/facial_recognition/output/encodings.pickle', 'rb').read())
+    encodings_json = json.dumps(encodings, cls=NumpyArrayEncoder)
+    return encodings_json
 
 @mod.route('/photos-upload/', methods=['GET', 'POST'])
 @requires_login
