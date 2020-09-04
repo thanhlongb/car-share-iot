@@ -57,6 +57,7 @@ def user_login_with_facial_recognition():
     print('[INFO] Training new model...')
     train_model(new_encodings_data)
     print('[INFO] Initializing...')
+    recognize()
     time.sleep(3)
 
 if __name__ == '__main__':
