@@ -4,7 +4,7 @@
     {% if field.errors %}
         {% set css_class = ' is-invalid ' + kwargs.pop('class', '') %}
         {{ field(class=css_class, **kwargs) }}
-        <div class="invalid-feedback">{% for error in field.errors %}{{ error|e }}. {% endfor %}</div>
+        <div class="invalid-feedback">{% for error in field.errors %}{{ error|e }}{% endfor %}</div>
     {% else %}
         {{ field(**kwargs) }}
     {% endif %}
