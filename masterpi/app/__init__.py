@@ -1,10 +1,16 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from oauthlib.oauth2 import WebApplicationClient
 
 app = Flask(__name__)
 app.config.from_object('config')
 
 db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+with app.app_context():
+    client = WebApplicationClient(app.config['GOOGLE_CLIENT_ID'])
 
 @app.errorhandler(404)
 def not_found(error):

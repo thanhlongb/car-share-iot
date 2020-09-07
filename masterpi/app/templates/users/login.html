@@ -15,9 +15,9 @@
               <fieldset>
                  <legend><b>Login</b> / <a href="{{ url_for('users.register') }}">Register</a></legend>
                  <hr class="my-4">
-                 <button type="button" class="btn btn-info btn-block btn-google">
+                 <a href="{{ url_for('users.google_login') }}" type="button" class="btn btn-info btn-block btn-google">
                  <i class="fa fa-google" aria-hidden="true"></i> Sign in with Google
-                 </button>
+                 </a>
                  <hr class="my-4">
                  {% from "forms/macros.html" import render_field, render_checkbox %}
                  <form method="POST" action="." class="form">
