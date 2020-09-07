@@ -15,13 +15,12 @@ class Car(db.Model):
     bookings = relationship("Booking")
 
     def __init__(self, make=None, color=None, body_type=None, 
-                 seats=None, cost_per_hour=0, available=True):
+                 seats=None, cost_per_hour=0):
         self.make = make
         self.color = color
         self.body_type = body_type
         self.seats = seats
         self.cost_per_hour = cost_per_hour
-        self.available = available
 
     @property
     def available(self):
