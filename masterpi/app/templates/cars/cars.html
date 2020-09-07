@@ -17,6 +17,7 @@
 
 <div class="card-deck" id="cars-list">
     {% for car in cars %}
+    {% if car.available %}
     <div class="card" id="card{{ car.id }}">
         <div class="card-body">
             <h5 class="card-title">{{ car.make }}</h5>
@@ -65,6 +66,7 @@
                 data-target="#booking-modal">Book car</a>
         </div>
     </div>
+    {% endif %}
     {% endfor %}
 </div>
 
@@ -74,7 +76,7 @@
             <div class="modal-header">
                 <h4 class="modal-title"> Booking car </h4>
                 <button type="button" class="close"
-                data-dismiss="modal">&times;</button>
+                    data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <p>Car ID: <span id="booked-car"></span></p>
@@ -126,6 +128,7 @@
             },
             type: 'POST',
             success: function (res) {
+                $('#booking-modal').modal('hide');
                 $('#card' + car_id).fadeOut();
                 $('#card' + car_id).remove();
             }
