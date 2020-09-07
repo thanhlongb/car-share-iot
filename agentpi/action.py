@@ -11,7 +11,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 from pisocket import client
 
 GET_FACE_ENCODINGS_API = "http://127.0.0.1:5000/api/users/face_encodings/"
-ENCODINGS_PICKLE_URL = "facial_recognition/output/encodings.pickle"
+ENGINEER_LOGIN_BY_QR_CODE_API = ""
 
 def _pass():
     pass
@@ -67,6 +67,10 @@ def user_login_with_facial_recognition():
     print('[INFO] Initializing...')
     username = recognize()
     handle_facial_recognition_result(username)
+
+##-------------------------------- Engineer login with QR code --------------------------------##
+def engineer_login_with_QR_code():
+    pass
 
 if __name__ == '__main__':
     user_login_with_facial_recognition()

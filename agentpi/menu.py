@@ -6,6 +6,7 @@ import time
 
 main_menu = None
 user_menu = None
+engineer_menu = None
 
 FORMAT = MenuFormatBuilder() \
             .set_border_style_type(MenuBorderStyleType.HEAVY_BORDER) \
@@ -32,13 +33,12 @@ def create_main_menu():
     #engineer section
     engineer_login_submenu = SelectionMenu([], 'Engineer login', 
         formatter=FORMAT)
-    customer_login_item = SubmenuItem("Customer login", 
-        customer_login_submenu, menu)
-    engineer_login_item = SubmenuItem("Retrieve engineer's profile by QR code", 
-        engineer_login_submenu, menu)
+    engineer_login_item = FunctionItem("Login by QR code", 
+        action.engineer_login_with_QR_code)
+    engineer_login_submenu.append_item(engineer_login_item)
 
-    menu.append_item(customer_login_item)
-    menu.append_item(engineer_login_item)
+    menu.append_item(customer_login_submenu)
+    menu.append_item(engineer_login_submenu)
     return menu
 
 def create_user_menu():
@@ -49,10 +49,15 @@ def create_user_menu():
     menu.append_item(logout_item)
     return menu
 
+def create_engineer_menu():
+    menu = ConsoleMenu("", formatter=FORMAT, show_exit_option=False)
+    logout_item = FunctionItem("Logout", action.user_logout)
+    menu.append_item(logout_item)
+    return menu
 
 main_menu = create_main_menu()
 user_menu = create_user_menu()
-
+engineer_menu = create_engineer_menu()
 
 
 
