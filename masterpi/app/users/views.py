@@ -36,10 +36,31 @@ class NumpyArrayEncoder(json.JSONEncoder):
         else:
             return super(NumpyArrayEncoder, self).default(obj)
 
-@mod.route('/me/')
+@mod.route('/login/redirect')
+@login_required
+def login_redirect():
+    if current_user.isEngineer():
+        return redirect(url_for('users.engineer'))
+    if current_user.isManager() or current_user.isAdmin():
+        return redirect(url_for('users.dashboard'))
+    return redirect(url_for('users.home'))
+
+@mod.route('/')
 @login_required
 def home():
-    return render_template("users/profile.html", user=current_user)
+    bookings = Booking.query.filter_by(user_id=current_user.id).all()
+    return render_template("users/home.html", user=current_user, bookings=bookings)
+    
+@mod.route('/dashboard/')
+@login_required
+def dashboard():
+    return render_template("users/dashboard.html")
+    
+@mod.route('/engineer/')
+@login_required
+def engineer():
+    return render_template("users/engineer.html")
+    
 
 @mod.route('/logout/')
 @login_required
@@ -74,8 +95,7 @@ def login():
             # the session can't be modified as it's signed, 
             # it's a safe place to store the user id
             login_user(user)
-            flash('Welcome %s' % user.username)
-            return redirect(url_for('users.home'))
+            return redirect(url_for('users.login_redirect'))
         flash('Wrong username or password', 'error-message')
     return render_template("users/login.html", form=form)
 
@@ -127,7 +147,7 @@ def google_callback():
         db.session.add(user)
         db.session.commit()
     login_user(user)
-    return redirect(url_for('users.home'))
+    return redirect(url_for('users.login_redirect'))
 
 @mod.route('/register/', methods=['GET', 'POST'])
 def register():
@@ -153,11 +173,8 @@ def register():
 
             # Log the user in, as he now has an id
             login_user(user)
-
-            # flash will display a message to the user
-            flash('Thanks for registering')
             # redirect user to the 'home' method of the user module.
-            return redirect(url_for('users.home'))
+            return redirect(url_for('users.login_redirect'))
         flash('Email address or username is taken.')
     return render_template("users/register.html", form=form)
     
