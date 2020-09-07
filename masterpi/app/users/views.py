@@ -1,7 +1,11 @@
-import requests, json
+import os, pickle, requests, json
+import numpy as np
+from multiprocessing import Process
+from json import JSONEncoder
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import or_
+from werkzeug.utils import secure_filename
 from flask_login import (
     current_user,
     login_required,
@@ -10,26 +14,12 @@ from flask_login import (
 )
 
 from app import db, login_manager, client
-from app.users.forms import RegisterForm, LoginForm, UserForm, UserEditForm
-import os
-import pickle
-import json
-import numpy as np
-from json import JSONEncoder
-from multiprocessing import Process
-from ..facial_recognition.encode_faces import encode
-from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
-from werkzeug.security import check_password_hash, generate_password_hash
-from sqlalchemy import or_
-from werkzeug.utils import secure_filename
-
-from app import db
-from app.users.forms import RegisterForm, LoginForm, PhotosForm
+from app.users.forms import RegisterForm, LoginForm, UserForm, UserEditForm, PhotosForm
+# from ..facial_recognition.encode_faces import encode
 from app.users.models import User
 from app.cars.models import Car, CarReport
 from app.cars.forms import CarForm
 from app.bookings.models import Booking
-# from app.users.decorators import login_required
 
 mod = Blueprint('users', __name__, url_prefix='/users')
 api_mod = Blueprint('users_api', __name__, url_prefix='/api/users')
