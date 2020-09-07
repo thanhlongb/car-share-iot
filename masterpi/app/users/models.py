@@ -38,9 +38,6 @@ class User(UserMixin, db.Model):
     def isManager(self):
         return self.role == 1
 
-    def isManager(self):
-        return self.role == 2 
-
     def isCustomer(self):
         return self.role == 3
 
