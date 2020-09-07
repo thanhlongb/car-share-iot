@@ -23,6 +23,10 @@ DATABASE_CONNECT_OPTIONS = {}
 CSRF_ENABLED = True
 CSRF_SESSION_KEY = '''lur$F1de)*Cxy;SA>fxvwqF=!R`F?m`PPO4~a;>,4t:yLEr*n6~0aStU:?;?x6n'''
 
+GOOGLE_CLIENT_ID = '''798556033482-18bih5lt883gvriclvr7fdger63hcnb4.apps.googleusercontent.com'''
+GOOGLE_CLIENT_SECRET = '''3azjWEwWkaMvMHPA_ue7FfR-'''
+GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
+
 # RECAPTCHA_USE_SSL = False
 # RECAPTCHA_PUBLIC_KEY = '6LeYIbsSAAAAACRPIllxA7wvXjIE411PfdB2gt2J'
 # RECAPTCHA_PRIVATE_KEY = '6LeYIbsSAAAAAJezaIq3Ft_hSTo0YtyeFG-JgRtu'
