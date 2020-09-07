@@ -22,11 +22,14 @@ def user_logout():
 
 ##-------------------------------- User login with credentials --------------------------------##
 def handle_fail_user_login(use_credentials):
-    print("Wrong username/password! Please try again.")
+    if use_credentials:
+        print("Wrong username/password! Please try again.")
+    else:
+        print("Cannot recognize user's face! Please try again.")
     time.sleep(2)
     menu.main_menu.resume()
 
-def handle_success_user_login(use_credentials, username):
+def handle_success_user_login(username):
     print("\n\nWelcome '{}' to the car".format(username))
     time.sleep(2)
     menu.main_menu.pause()
@@ -41,8 +44,7 @@ def user_login_with_credentials():
     if len(res_dict) == 0:
         handle_fail_user_login(use_credentials=True)
     else:
-        handle_success_user_login(use_credentials=True, 
-            username=res_dict['username'])
+        handle_success_user_login(username=res_dict['username'])
 
 ##-------------------------------- User login with facial recognition --------------------------------##
 def update_facial_encodings():
@@ -50,15 +52,21 @@ def update_facial_encodings():
     response = requests.get(GET_FACE_ENCODINGS_API)
     response_pickle = response.json()
     return response_pickle
-    
+
+def handle_facial_recognition_result(username):
+    if username == 'unknown':
+        handle_fail_user_login(use_credentials=False)
+    else:
+        handle_success_user_login(username)
+
 def user_login_with_facial_recognition():
     menu.main_menu.pause()
     new_encodings_data = update_facial_encodings()
     print('[INFO] Training new model...')
     train_model(new_encodings_data)
     print('[INFO] Initializing...')
-    recognize()
-    time.sleep(3)
+    username = recognize()
+    handle_facial_recognition_result(username)
 
 if __name__ == '__main__':
     user_login_with_facial_recognition()
