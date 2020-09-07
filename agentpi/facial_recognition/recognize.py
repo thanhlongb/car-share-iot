@@ -8,6 +8,7 @@ import pickle
 import time
 import cv2
 import os
+import time
 
 # ap = argparse.ArgumentParser()
 # ap.add_argument("-d", "--detector", required=True)
@@ -29,7 +30,7 @@ CONFIDENCE = 0.5
 #   "res10_300x300_ssd_iter_140000.caffemodel"])
 def recognize():
     detector = cv2.dnn.readNetFromCaffe(DEPLOY_PROTOTXT_PATH, RES10_300X300_PATH)
-
+    
     #print("[INFO] loading face recognizer...")
     #embedder = cv2.dnn.readNetFromTorch(args["embedding_model"])
 
@@ -41,6 +42,7 @@ def recognize():
     time.sleep(2.0)
 
     fps = FPS().start()
+    tstart = time.time()
 
     while True:
         frame = vs.read()
@@ -92,10 +94,17 @@ def recognize():
         fps.update()
 
         cv2.imshow("Frame", frame)
-        key = cv2.waitKey(1) & 0xFF
+        tcur = time.time()
 
-        if key == ord("q"):
-            break
+        if tcur - tstart > 15 & name != 'unknown' & proba > 0.8:
+            return name
+        elif tcur - tstart > 60:
+            return 'unknown'
+
+        # key = cv2.waitKey(1) & 0xFF
+
+        # if key == ord("q"):
+        #     break
 
     fps.stop()
     print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
