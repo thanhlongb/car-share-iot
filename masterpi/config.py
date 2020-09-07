@@ -1,5 +1,5 @@
 import os
-# _basedir = os.path.abspath(os.path.dirname(__file__))
+_basedir = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = True
 SECRET_KEY = '''wrg)_4')@(<VcJxc37"lG;.hC^LT.7X_+Flv2X0w7W&je3>HDTXA*)Ff'xk#D*5'''

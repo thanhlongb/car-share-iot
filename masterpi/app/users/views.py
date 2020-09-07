@@ -11,6 +11,20 @@ from flask_login import (
 
 from app import db, login_manager, client
 from app.users.forms import RegisterForm, LoginForm, UserForm, UserEditForm
+import os
+import pickle
+import json
+import numpy as np
+from json import JSONEncoder
+from multiprocessing import Process
+from ..facial_recognition.encode_faces import encode
+from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
+from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy import or_
+from werkzeug.utils import secure_filename
+
+from app import db
+from app.users.forms import RegisterForm, LoginForm, PhotosForm
 from app.users.models import User
 from app.cars.models import Car, CarReport
 from app.cars.forms import CarForm
@@ -19,6 +33,18 @@ from app.bookings.models import Booking
 
 mod = Blueprint('users', __name__, url_prefix='/users')
 api_mod = Blueprint('users_api', __name__, url_prefix='/api/users')
+UPLOAD_FOLDER_URL = 'app/facial_recognition/dataset'
+
+class NumpyArrayEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(NumpyArrayEncoder, self).default(obj)
 
 @mod.route('/me/')
 @login_required
@@ -285,3 +311,31 @@ def api_login():
 
 def api_logout():
     pass
+
+@api_mod.route('/face_encodings/', methods=['GET'])
+def face_encodings():
+    encodings = pickle.loads(open('app/facial_recognition/output/encodings.pickle', 'rb').read())
+    encodings_json = json.dumps(encodings, cls=NumpyArrayEncoder)
+    return encodings_json
+
+@mod.route('/photos-upload/', methods=['GET', 'POST'])
+@login_required
+def photos_upload():
+    """
+    Upload photos
+    """
+    form = PhotosForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user = User.query.filter_by(id=session['user_id']).first()
+            username = user.username
+            directory = os.path.join(UPLOAD_FOLDER_URL, username)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            for f in request.files.getlist('images'):
+                filename = secure_filename(f.filename)
+                f.save(os.path.join(directory, filename))
+            thread = Process(target=encode)
+            thread.run()
+            return render_template("users/photos-upload.html", form=form, uploaded=True)
+    return render_template("users/photos-upload.html", form=form, uploaded=False)

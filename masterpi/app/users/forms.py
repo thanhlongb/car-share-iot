@@ -1,7 +1,8 @@
-from flask_wtf import Form, RecaptchaField
-from wtforms import TextField, PasswordField, BooleanField, SelectField
+from flask_wtf import Form, RecaptchaField, FlaskForm
+from wtforms import TextField, PasswordField, BooleanField, SelectField, MultipleFileField, SubmitField, FileField
 from wtforms.validators import Required, EqualTo, Email
 from app.users import constants as USER
+from flask_wtf.file import FileAllowed, FileRequired
 
 class LoginForm(Form):
     username = TextField('Username', [Required()])
@@ -38,3 +39,9 @@ class UserEditForm(Form):
                                        (3, USER.ROLE[3])])
     first_name = TextField('First Name')
     last_name = TextField('Last Name')
+class PhotosForm(FlaskForm):
+    images = FileField('Images', render_kw={'multiple':True},
+    validators=[
+        FileRequired(),
+        FileAllowed(['jpg', 'png'], 'jpg, png files only!')
+    ])
