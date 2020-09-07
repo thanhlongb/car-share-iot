@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="jumbotron">
+    <h1 class="display-3">Hello, {{ user.first_name if user.first_name else user.username }}!</h1>
+    <p class="lead">It's nice to have you back with us. Have a nice day.</p>
+    <hr class="my-4">
+    <p>There are X cars available near your location.</p>
+    <p class="lead">
+      <a class="btn btn-primary btn-lg" href="#" role="button">Book a car</a>
+    </p>
+  </div>
+  <div class="bs-docs-section">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class='page-header'>Your booking history:</h1>
+      </div>
+    </div>
+    <div class="bs-component">
+
+      <div class="row">
+        
+        {% for booking in bookings %}
+        <div class="col-lg-4">
+          <div class="card mb-3">
+            <h3 class="card-header"><a href={{ url_for('cars.details', id=booking.car_id) }}>CAR #{{ booking.car_id }}</a></h3>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Duration: {{ booking.duration }} hour</li>
+              {% for action in booking.actions %}
+                <li class="list-group-item">{{ action.action }} at {{ action.creation_time }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% else %}
+        <div class="col-lg-12">
+          <p>your booking history is empty :(</p>
+        </div>
+        {% endfor %}        
+      </div>  
+    </div>
+  </div>
+{% endblock %}
