@@ -7,7 +7,7 @@
 <div class="form-group">
     <div class="input-group mb-3">
         <div class="input-group-prepend">
-            <span class="input-group-text">Search cars</span>
+            <span class="input-group-text">Search:</span>
         </div>
         <input type="text" class="form-control" id="search-text"
             aria-label="Enter your query here..."
@@ -15,60 +15,40 @@
     </div>
 </div>
 
-<div class="card-deck" id="cars-list">
-    {% for car in cars %}
-    {% if car.available %}
-    <div class="card" id="card{{ car.id }}">
-        <div class="card-body">
-            <h5 class="card-title">{{ car.make }}</h5>
-            <table class="table card-body">
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">details</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">Id</th>
-                        <td>{{ car.id }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">make</th>
-                        <td>{{ car.make }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">color</th>
-                        <td>{{ car.color }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Body Type</th>
-                        <td>{{ car.body_type }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Seats</th>
-                        <td>{{ car.seats }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Cost Per Hour</th>
-                        <td>{{ car.cost_per_hour }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Available</th>
-                        <td>{{ "yes" if car.available else "no" }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer">
-            <a href="#" onclick="booking_car({{car.id}})"
-                class="btn btn-primary" data-toggle="modal"
-                data-target="#booking-modal">Book car</a>
-        </div>
-    </div>
-    {% endif %}
-    {% endfor %}
-</div>
+<table class="table table-hover" style="width:100%">
+    <thead>
+      <tr class="table-secondary">
+        <th>ID</th>
+        <th>Make</th>
+        <th>Color</th>
+        <th>Body Type</th>
+        <th>Seats</th>
+        <th>Cost Per Hour</th>
+        <th>Available</th>
+        <th>Location</th>
+        <th>Book</th>
+      </tr>
+    </thead>
+    <tbody id="search-table">
+      {% for car in cars %}
+          <tr id="row{{ car.id }}">
+              <td>{{ car.id }}</td>
+              <td>{{ car.make }}</td>
+              <td>{{ car.color }}</td>
+              <td>{{ car.body_type }}</td>
+              <td>{{ car.seats }}</td>
+              <td>{{ car.cost_per_hour }}</td>
+              <td>{{ "yes" if car.available else "no" }}</td>
+              <td>{{ car.current_location }}</td>
+              <td>
+                <button onclick='booking_car({{ car.id }})' type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-modal" title="Delete">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                  </button>
+              </td>
+            </tr>
+      {% endfor %}
+    </tbody>
+    </table>
 
 <div id="booking-modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -102,7 +82,7 @@
     $(document).ready(function () {
         $("#search-text").on("keyup", function () {
             var value = $(this).val().toLowerCase();
-            $("#cars-list").filter(function () {
+            $("#search-table tr").filter(function () {
                 $(this).toggle($(this).text()
                     .toLowerCase().indexOf(value) >
                     -1)
@@ -121,7 +101,7 @@
         car_id = $('#booked-car').text();
         duration = $('#duration').val();
         $.ajax({
-            url: '{{ url_for("bookings.book_car") }}',
+            url: '{{ url_for("bookings.book") }}',
             data: {
                 car_id: car_id,
                 duration: duration,
