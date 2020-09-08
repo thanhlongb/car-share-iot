@@ -9,7 +9,7 @@
         <div class="input-group-prepend">
             <span class="input-group-text">Search cars</span>
         </div>
-        <input type="text" class="form-control" id="search-text"
+        <input type="text" class="form-control" id="search-value"
             aria-label="Enter your query here..."
             placeholder="Enter your query here...">
     </div>
@@ -18,54 +18,54 @@
 <div class="card-deck" id="cars-list">
     {% for car in cars %}
     {% if car.available %}
-    <div class="card" id="card{{ car.id }}">
-        <div class="card-body">
-            <h5 class="card-title">{{ car.make }}</h5>
-            <table class="table card-body">
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">details</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">Id</th>
-                        <td>{{ car.id }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">make</th>
-                        <td>{{ car.make }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">color</th>
-                        <td>{{ car.color }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Body Type</th>
-                        <td>{{ car.body_type }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Seats</th>
-                        <td>{{ car.seats }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Cost Per Hour</th>
-                        <td>{{ car.cost_per_hour }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Available</th>
-                        <td>{{ "yes" if car.available else "no" }}</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="card" id="card{{ car.id }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ car.make }}</h5>
+                <table class="table card-body">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Id</th>
+                            <td>{{ car.id }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">make</th>
+                            <td>{{ car.make }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">color</th>
+                            <td>{{ car.color }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Body Type</th>
+                            <td>{{ car.body_type }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Seats</th>
+                            <td>{{ car.seats }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Cost Per Hour</th>
+                            <td>{{ car.cost_per_hour }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Available</th>
+                            <td>{{ "yes" if car.available else "no" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <a href="#" onclick="booking_car({{car.id}})"
+                    class="btn btn-primary" data-toggle="modal"
+                    data-target="#booking-modal">Book car</a>
+            </div>
         </div>
-        <div class="card-footer">
-            <a href="#" onclick="booking_car({{car.id}})"
-                class="btn btn-primary" data-toggle="modal"
-                data-target="#booking-modal">Book car</a>
-        </div>
-    </div>
     {% endif %}
     {% endfor %}
 </div>
@@ -99,15 +99,39 @@
 {{ super() }}
 <!-- search car function -->
 <script>
-    $(document).ready(function () {
-        $("#search-text").on("keyup", function () {
+    /*$(document).ready(function () {
+        $("#search-value").on("keyup", function () {
             var value = $(this).val().toLowerCase();
-            $("#cars-list").filter(function () {
+            $("#cars-list *").filter(function () {
                 $(this).toggle($(this).text()
                     .toLowerCase().indexOf(value) >
                     -1)
             });
         });
+    }); */
+
+    $(document).ready(function() {
+        $('#search-value').keyup(function(){
+            search_text($(this).val().toLowerCase());
+        });
+    
+        function search_text(value){
+            $('#cars-list .card').each(function(){
+                var found = 'false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0)
+                    {
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show()
+                }
+                else {
+                    $(this).hide();
+                }
+            })
+        }
     });
 </script>
 
