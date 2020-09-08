@@ -48,7 +48,8 @@ def login_redirect():
 @mod.route('/')
 @login_required
 def home():
-    bookings = Booking.query.filter_by(user_id=current_user.id).all()
+    bookings = Booking.query.filter_by(user_id=current_user.id) \
+                            .order_by(Booking.id.desc()).all()
     return render_template("users/home.html", user=current_user, bookings=bookings)
     
 @mod.route('/dashboard/')

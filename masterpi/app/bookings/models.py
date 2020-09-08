@@ -1,6 +1,7 @@
 from app import db
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
+
 class Booking(db.Model):
     __tablename__ = 'Booking'
     id = db.Column(db.Integer, primary_key=True)
@@ -17,6 +18,10 @@ class Booking(db.Model):
     @property
     def booked(self):
         return self.actions and self.actions[-1].action == "created"
+
+    @property
+    def unlocked(self):
+        return self.actions and self.actions[-1].action == "unlocked"
 
     def __repr__(self):
         return '<Booking %r>' % (self.id)
