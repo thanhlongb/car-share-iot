@@ -12,6 +12,7 @@ class User(UserMixin, db.Model):
     role = db.Column(db.SmallInteger, default=USER.CUSTOMER)
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
+    bluetooth_MAC = db.Column(db.String(100))
     facial_recognition = db.Column(db.Boolean, default=False)
     google_login = db.Column(db.Boolean, default=False)
 
