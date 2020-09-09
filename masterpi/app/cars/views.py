@@ -16,15 +16,13 @@ def details(id):
     return render_template("404.html")
 
 
-@mod.route('/show-cars', methods=['GET'])
-def show_all_cars(): 
+@mod.route('/', methods=['GET'])
+def index(): 
     cars = Car.query.all()
-    if cars:
-        return render_template("cars/cars.html", cars=cars)
-    return "There is no available car at the moment"
+    return render_template("cars/index.html", cars=cars)
+    
 
-
-@mod.route('/search-cars', methods=['GET', 'POST'])
+@mod.route('/search', methods=['GET', 'POST'])
 #TODO: implement https://sqlalchemy-searchable.readthedocs.io/en/latest/integrations.html or https://pythonhosted.org/Flask-WhooshAlchemy/
 def search_cars():
     form = searchForm(request.form)

@@ -1,5 +1,46 @@
-<p>Make: {{ car.make }}</p>
-<p>Color: {{ car.color }}</p>
-<p>Body Type: {{ car.body_type }}</p>
-<p>Seats: {{ car.seats }}</p>
-<p>Cost per hour: {{ car.cost_per_hour }}</p>
+{% extends "base.html" %}
+{% block content %}
+<h1>Car details:</h1>
+<div class="card-deck" id="cars-list">
+        <div class="card" id="card{{ car.id }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ car.make }}</h5>
+                <table class="table card-body">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Id</th>
+                            <td>{{ car.id }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">make</th>
+                            <td>{{ car.make }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">color</th>
+                            <td>{{ car.color }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Body Type</th>
+                            <td>{{ car.body_type }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Seats</th>
+                            <td>{{ car.seats }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Cost Per Hour</th>
+                            <td>{{ car.cost_per_hour }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+</div>
+
+{% endblock %}
