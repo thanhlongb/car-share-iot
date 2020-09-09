@@ -14,6 +14,7 @@ def book():
         user_id = current_user.id
     booking = Booking(user_id, car.id, request.form['duration'])
     db.session.add(booking)
+    db.session.commit()
     bookingAction = BookingAction(booking.id, "created")
     db.session.add(bookingAction)
     db.session.commit()

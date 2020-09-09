@@ -185,6 +185,15 @@ def booking_history():
     bookings = Booking.query.filter_by(user_id=session['user_id']).all()
     return render_template("users/booking-history.html", bookings=bookings)
 
+@mod.route('/admin/bookings', methods=['GET'])
+@login_required
+def admin_bookings():
+    if not current_user.isAdmin():
+        return "503 Not sufficent permission"
+    bookings = Booking.query.all()
+    return render_template("users/admin/bookings.html", bookings=bookings)
+
+
 @mod.route('/admin/cars', methods=['GET'])
 @login_required
 def admin_cars():
