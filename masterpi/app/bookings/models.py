@@ -9,6 +9,8 @@ class Booking(db.Model):
     car_id = db.Column(db.Integer, db.ForeignKey('Car.id'))
     duration = db.Column(db.Integer)
     actions = relationship("BookingAction")
+    user = relationship("User")
+    car = relationship("Car")
 
     def __init__(self, user_id, car_id, duration=0):
         self.user_id = user_id
