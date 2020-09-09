@@ -13,6 +13,7 @@ class Car(db.Model):
     available = db.Column(db.Boolean, nullable=False)
     reports = relationship("CarReport")
     bookings = relationship("Booking")
+    locations = relationship("CarLocation")
 
     def __init__(self, make=None, color=None, body_type=None, 
                  seats=None, cost_per_hour=0):
@@ -28,11 +29,18 @@ class Car(db.Model):
 
     @property
     def booked(self):
-        return self.bookings and self.bookings[-1].booked
+        return self.bookings and \
+                (self.bookings[-1].booked or self.bookings[-1].unlocked)
 
     @property
     def fixing(self):
         return self.reports and not self.reports[-1].fixed
+
+    @property
+    def current_location(self):
+        if not self.locations:
+            return 'undefined'
+        return self.locations[-1].location
 
     def __repr__(self):
         return '<Car %r>' % (self.id)
