@@ -10,6 +10,15 @@ DATABASE_PORT = 3306
 DATABASE_USER = 'dwnmrp5llieowj19'
 DATABASE_PASSWORD = 'i1dtel962z0lo3jy'
 DATABASE_NAME = 'ejdr1o1zohrodiw4'
+
+# FIXME: remove later
+# Uncomment if you want to use Google Cloud DB
+# DATABASE_HOST = '35.187.227.56'
+# DATABASE_PORT = 3306
+# DATABASE_USER = 'root'
+# DATABASE_PASSWORD = 'C3lz4Jemuga0LNFK'
+# DATABASE_NAME = 'carshareiot'
+
 SQLALCHEMY_DATABASE_URI = (
     'mysql+mysqlconnector://{user}:{pasw}@{host}:{port}/{name}').format(
     user=DATABASE_USER,
