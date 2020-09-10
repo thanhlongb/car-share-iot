@@ -1,4 +1,8 @@
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
+from flask_login import (
+    current_user,
+    login_required,
+)
 
 from app import db
 from app.cars.models import Car, CarReport
@@ -17,6 +21,7 @@ def details(id):
 
 
 @mod.route('/', methods=['GET'])
+@login_required
 def index(): 
     cars = Car.query.all()
     return render_template("cars/index.html", cars=cars)
