@@ -374,11 +374,17 @@ def photos_upload():
 
 ################################ Engineer unlock car ######################################
 @api_mod.route('/engineer_unlock_car_QR/', methods=['POST'])
-def api_engineer_unlock_car():
+def api_engineer_unlock_car_by_QR():
     engineer = User.query.filter_by(username=request.form['username']).first()
     if engineer and engineer.isEngineer():
-        print('ccccccccccccccccccc')
         return engineer.serialize(), 200
     else:
         return '{}', 401
 
+@api_mod.route('/engineer_unlock_car_bluetooth/', methods=['POST'])
+def api_engineer_unlock_car_by_bluetooth():
+    engineer = User.query.filter_by(username=request.form['bluetooth_MAC']).first()
+    if engineer and engineer.isEngineer():
+        return engineer.serialize(), 200
+    else:
+        return '{}', 401

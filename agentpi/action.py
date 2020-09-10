@@ -5,14 +5,17 @@ import menu
 import getpass
 import requests
 import pickle
+import warnings
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from facial_recognition.train_model import train_model
 from facial_recognition.recognize import recognize
 from qr_code import get_QR_encryption
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 from pisocket import client
 
-GET_FACE_ENCODINGS_API = "http://127.0.0.1:5000/api/users/face_encodings/"
-ENGINEER_LOGIN_BY_QR_CODE_API = "http://127.0.0.1:5000/api/users/engineer_unlock_car_QR/"
+GET_FACE_ENCODINGS_API = "https://127.0.0.1:5000/api/users/face_encodings/"
+ENGINEER_LOGIN_BY_QR_CODE_API = "https://127.0.0.1:5000/api/users/engineer_unlock_car_QR/"
+warnings.simplefilter('ignore',InsecureRequestWarning)
 
 def _pass():
     pass
@@ -50,7 +53,7 @@ def user_login_with_credentials():
 ##-------------------------------- User login with facial recognition --------------------------------##
 def update_facial_encodings():
     print('[INFO] Updating face encodings from server...')
-    response = requests.get(GET_FACE_ENCODINGS_API)
+    response = requests.get(GET_FACE_ENCODINGS_API, verify=False)
     response_pickle = response.json()
     return response_pickle
 
@@ -85,7 +88,7 @@ def handle_success_engineer_login(engineer_username):
 def engineer_login_with_QR_code():
     engineer_username = get_QR_encryption()
     Params = {'username' : engineer_username}
-    response = requests.post(ENGINEER_LOGIN_BY_QR_CODE_API, Params)
+    response = requests.post(ENGINEER_LOGIN_BY_QR_CODE_API, Params, verify=False)
     response_json = response.json()
     if len(response_json) != 0:
         handle_success_engineer_login(response_json['username'])
@@ -93,6 +96,6 @@ def engineer_login_with_QR_code():
         handle_fail_engineer_login()
 
 if __name__ == '__main__':
-    user_login_with_credentials()
+    engineer_login_with_QR_code()
 
 
