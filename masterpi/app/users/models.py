@@ -16,10 +16,11 @@ class User(UserMixin, db.Model):
     facial_recognition = db.Column(db.Boolean, default=False)
     google_login = db.Column(db.Boolean, default=False)
 
-    def __init__(self, username, email, password,
+    def __init__(self, email, username=None, password=None,
                        role=None, first_name=None, last_name=None):
         self.username = username
         self.email = email
+        self.username = username
         self.password = password
         self.role = role
         self.first_name = first_name
