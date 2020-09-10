@@ -23,22 +23,24 @@ def create_main_menu():
     #Customer section
     customer_login_submenu = SelectionMenu([], 'Customer login',
         formatter=FORMAT)
-    face_login_item = FunctionItem("Use username/password", 
+    credentials_login_item = FunctionItem("Use username/password", 
         action.user_login_with_credentials)
-    credentials_login_item = FunctionItem("Use facial recognition", 
+    facial_login_item = FunctionItem("Use facial recognition", 
         action.user_login_with_facial_recognition)
-    customer_login_submenu.append_item(face_login_item)
+    customer_login_submenu.append_item(facial_login_item)
     customer_login_submenu.append_item(credentials_login_item)
+    customer_login_submenu_item = SubmenuItem("Customer login", customer_login_submenu, menu)
 
     #engineer section
     engineer_login_submenu = SelectionMenu([], 'Engineer login', 
         formatter=FORMAT)
-    engineer_login_item = FunctionItem("Login by QR code", 
+    QR_code_login_item = FunctionItem("Use QR code", 
         action.engineer_login_with_QR_code)
-    engineer_login_submenu.append_item(engineer_login_item)
+    engineer_login_submenu.append_item(QR_code_login_item)
+    engineer_login_submenu_item = SubmenuItem("Engineer login", engineer_login_submenu, menu)
 
-    menu.append_item(customer_login_submenu)
-    menu.append_item(engineer_login_submenu)
+    menu.append_item(customer_login_submenu_item)
+    menu.append_item(engineer_login_submenu_item)
     return menu
 
 def create_user_menu():
