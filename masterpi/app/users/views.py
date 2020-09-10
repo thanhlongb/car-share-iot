@@ -155,15 +155,14 @@ def register():
     form = RegisterForm(request.form)
     if form.validate_on_submit():
         # check whether if there is user with the same username/email
-        user = User.query.filter(
-            or_(
-                User.username == form.username.data,
-                User.email == form.email.data
-            )
-        ).first()
+        user = User.query.filter(or_(User.username == form.username.data, 
+                                     User.email == form.email.data)).first()
         if not user:
             # create an user instance not yet stored in the database
-            user = User(username=form.username.data, email=form.email.data, \
+            user = User(form.email.data, 
+                        username=form.username.data, 
+                        first_name=form.first_name.data, 
+                        last_name=form.last_name.data, 
                         password=generate_password_hash(form.password.data))
             # Insert the record in our database and commit it
             db.session.add(user)
