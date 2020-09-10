@@ -17,6 +17,8 @@ class RegisterForm(Form):
         Required(),
         EqualTo('password', message='Passwords must match')
         ])
+    first_name = TextField('First Name', [Required()])
+    last_name = TextField('Last Name', [Required()])
     accept_tos = BooleanField('I accept the TOS', [Required()])
 
 class UserForm(Form):

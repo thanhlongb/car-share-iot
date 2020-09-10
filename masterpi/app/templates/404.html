@@ -1,1 +1,9 @@
-404
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="text-center">
+        <h1><b>404</b></h1>
+        <h3>Page Not Found</h3>    
+        <a type="button" href="{{ url_for('users.home') }}" class="btn btn-primary">Go home</a>
+    </div>
+{% endblock %}
