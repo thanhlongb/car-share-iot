@@ -66,27 +66,20 @@ def engineer():
 @mod.route('/logout/')
 @login_required
 def logout():
-    session['user_id'] = None
+    logout_user()
     return redirect(url_for('users.login'))
     
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
 
-# @mod.before_request
-# def before_request():
-#     """
-#     pull user's profile from the database before every request are treated
-#     """
-#     current_user = None
-#     if 'user_id' in session:
-#         current_user = User.query.get(session['user_id'])
-
 @mod.route('/login/', methods=['GET', 'POST'])
 def login():
     """
     Login form
     """
+    if current_user.is_authenticated:
+        return redirect(url_for('users.login_redirect'))
     form = LoginForm(request.form)
     # make sure data are valid, but doesn't validate password is right
     if form.validate_on_submit():
@@ -102,6 +95,8 @@ def login():
 
 @mod.route('/google-login/', methods=['GET'])
 def google_login():
+    if current_user.is_authenticated:
+        return redirect(url_for('users.login_redirect'))    
     #ref: https://realpython.com/flask-google-login/
     #TODO: check if user's is logged in
     google_provider_cfg = requests.get(current_app.config['GOOGLE_DISCOVERY_URL']).json()
@@ -155,6 +150,8 @@ def register():
     """
     Registration Form
     """
+    if current_user.is_authenticated:
+        return redirect(url_for('users.login_redirect'))    
     form = RegisterForm(request.form)
     if form.validate_on_submit():
         # check whether if there is user with the same username/email

@@ -2,20 +2,20 @@
 
 {% block content %}
 
-<div class="container">
-     <div class="row">
+<div class="container-fluid h-100 pt-5">
+     <div class="row justify-content-center align-items-center h-100">
         <div class="col-lg-6 d-none d-lg-block">
            <div class="page-header">
               <h1 id="forms">Car Share IOT</h1>
               <img src="{{ url_for('static', filename='img/hero.svg') }}" class="img-fluid hero-img" alt="hero">
            </div>
         </div>
-        <div class="col-lg-6 mx-auto login-form">
+        <div class="col-lg-6 mx-auto login-form shadow">
            <div class="bs-component">
               <fieldset>
                  <legend><b>Login</b> / <a href="{{ url_for('users.register') }}">Register</a></legend>
                  <hr class="my-4">
-                 <a href="{{ url_for('users.google_login') }}" type="button" class="btn btn-info btn-block btn-google">
+                 <a href="{{ url_for('users.google_login') }}" type="button" class="btn btn-block btn-google shadow">
                  <i class="fa fa-google" aria-hidden="true"></i> Sign in with Google
                  </a>
                  <hr class="my-4">
@@ -28,7 +28,7 @@
                     {{ render_field(form.username, class="form-control") }}
                     {{ render_field(form.password, class="form-control") }}
                     {{ render_checkbox(form.remember_me, class="custom-control-input") }}
-                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    <button type="submit" class="btn btn-primary btn-block shadow">Login</button>
                  </form>
               </fieldset>
            </div>
