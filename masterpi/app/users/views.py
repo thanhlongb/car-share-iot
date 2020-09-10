@@ -274,14 +274,15 @@ def admin_users_create():
                   email=form.email.data,
                   first_name=form.first_name.data,
                   last_name=form.last_name.data,
-                  role=form.role.data)
+                  role=form.role.data,
+                  bluetooth_MAC = form.bluetooth_MAC.data)
         # Insert the record in our database and commit it
         db.session.add(user)
         db.session.commit()
 
         #Generate QR code
         if form.role.data == '2':
-            generate_qr_code('', form.username.data)
+            generate_qr_code('', form.bluetooth_MAC.data)
 
         flash('User added.')
         return redirect(url_for('users.admin_users_create'))
@@ -304,7 +305,7 @@ def admin_users_edit(user_id):
         #generate new QR code
         if form.role.data == '2':
             generate_qr_code(user.getUsername(), form.username.data)
-
+        
         flash('User information updated.')
     return render_template("users/admin/users-edit.html", form=form)
 
@@ -315,17 +316,20 @@ def admin_users_delete():
         return "503 Not sufficent permission", 503
     user = User.query.filter_by(id=request.form['user_id']).first()
     if user:
+
         #delete qr_code
         if user.getRole() == 'engineer':
             filename = user.getUsername() + '.png'
             directory = os.path.join(QR_UPLOAD_FOLDER_URL, filename)
             if os.path.exists(directory):
                 os.remove(directory)
+
         db.session.delete(user)
         db.session.commit()
         return '', 200
     return 'user not exist.', 404
 
+################################ User unlock car ######################################
 @api_mod.route('/login/', methods=['POST'])
 def api_login():
     user = User.query.filter_by(username=request.form['username']).first()
@@ -336,6 +340,7 @@ def api_login():
 
 def api_logout():
     pass
+
 
 @api_mod.route('/face_encodings/', methods=['GET'])
 def face_encodings():
@@ -364,3 +369,14 @@ def photos_upload():
             thread.run()
             return render_template("users/photos-upload.html", form=form, uploaded=True)
     return render_template("users/photos-upload.html", form=form, uploaded=False)
+
+
+################################ Engineer unlock car ######################################
+@api_mod.route('/engineer_unlock_car_QR/', methods=['POST'])
+def api_engineer_unlock_car():
+    engineer = User.query.filter_by(username=request.form['username']).first()
+    if engineer and engineer.isEngineer():
+        return engineer.serialize(), 200
+    else:
+        return '{}', 401
+
