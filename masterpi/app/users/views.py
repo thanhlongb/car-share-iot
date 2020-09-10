@@ -44,9 +44,10 @@ class NumpyArrayEncoder(json.JSONEncoder):
             return super(NumpyArrayEncoder, self).default(obj)
 
 def generate_qr_code(old_engineer_name, new_engineer_name):
+    print(old_engineer_name)
     if old_engineer_name != '':
         oldfilename = old_engineer_name + '.png'
-        dir =  os.path.join(QR_UPLOAD_FOLDER_URL, oldfilename)
+        dir = os.path.join(QR_UPLOAD_FOLDER_URL, oldfilename)
         if os.path.exists(dir):
             os.remove(dir)
     
@@ -282,7 +283,7 @@ def admin_users_create():
 
         #Generate QR code
         if form.role.data == '2':
-            generate_qr_code('', form.bluetooth_MAC.data)
+            generate_qr_code('', form.username.data)
 
         flash('User added.')
         return redirect(url_for('users.admin_users_create'))
@@ -376,6 +377,7 @@ def photos_upload():
 def api_engineer_unlock_car():
     engineer = User.query.filter_by(username=request.form['username']).first()
     if engineer and engineer.isEngineer():
+        print('ccccccccccccccccccc')
         return engineer.serialize(), 200
     else:
         return '{}', 401

@@ -17,13 +17,14 @@ class User(UserMixin, db.Model):
     google_login = db.Column(db.Boolean, default=False)
     
     def __init__(self, username, email, password,
-                       role=None, first_name=None, last_name=None):
+                       role=None, first_name=None, last_name=None, bluetooth_MAC=None):
         self.username = username
         self.email = email
         self.password = password
         self.role = role
         self.first_name = first_name
         self.last_name = last_name
+        self.bluetooth_MAC = bluetooth_MAC
 
     @classmethod
     def google_init(cls, username, email, first_name=None, last_name=None):
