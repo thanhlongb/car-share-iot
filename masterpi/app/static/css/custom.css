@@ -146,7 +146,7 @@ pre {
 }
 
 #footer {
-    margin: 5em 0
+    margin: 5em 0 0 0
 }
 
 #footer li {
@@ -314,14 +314,20 @@ pre {
     border-radius: 15px;
     padding: 30px;
     background: #ffffff;
-    box-shadow:  20px 20px 60px #d9d9d9, 
-             -20px -20px 60px #ffffff;
 }
 
 .btn-google {
     background-color:#1a73e8
 }
 
+.btn-google:hover {
+    background-color: #1258ba;
+}
+
 .main {
-    padding-top:30px
+    margin-top: 40px;
+}
+
+.jumbotron {
+    padding: 2rem
 }

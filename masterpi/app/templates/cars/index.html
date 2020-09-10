@@ -1,44 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="form-group justify-content-between">
-    <h1 class="d-inline">Cars</h1>
+    <h1 class="d-inline">Available cars:</h1>
 </div>
 
 <div class="form-group">
     <div class="input-group mb-3">
         <div class="input-group-prepend">
-            <span class="input-group-text">Search cars</span>
+            <span class="input-group-text">Search</span>
         </div>
         <input type="text" class="form-control" id="search-value"
-            aria-label="Enter your query here..."
-            placeholder="Enter your query here...">
+            aria-label="Enter your search keywords here..."
+            placeholder="Enter your search keywords here...">
     </div>
 </div>
 
-<div class="card-deck" id="cars-list">
+<div id="cars-list" class="row">
     {% for car in cars %}
-    {% if car.available %}
-        <div class="card" id="card{{ car.id }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ car.make }}</h5>
-                <table class="table card-body">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">details</th>
-                        </tr>
-                    </thead>
+        {% if car.available %}
+            <div  id="card{{ car.id }}" class="col-lg-4 col-md-6 card-wrapper">
+            <div class="bs-component">
+                <div class="card mb-3 shadow">
+                <h4 class="card-header text-center"><a href={{ url_for('cars.details', id=car.id) }}>{{ car.make }}</a></h4>
+                <table class="table card-body mb-0">
                     <tbody>
                         <tr>
-                            <th scope="row">Id</th>
-                            <td>{{ car.id }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">make</th>
+                            <th scope="row">Make</th>
                             <td>{{ car.make }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">color</th>
+                            <th scope="row">Color</th>
                             <td>{{ car.color }}</td>
                         </tr>
                         <tr>
@@ -54,21 +45,22 @@
                             <td>{{ car.cost_per_hour }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">Available</th>
-                            <td>{{ "yes" if car.available else "no" }}</td>
+                            <th scope="row">Location</th>
+                            <td>{{ car.current_location }}</td>
                         </tr>
                     </tbody>
                 </table>
+                <div class="card-footer">
+                    <button href="#" onclick="booking_car({{ car.id }})"
+                        class="btn btn-primary float-right" data-toggle="modal"
+                        data-target="#booking-modal">Book this car</button>
+                </div>
             </div>
-            <div class="card-footer">
-                <a href="#" onclick="booking_car({{car.id}})"
-                    class="btn btn-primary" data-toggle="modal"
-                    data-target="#booking-modal">Book car</a>
             </div>
         </div>
-    {% endif %}
+        {% endif %}
     {% endfor %}
-</div>
+  </div>
 
 <div id="booking-modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -82,11 +74,10 @@
                 <p>Car ID: <span id="booked-car"></span></p>
                 <input type="text" class="form-control" id="duration"
                     aria-label="Enter number of hours you want to rent a car"
-                    placeholder="Enter number of hourss you want to rent a car">
+                    placeholder="Enter number of hours you want to rent a car">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary"
-                    id="book-btn">Book</button>
+                <button type="button" class="btn btn-primary shadow" id="book-btn">Book</button>
             </div>
         </div>
 
@@ -99,24 +90,13 @@
 {{ super() }}
 <!-- search car function -->
 <script>
-    /*$(document).ready(function () {
-        $("#search-value").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#cars-list *").filter(function () {
-                $(this).toggle($(this).text()
-                    .toLowerCase().indexOf(value) >
-                    -1)
-            });
-        });
-    }); */
-
     $(document).ready(function() {
         $('#search-value').keyup(function(){
             search_text($(this).val().toLowerCase());
         });
     
         function search_text(value){
-            $('#cars-list .card').each(function(){
+            $('#cars-list .card-wrapper').each(function(){
                 var found = 'false';
                 $(this).each(function(){
                     if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0)
@@ -125,10 +105,10 @@
                     }
                 });
                 if(found == 'true'){
-                    $(this).show()
+                    $(this).fadeIn()
                 }
                 else {
-                    $(this).hide();
+                    $(this).fadeOut();
                 }
             })
         }
@@ -151,11 +131,22 @@
                 duration: duration,
             },
             type: 'POST',
+            beforeSend: function() {
+                $('#book-btn').text('Booking');
+                $('#book-btn').prop('disabled', true);
+                $('#duration').prop('disabled', true);
+            },
             success: function (res) {
                 $('#booking-modal').modal('hide');
                 $('#card' + car_id).fadeOut();
                 $('#card' + car_id).remove();
-            }
+                $('#duration').val('');
+            },
+            complete: function() {
+                $('#book-btn').text('Book');
+                $('#duration').prop('disabled', false);
+                $('#book-btn').prop('disabled', false);
+            },        
         })
     });
 </script>
