@@ -62,14 +62,14 @@ def login():
     form = LoginForm(request.form)
     # make sure data are valid, but doesn't validate password is right
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(username=form.username.data).first()
         # we use werzeug to validate user's password
         if user and check_password_hash(user.password, form.password.data):
             # the session can't be modified as it's signed, 
             # it's a safe place to store the user id
             login_user(user)
             return redirect(url_for('users.login_redirect'))
-        flash('Wrong email or password', 'error-message')
+        flash('Wrong username or password', 'error-message')
     return render_template("users/login.html", form=form)
 
 @mod.route('/google-login/', methods=['GET'])
@@ -166,7 +166,7 @@ def register():
             login_user(user)
             # redirect user to the 'home' method of the user module.
             return redirect(url_for('users.login_redirect'))
-        flash('Email address is taken.')
+        flash('Username or email is taken.')
     return render_template("users/register.html", form=form)
 
 @mod.route('/dashboard/')
@@ -271,6 +271,7 @@ def admin_users_create():
     form = UserForm(request.form)
     if form.validate_on_submit():
         user = User(form.email.data,
+                    username=form.username.data,
                     password=generate_password_hash(form.password.data),
                     first_name=form.first_name.data,
                     last_name=form.last_name.data,
@@ -312,7 +313,7 @@ def admin_users_delete():
 
 @api_mod.route('/login/', methods=['POST'])
 def api_login():
-    user = User.query.filter_by(email=request.form['email']).first()
+    user = User.query.filter_by(username=request.form['username']).first()
     if user and check_password_hash(user.password, request.form['password']):
         return user.serialize(), 200
     else:
@@ -333,9 +334,9 @@ def photos_upload():
     form = PhotosForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            user = User.query.filter_by(id=session['user_id']).first()
-            id = user.id
-            directory = os.path.join(UPLOAD_FOLDER_URL, id)
+            user = User.query.filter_by(id=current_user.id).first()
+            username = user.username
+            directory = os.path.join(UPLOAD_FOLDER_URL, username)
             if not os.path.exists(directory):
                 os.makedirs(directory)
             for f in request.files.getlist('images'):
