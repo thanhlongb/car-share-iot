@@ -383,7 +383,7 @@ def api_engineer_unlock_car_by_QR():
 
 @api_mod.route('/engineer_unlock_car_bluetooth/', methods=['POST'])
 def api_engineer_unlock_car_by_bluetooth():
-    engineer = User.query.filter_by(username=request.form['bluetooth_MAC']).first()
+    engineer = User.query.filter_by(bluetooth_MAC=request.form['bluetooth_MAC']).first()
     if engineer and engineer.isEngineer():
         return engineer.serialize(), 200
     else:

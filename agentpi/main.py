@@ -57,7 +57,7 @@ def create_engineer_menu():
         show_exit_option=False
     )
     exit_item = FunctionItem("Logout and lock car", 
-        user_logout, 
+        engineer_logout, 
         should_exit=True
     )    
     menu.append_item(exit_item)
@@ -117,6 +117,10 @@ def user_logout():
     global car_locked
     car_locked = True
 
+def engineer_logout():
+    user_logout()
+    main_menu.resume()
+
 #---- User login with credentials ----#
 def handle_fail_user_login(use_credentials, main_menu):
     if use_credentials:
@@ -172,13 +176,15 @@ def handle_fail_engineer_login(main_menu):
     time.sleep(2)
     main_menu.resume()
 
-def handle_success_engineer_login(engineer_username, engineer_menu):
+def handle_success_engineer_login(engineer_username, main_menu, engineer_menu):
     global car_locked
     car_locked = False
+    main_menu.pause()
     print("\n\nWelcome engineer '{}' to the car".format(engineer_username))
     time.sleep(2)
     engineer_menu.title = engineer_username  + ' | Car unlocked'
-    engineer_menu.show()
+    engineer_menu.start()
+    engineer_menu.join()
 
 def engineer_login_with_QR_code(main_menu, engineer_menu):
     engineer_username = get_QR_encryption()
@@ -186,19 +192,20 @@ def engineer_login_with_QR_code(main_menu, engineer_menu):
     response = requests.post(ENGINEER_LOGIN_BY_QR_CODE_API, Params, verify=False)
     response_json = response.json()
     if len(response_json) != 0:
-        handle_success_engineer_login(response_json['username'], engineer_menu)
+        handle_success_engineer_login(response_json['username'], main_menu, engineer_menu)
     else:
         handle_fail_engineer_login(main_menu)
 
-def detect_bluetooth_device(engineer_menu):
+def detect_bluetooth_device(main_menu, engineer_menu):
     while True:
         global car_locked
         if car_locked:
+            print('Detecting')
             engineer_username = detect()
             print(engineer_username)
             if engineer_username != '':
-                handle_success_engineer_login(engineer_username, engineer_menu)
-        time.sleep(1)
+                handle_success_engineer_login(engineer_username, main_menu, engineer_menu)
+        time.sleep(10)
 
 if __name__ == '__main__':
     user_menu = create_user_menu()
@@ -206,7 +213,7 @@ if __name__ == '__main__':
     main_menu = create_main_menu(user_menu, engineer_menu)
     bluetooth_device_detector = threading.Thread(
         target=detect_bluetooth_device,
-        args=(engineer_menu,)
+        args=(main_menu, engineer_menu,)
     )
 
     bluetooth_device_detector.start()
