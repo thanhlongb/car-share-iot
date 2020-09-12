@@ -1,11 +1,14 @@
 import os.path
 import sys
 import time
+# from menu import Menu
 import menu
 import getpass
 import requests
 import pickle
 import warnings
+# from main import Main
+import main
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from facial_recognition.train_model import train_model
 from facial_recognition.recognize import recognize
@@ -19,6 +22,10 @@ warnings.simplefilter('ignore',InsecureRequestWarning)
 
 def _pass():
     pass
+
+def _exitt():
+    main.Main.program_exit = True
+    menu.Menu.main_menu.join()
 
 def user_logout():
     #TODO: change availability of the car in the db
@@ -96,6 +103,6 @@ def engineer_login_with_QR_code():
         handle_fail_engineer_login()
 
 if __name__ == '__main__':
-    engineer_login_with_QR_code()
+    user_login_with_facial_recognition()
 
 
