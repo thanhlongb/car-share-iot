@@ -4,9 +4,6 @@ from consolemenu.items import *
 import action
 import time
 
-main_menu = None
-user_menu = None
-
 FORMAT = MenuFormatBuilder() \
             .set_border_style_type(MenuBorderStyleType.HEAVY_BORDER) \
             .set_prompt("SELECT>") \
@@ -17,28 +14,32 @@ FORMAT = MenuFormatBuilder() \
             .show_header_bottom_border(True)
 
 def create_main_menu():
-    menu = ConsoleMenu("Main menu", formatter=FORMAT)
+    menu = ConsoleMenu("Main menu", formatter=FORMAT, show_exit_option=False)
 
     #Customer section
     customer_login_submenu = SelectionMenu([], 'Customer login',
         formatter=FORMAT)
-    face_login_item = FunctionItem("Use username/password", 
+    credentials_login_item = FunctionItem("Use username/password", 
         action.user_login_with_credentials)
-    credentials_login_item = FunctionItem("Use facial recognition", 
+    facial_login_item = FunctionItem("Use facial recognition", 
         action.user_login_with_facial_recognition)
-    customer_login_submenu.append_item(face_login_item)
+    customer_login_submenu.append_item(facial_login_item)
     customer_login_submenu.append_item(credentials_login_item)
+    customer_login_submenu_item = SubmenuItem("Customer login", customer_login_submenu, menu)
 
     #engineer section
     engineer_login_submenu = SelectionMenu([], 'Engineer login', 
         formatter=FORMAT)
-    customer_login_item = SubmenuItem("Customer login", 
-        customer_login_submenu, menu)
-    engineer_login_item = SubmenuItem("Retrieve engineer's profile by QR code", 
-        engineer_login_submenu, menu)
+    QR_code_login_item = FunctionItem("Use QR code", 
+        action.engineer_login_with_QR_code)
+    engineer_login_submenu.append_item(QR_code_login_item)
+    engineer_login_submenu_item = SubmenuItem("Engineer login", engineer_login_submenu, menu)
 
-    menu.append_item(customer_login_item)
-    menu.append_item(engineer_login_item)
+    exit_item = FunctionItem("Exit", 
+        action._exitt)
+    menu.append_item(customer_login_submenu_item)
+    menu.append_item(engineer_login_submenu_item)
+    menu.append_item(exit_item)
     return menu
 
 def create_user_menu():
@@ -49,9 +50,30 @@ def create_user_menu():
     menu.append_item(logout_item)
     return menu
 
+def create_engineer_menu():
+    menu = ConsoleMenu("", formatter=FORMAT, show_exit_option=False)
+    logout_item = FunctionItem("Logout", action.user_logout)
+    menu.append_item(logout_item)
+    return menu
 
-main_menu = create_main_menu()
-user_menu = create_user_menu()
+class Menu:
+    main_menu = create_main_menu()
+    user_menu = create_user_menu()
+    engineer_menu = create_engineer_menu()
+
+    # @classmethod    
+    # def __init__(self):
+    #     if Menu.__instance != None:
+    #         raise Exception("This class is a singleton!")
+    #     else:
+    #         Menu.__instance = self
+            
+
+    # def getMainMenu(self):
+    #     return self.main_menu
+
+
+
 
 
 

@@ -12,7 +12,7 @@ class User(UserMixin, db.Model):
     role = db.Column(db.SmallInteger, default=USER.CUSTOMER)
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
-    bluetooth_MAC = db.Column(db.String(100))
+    bluetooth_MAC = db.Column(db.String(100), unique=True, nullable=True)
     facial_recognition = db.Column(db.Boolean, default=False)
     google_login = db.Column(db.Boolean, default=False)
 
@@ -24,6 +24,7 @@ class User(UserMixin, db.Model):
         self.role = role
         self.first_name = first_name
         self.last_name = last_name
+        self.bluetooth_MAC = bluetooth_MAC
 
     def isAdmin(self):
         return self.role == 0

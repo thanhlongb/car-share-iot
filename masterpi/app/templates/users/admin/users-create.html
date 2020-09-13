@@ -19,7 +19,8 @@
                     {{ render_field(form.email, class="form-control") }}
                     {{ render_field(form.first_name, class="form-control") }}
                     {{ render_field(form.last_name, class="form-control") }}
-                    {{ render_select(form.role) }}
+                    {{ render_select(form.role, id="role") }}
+                    {{ render_field(form.bluetooth_MAC, class="form-control", id="bluetooth_MAC") }}
                     <button type="submit" class="btn btn-primary btn-block">Create</button>
                  </form>
               </fieldset>
@@ -27,4 +28,25 @@
         </div>
      </div>
 </div>
+
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script type="text/javascript">
+   $("#bluetooth_MAC").prop( "disabled", true );
+   $(document).ready(function(){
+   $("select#role").change(function(){
+      var selectedRole = $(this).children("option:selected").val();
+      switch(selectedRole){
+         case '2':
+            $("#bluetooth_MAC").prop( "disabled", false );
+            break;
+         default:
+            $("#bluetooth_MAC").prop( "disabled", true );
+            break;
+      }
+   });
+});
+</script>
 {% endblock %}
