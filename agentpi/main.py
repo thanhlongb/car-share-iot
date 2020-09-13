@@ -12,6 +12,7 @@ import getpass
 import requests
 import pickle
 import warnings
+import keyboard
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from facial_recognition.train_model import train_model
 from facial_recognition.recognize import recognize
@@ -25,7 +26,7 @@ GET_FACE_ENCODINGS_API = "https://127.0.0.1:5000/api/users/face_encodings/"
 ENGINEER_LOGIN_BY_QR_CODE_API = "https://127.0.0.1:5000/api/users/engineer_unlock_car_QR/"
 warnings.simplefilter('ignore',InsecureRequestWarning)
 car_locked = True
-
+program_exit = False
 
 #--------------------------------- Menu ---------------------------------#
 FORMAT = MenuFormatBuilder() \
@@ -54,10 +55,11 @@ def create_user_menu():
 def create_engineer_menu():
     menu = ConsoleMenu("", 
         formatter=FORMAT, 
-        show_exit_option=False
+        show_exit_option=False,
+        exit_option_text="Logout and lock car"
     )
     exit_item = FunctionItem("Logout and lock car", 
-        engineer_logout, 
+        user_logout, 
         should_exit=True
     )    
     menu.append_item(exit_item)
@@ -65,7 +67,11 @@ def create_engineer_menu():
 
 #----- Main menu -----#
 def create_main_menu(user_menu, engineer_menu):
-    menu = ConsoleMenu("Main menu | Car locked", formatter=FORMAT)
+    menu = ConsoleMenu(
+        "Main menu | Car locked", 
+        formatter=FORMAT,
+        show_exit_option=False
+    )
 
     #Customer section
     customer_login_submenu = SelectionMenu([], 
@@ -107,8 +113,15 @@ def create_main_menu(user_menu, engineer_menu):
         engineer_login_submenu, 
         menu
     )
+
+    exit_item = FunctionItem("Exit", 
+        shutdown, 
+        should_exit=True
+    )    
+
     menu.append_item(customer_login_submenu_item)
     menu.append_item(engineer_login_submenu_item)
+    menu.append_item(exit_item)
     return menu
 
 #--------------------------------- Action ---------------------------------#
@@ -117,9 +130,9 @@ def user_logout():
     global car_locked
     car_locked = True
 
-def engineer_logout():
-    user_logout()
-    main_menu.resume()
+def shutdown():
+    global program_exit
+    program_exit = True
 
 #---- User login with credentials ----#
 def handle_fail_user_login(use_credentials, main_menu):
@@ -128,17 +141,19 @@ def handle_fail_user_login(use_credentials, main_menu):
     else:
         print("Cannot recognize user's face! Please try again.")
     time.sleep(2)
+    global car_locked
+    car_locked = True
     main_menu.resume()
 
 def handle_success_user_login(username, user_menu):
-    global car_locked
-    car_locked = False
     print("\n\nWelcome user '{}' to the car".format(username))
     time.sleep(2)
     user_menu.title = username + ' | Car unlocked'
     user_menu.show()
 
 def user_login_with_credentials(main_menu, user_menu):
+    global car_locked
+    car_locked = False
     main_menu.pause()
     username = input('Username: ')
     password = getpass.getpass('Password: ')
@@ -155,38 +170,47 @@ def update_facial_encodings():
     response_pickle = response.json()
     return response_pickle
 
-def handle_facial_recognition_result(username, main_menu):
+def handle_facial_recognition_result(username, main_menu, user_menu):
     if username == 'unknown':
         handle_fail_user_login(False, main_menu)
     else:
-        handle_success_user_login(username, main_menu)
+        handle_success_user_login(username, user_menu)
 
-def user_login_with_facial_recognition(main_menu):
+def user_login_with_facial_recognition(main_menu, user_menu):
+    global car_locked
+    car_locked = False
     main_menu.pause()
     new_encodings_data = update_facial_encodings()
     print('[INFO] Training new model...')
     train_model(new_encodings_data)
     print('[INFO] Initializing...')
     username = recognize()
-    handle_facial_recognition_result(username, main_menu)
+    handle_facial_recognition_result(username, main_menu, user_menu)
 
 #---- Engineer login with QR code ----#
 def handle_fail_engineer_login(main_menu):
+    global car_locked
+    car_locked = True
     print('The QR code used is invalid. Please try again!')
     time.sleep(2)
     main_menu.resume()
 
-def handle_success_engineer_login(engineer_username, main_menu, engineer_menu):
+def handle_success_engineer_login(engineer_username, engineer_menu):
     global car_locked
     car_locked = False
-    main_menu.pause()
     print("\n\nWelcome engineer '{}' to the car".format(engineer_username))
     time.sleep(2)
+    tempMenu = ConsoleMenu.currently_active_menu
+    tempMenu.pause()
+    keyboard.press_and_release('enter')
     engineer_menu.title = engineer_username  + ' | Car unlocked'
     engineer_menu.start()
     engineer_menu.join()
+    tempMenu.resume()
 
 def engineer_login_with_QR_code(main_menu, engineer_menu):
+    global car_locked
+    car_locked = False
     engineer_username = get_QR_encryption()
     Params = {'username' : engineer_username}
     response = requests.post(ENGINEER_LOGIN_BY_QR_CODE_API, Params, verify=False)
@@ -198,14 +222,17 @@ def engineer_login_with_QR_code(main_menu, engineer_menu):
 
 def detect_bluetooth_device(main_menu, engineer_menu):
     while True:
+        global program_exit
         global car_locked
+        if program_exit:
+            return
         if car_locked:
             print('Detecting')
             engineer_username = detect()
             print(engineer_username)
             if engineer_username != '':
-                handle_success_engineer_login(engineer_username, main_menu, engineer_menu)
-        time.sleep(10)
+                handle_success_engineer_login(engineer_username, engineer_menu)
+        time.sleep(5)
 
 if __name__ == '__main__':
     user_menu = create_user_menu()
@@ -213,10 +240,9 @@ if __name__ == '__main__':
     main_menu = create_main_menu(user_menu, engineer_menu)
     bluetooth_device_detector = threading.Thread(
         target=detect_bluetooth_device,
-        args=(main_menu, engineer_menu,)
+        args=(main_menu, engineer_menu, ),
     )
-
-    bluetooth_device_detector.start()
     main_menu.start()
+    bluetooth_device_detector.start()
     main_menu.join()
     bluetooth_device_detector.join()
