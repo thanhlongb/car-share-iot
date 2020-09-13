@@ -27,6 +27,7 @@ class UserForm(Form):
                                        (3, USER.ROLE[3])])
     first_name = TextField('First Name')
     last_name = TextField('Last Name')
+    bluetooth_MAC = TextField('Bluetooth MAC')
 
 class UserEditForm(Form):
     username = TextField('Username', [Required()])
@@ -37,6 +38,8 @@ class UserEditForm(Form):
                                        (3, USER.ROLE[3])])
     first_name = TextField('First Name')
     last_name = TextField('Last Name')
+    bluetooth_MAC = TextField('bluetooth MAC')
+
 class PhotosForm(FlaskForm):
     images = FileField('Images', render_kw={'multiple':True},
     validators=[
