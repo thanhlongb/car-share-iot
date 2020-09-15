@@ -5,9 +5,8 @@ from flask_login import (
 )
 
 from app import db
-from app.cars.models import Car, CarReport
-from app.cars.forms import searchForm
-
+from app.cars.models import Car, CarReport, CarLocation
+from app.cars.maps import StaticMap
 
 mod = Blueprint('cars', __name__, url_prefix='/cars')
 
@@ -15,8 +14,11 @@ mod = Blueprint('cars', __name__, url_prefix='/cars')
 @mod.route('/details/<id>', methods=['GET'])
 def details(id):
     car = Car.query.filter_by(id=id).first()
+    carLocation = CarLocation.query.filter_by(id=id).first()
+    gmap = StaticMap(carLocation.location, car.id)
+    carMap = gmap.create_map()
     if car:
-        return render_template("cars/details.html", car=car)
+        return render_template("cars/details.html", car=car, carMap=carMap)
     return render_template("404.html")
 
 

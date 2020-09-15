@@ -9,6 +9,7 @@ from app.users.models import User
 
 from datetime import datetime
 
+
 mod = Blueprint('bookings', __name__, url_prefix = '/bookings')
 
 @mod.route('/book', methods = ['POST'])
