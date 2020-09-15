@@ -255,6 +255,28 @@ def admin_cars_report():
         return '', 200
     return 'car not exist.', 404
 
+
+@mod.route('/manager/reports', methods=['GET'])
+@login_required
+def manager_reports():
+    if not current_user.isManager():
+        return "503 Not sufficent permission"
+    reports = CarReport.query.filter_by(fixed=False).all()
+    engineers = User.query.filter_by(role=2).all()
+    return render_template("users/manager/reports.html", reports=reports, engineers=engineers)
+
+@mod.route('/manager/reports/assign', methods=['POST'])
+@login_required
+def manager_reports_assign():
+    if not current_user.isManager():
+        return "503 Not sufficent permission", 503
+    report = CarReport.query.filter_by(id=request.form['report_id']).first()
+    if report:
+        report.fixer_id = request.form['engineer_id']
+        db.session.commit()
+        return '', 200
+    return 'report not exist.', 404
+
 @mod.route('/admin/users', methods=['GET'])
 @login_required
 def admin_users():

@@ -37,6 +37,9 @@
 						</div>
 					</li>
 				{% endif %}
+				{% if current_user.isManager() %}
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('users.manager_reports') }}">Reports</a></li>
+				{% endif %}
 				{% if current_user.isEngineer() %}
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('users.engineer') }}">Engineer page</a></li>
 				{% endif %}

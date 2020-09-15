@@ -34,7 +34,7 @@
             <td>{{ car.body_type }}</td>
             <td>{{ car.seats }}</td>
             <td>{{ car.cost_per_hour }}</td>
-            <td>{{ "yes" if car.available else "no" }}</td>
+            <td id="available-status{{ car.id }}">{{ "yes" if car.available else "no" }}</td>
             <td>
               <a href="{{ url_for('users.admin_cars_edit', car_id=car.id) }}" target="_blank" class="btn btn-sm btn-info" title="Edit">
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
@@ -43,7 +43,7 @@
                 <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
               {% if not car.fixing %}
-              <button onclick='report_car({{ car.id }})' type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#report-modal"  title="Report">
+              <button id="report-btn{{ car.id }}" onclick='report_car({{ car.id }})' type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#report-modal"  title="Report">
                 <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
               </button>
               {% endif %}
@@ -140,7 +140,8 @@
               type: 'POST',
               success: function(res) {
                   $('#report-modal').modal('hide');
-                  $('#row' + car_id).addClass('table-warning');
+                  $('#report-btn' + car_id).fadeOut();
+                  $('#available-status' + car_id).text("no");
               },
               error: function(error) {
                   $('#report-modal').modal('hide');
