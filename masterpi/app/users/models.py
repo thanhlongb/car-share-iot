@@ -3,6 +3,12 @@ from sqlalchemy.inspection import inspect
 from app.users import constants as USER
 from flask_login import UserMixin
 
+def dump_datetime(value):
+    """Deserialize datetime object into string form for JSON processing."""
+    if value is None:
+        return None
+    return value.strftime("%Y-%m-%d")
+
 class User(UserMixin, db.Model):
     __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key=True)
@@ -15,7 +21,7 @@ class User(UserMixin, db.Model):
     bluetooth_MAC = db.Column(db.String(100), nullable=True)
     facial_recognition = db.Column(db.Boolean, default=False)
     google_login = db.Column(db.Boolean, default=False)
-    date = db.Column(db.DateTime, nullable=False)
+    date = db.Column(db.String(100), nullable=False)
 
     def __init__(self, email, username=None, password=None,
                        role=None, first_name=None, last_name=None, 
@@ -47,6 +53,10 @@ class User(UserMixin, db.Model):
     def serialize(self):
         data = {c: getattr(self, c) for c in inspect(self).attrs.keys()}
         del data['password']
+        return data
+
+    def serialize_with_cols(self, cols):
+        data = {c: getattr(self, c) for c in cols}
         return data
 
     def __repr__(self):
