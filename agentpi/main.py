@@ -22,8 +22,8 @@ from pisocket import client
 
 from detect_nearby_device import detect
 
-GET_FACE_ENCODINGS_API = "https://127.0.0.1:5000/api/users/face_encodings/"
-ENGINEER_LOGIN_BY_QR_CODE_API = "https://127.0.0.1:5000/api/users/engineer_unlock_car_QR/"
+GET_FACE_ENCODINGS_API = "https://127.0.0.1:5000/api/face_encodings/"
+ENGINEER_LOGIN_BY_QR_CODE_API = "https://127.0.0.1:5000/api/engineer_unlock_car_QR/"
 warnings.simplefilter('ignore',InsecureRequestWarning)
 car_locked = True
 program_exit = False

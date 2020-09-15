@@ -3,6 +3,7 @@ import numpy as np
 from json import JSONEncoder
 import requests, json
 import qrcode
+import datetime
 
 from json import JSONEncoder
 from multiprocessing import Process
@@ -16,7 +17,6 @@ from flask_login import (
     login_user,
     logout_user,
 )
-
 
 from ..facial_recognition.encode_faces import encode
 from app import db, login_manager, client
@@ -156,7 +156,7 @@ def login_redirect():
 def logout():
     logout_user()
     return redirect(url_for('users.login'))
-  
+
 @mod.route('/register/', methods=['GET', 'POST'])
 def register():
     """
@@ -175,7 +175,8 @@ def register():
                         username=form.username.data, 
                         first_name=form.first_name.data, 
                         last_name=form.last_name.data, 
-                        password=generate_password_hash(form.password.data))
+                        password=generate_password_hash(form.password.data),
+                        date=datetime.datetime.now())
             # Insert the record in our database and commit it
             db.session.add(user)
             db.session.commit()
@@ -294,7 +295,8 @@ def admin_users_create():
                     first_name=form.first_name.data,
                     last_name=form.last_name.data,
                     role=form.role.data,
-                    bluetooth_MAC = form.bluetooth_MAC.data)
+                    bluetooth_MAC = form.bluetooth_MAC.data,
+                    date=datetime.datetime.now())
         # Insert the record in our database and commit it
         db.session.add(user)
         db.session.commit()
@@ -400,8 +402,11 @@ def api_engineer_unlock_car_by_QR():
 
 @api_mod.route('/engineer_unlock_car_bluetooth/', methods=['POST'])
 def api_engineer_unlock_car_by_bluetooth():
+    print(request.form['bluetooth_MAC'])
     engineer = User.query.filter_by(bluetooth_MAC=request.form['bluetooth_MAC']).first()
     if engineer and engineer.isEngineer():
         return engineer.serialize(), 200
     else:
         return '{}', 401
+
+
