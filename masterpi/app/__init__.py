@@ -7,17 +7,18 @@ from flask_googlemaps import GoogleMaps, Map, icons
 app = Flask(__name__)
 app.config.from_object('config')
 
+GoogleMaps(
+    app,
+    key="AIzaSyC4l8KgttHz2TGU96K88shTXGpm17xvF20"
+)
+
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 with app.app_context():
     client = WebApplicationClient(app.config['GOOGLE_CLIENT_ID'])
 
-GoogleMaps(app)
-GoogleMaps(
-    app,
-    key="AIzaSyC4l8KgttHz2TGU96K88shTXGpm17xvF20"
-)
+
 
 @app.errorhandler(404)
 def not_found(error):
