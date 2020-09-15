@@ -57,23 +57,33 @@ def generate_qr_code(old_engineer_name, new_engineer_name):
     
 @login_manager.user_loader
 def load_user(user_id):
+    """ retrieve the user on the database using user id 
+
+    :param int id: the id of user
+    
+    :return: return user object with corresponding user id
+    :rtype: User
+    """
     return User.query.get(user_id)
 
 @login_manager.unauthorized_handler
 def unauthorized():
+    """ Redirect the user to login page if the user type is invalid
+    """
     return redirect(url_for('users.login'))
 
 @mod.route('/')
 @login_required
 def home():
+    """ Redirect the user to home page which have booking history
+    """
     bookings = Booking.query.filter_by(user_id=current_user.id) \
                             .order_by(Booking.id.desc()).all()
     return render_template("users/home.html", user=current_user, bookings=bookings)
 
 @mod.route('/login/', methods=['GET', 'POST'])
 def login():
-    """
-    Login form
+    """ Login form using register account
     """
     if current_user.is_authenticated:
         return redirect(url_for('users.login_redirect'))
@@ -92,6 +102,8 @@ def login():
 
 @mod.route('/google-login/', methods=['GET'])
 def google_login():
+    """ Login form using Google account
+    """
     if current_user.is_authenticated:
         return redirect(url_for('users.login_redirect'))    
     #ref: https://realpython.com/flask-google-login/
@@ -107,6 +119,8 @@ def google_login():
 
 @mod.route('/google-login/callback', methods=['GET'])
 def google_callback():
+    """ retrieve user information in Google account
+    """
     #ref: https://realpython.com/flask-google-login/
     code = request.args.get("code")
     google_provider_cfg = requests.get(current_app.config['GOOGLE_DISCOVERY_URL']).json()
@@ -145,6 +159,8 @@ def google_callback():
 @mod.route('/login/redirect')
 @login_required
 def login_redirect():
+    """ Redirect to page based on user role
+    """
     if current_user.isEngineer():
         return redirect(url_for('users.engineer'))
     if current_user.isManager() or current_user.isAdmin():
@@ -154,13 +170,14 @@ def login_redirect():
 @mod.route('/logout/')
 @login_required
 def logout():
+    """ User logout 
+    """
     logout_user()
     return redirect(url_for('users.login'))
   
 @mod.route('/register/', methods=['GET', 'POST'])
 def register():
-    """
-    Registration Form
+    """ Registration Form for register new account
     """
     if current_user.is_authenticated:
         return redirect(url_for('users.login_redirect'))    
@@ -190,16 +207,22 @@ def register():
 @mod.route('/dashboard/')
 @login_required
 def dashboard():
-    return render_template("users/dashboard.html")
+    """ Redirect to dashboard
+    """
+    return render_template("users/dashboard.html")  
     
 @mod.route('/engineer/')
 @login_required
 def engineer():
+    """ Redirect to engineering page
+    """
     return render_template("users/engineer.html")
   
 @mod.route('/admin/bookings', methods=['GET'])
 @login_required
 def admin_bookings():
+    """ Redirect the admin to booking page which show the list of bookings
+    """
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
     bookings = Booking.query.all()
@@ -208,6 +231,8 @@ def admin_bookings():
 @mod.route('/admin/cars', methods=['GET'])
 @login_required
 def admin_cars():
+    """ Redirect the admin to car page which show the list of cars
+    """
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
     cars = Car.query.all()
@@ -216,6 +241,17 @@ def admin_cars():
 @mod.route('/admin/cars/create', methods=['GET', 'POST'])
 @login_required
 def admin_cars_create():
+    """ This function allow admin to create a car record in the database
+
+        :reqheader Accept: application/json
+        :<json string make: car brand
+        :<json string color: car color
+        :<json string body_type: car body type
+        :<json int seats: number of seats
+        :<json int cost_per_hour: cost per hour
+        :status 201: car created
+        :status 400: bad request
+    """
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
     form = CarForm(request.form)
@@ -236,6 +272,13 @@ def admin_cars_create():
 @mod.route('/admin/cars/edit/<car_id>', methods=['GET', 'POST'])
 @login_required
 def admin_cars_edit(car_id):
+    """ Update car's properties
+    :param int car_id: id of an existing car
+
+    :status 200: car report updated
+    :status 400: car not exist
+    :status 503: Not sufficent permission
+    """
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
     car = Car.query.filter_by(id=car_id).first()
@@ -251,6 +294,15 @@ def admin_cars_edit(car_id):
 @mod.route('/admin/cars/delete', methods=['POST'])
 @login_required
 def admin_cars_delete():
+    """ This function allow admin to delete a car record in the database
+
+        :reqheader Accept: application/json
+        :<json int car_id: id of the car
+        :status 201: car deleted
+        :status 404: car not exist
+        :status 503: Not sufficent permission
+
+    """
     if not current_user.isAdmin():
         return "503 Not sufficent permission", 503
     car = Car.query.filter_by(id=request.form['car_id']).first()
@@ -263,6 +315,13 @@ def admin_cars_delete():
 @mod.route('/admin/cars/report', methods=['POST'])
 @login_required
 def admin_cars_report():
+    """ This function allow admin to create a car report in the database
+
+        :reqheader Accept: application/json
+        :<json int car_id: id of the car
+        :status 200: car report created
+        :status 400: car not exist
+    """
     if not current_user.isAdmin():
         return "503 Not sufficent permission", 503
     car = Car.query.filter_by(id=request.form['car_id']).first()
@@ -276,6 +335,8 @@ def admin_cars_report():
 @mod.route('/admin/users', methods=['GET'])
 @login_required
 def admin_users():
+    """ Redirect admin to user management page
+    """
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
     users = User.query.all()
@@ -284,6 +345,19 @@ def admin_users():
 @mod.route('/admin/users/create', methods=['GET', 'POST'])
 @login_required
 def admin_users_create():
+    """ This function allow admin to create a car report in the database
+
+        :reqheader Accept: application/json
+        :<json str email: email of the user
+        :<json str username: username of the user
+        :<json str password: password of the user
+        :<json str first_name: first name
+        :<json str last_name: last name
+        :<json int role: role of user
+
+        :status 200: car report created
+        :status 400: car not exist
+    """
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
     form = UserForm(request.form)
@@ -311,6 +385,14 @@ def admin_users_create():
 @mod.route('/admin/users/edit/<user_id>', methods=['GET', 'POST'])
 @login_required
 def admin_users_edit(user_id):
+    """ Edit an existing user
+
+    :param int user_id: id of an existing user
+
+    :status 200: User report updated
+    :status 400: user not exist
+    :status 503: Not sufficent permission
+    """
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
     user = User.query.filter_by(id=user_id).first()
@@ -331,6 +413,15 @@ def admin_users_edit(user_id):
 @mod.route('/admin/users/delete', methods=['POST'])
 @login_required
 def admin_users_delete():
+    """ This function allow admin to delete an user record in the database
+
+    :reqheader Accept: application/json
+    :<json int user_id: id of the user
+    :status 201: user deleted
+    :status 404: user not exist
+    :status 503: Not sufficent permission
+
+    """
     if not current_user.isAdmin():
         return "503 Not sufficent permission", 503
     user = User.query.filter_by(id=request.form['user_id']).first()
@@ -351,6 +442,15 @@ def admin_users_delete():
 ################################ User unlock car ######################################
 @api_mod.route('/login/', methods=['POST'])
 def api_login():
+    """ This function allow user to unlock car by using their account
+
+    :reqheader Accept: application/json
+    :<json str username: user name of the user
+    :<json str password: password of the user
+    :status 200: login success
+    :status 401: login failed
+
+    """
     user = User.query.filter_by(username=request.form['username']).first()
     if user and check_password_hash(user.password, request.form['password']):
         return user.serialize(), 200
@@ -362,6 +462,12 @@ def api_logout():
 
 @api_mod.route('/face_encodings/', methods=['GET'])
 def face_encodings():
+    """ This function allow user to unlock car by using facial recognition
+
+    :status 200: login success
+    :status 401: login failed
+
+    """
     encodings = pickle.loads(open('app/facial_recognition/output/encodings.pickle', 'rb').read())
     encodings_json = json.dumps(encodings, cls=NumpyArrayEncoder)
     return encodings_json
@@ -392,6 +498,12 @@ def photos_upload():
 ################################ Engineer unlock car ######################################
 @api_mod.route('/engineer_unlock_car_QR/', methods=['POST'])
 def api_engineer_unlock_car_by_QR():
+    """ This function allow user to unlock car by using QR code
+
+    :status 200: login success
+    :status 401: login failed
+
+    """
     engineer = User.query.filter_by(username=request.form['username']).first()
     if engineer and engineer.isEngineer():
         return engineer.serialize(), 200
@@ -400,6 +512,12 @@ def api_engineer_unlock_car_by_QR():
 
 @api_mod.route('/engineer_unlock_car_bluetooth/', methods=['POST'])
 def api_engineer_unlock_car_by_bluetooth():
+    """ This function allow user to unlock car by bluetooth
+
+    :status 200: login success
+    :status 401: login failed
+
+    """
     engineer = User.query.filter_by(bluetooth_MAC=request.form['bluetooth_MAC']).first()
     if engineer and engineer.isEngineer():
         return engineer.serialize(), 200
