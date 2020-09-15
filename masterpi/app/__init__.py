@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from oauthlib.oauth2 import WebApplicationClient
+from flask_googlemaps import GoogleMaps, Map, icons
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -11,6 +12,12 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 with app.app_context():
     client = WebApplicationClient(app.config['GOOGLE_CLIENT_ID'])
+
+GoogleMaps(app)
+GoogleMaps(
+    app,
+    key="AIzaSyC4l8KgttHz2TGU96K88shTXGpm17xvF20"
+)
 
 @app.errorhandler(404)
 def not_found(error):

@@ -39,8 +39,16 @@
                         </tr>
                     </tbody>
                 </table>
+                <div>    
+                    {{ carMap.html }}
+                </div>
             </div>
         </div>
 </div>
 
+{% endblock %}
+
+{% block script %}
+    {{ super() }}
+    {{ gmap.js }}
 {% endblock %}
