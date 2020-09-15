@@ -4,7 +4,7 @@ from multiprocessing import Process
 from json import JSONEncoder
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
-from sqlalchemy import or_
+from sqlalchemy import or_, and_, desc
 from werkzeug.utils import secure_filename
 from flask_login import (
     current_user,
@@ -184,7 +184,7 @@ def engineer():
 def admin_bookings():
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
-    bookings = Booking.query.all()
+    bookings = Booking.query.orderby(desc(Booking.id)).all()
     return render_template("users/admin/bookings.html", bookings=bookings)
 
 @mod.route('/admin/cars', methods=['GET'])
@@ -192,7 +192,7 @@ def admin_bookings():
 def admin_cars():
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
-    cars = Car.query.all()
+    cars = Car.query.orderby(desc(Car.id)).all()
     return render_template("users/admin/cars.html", cars=cars)
 
 @mod.route('/admin/cars/create', methods=['GET', 'POST'])
@@ -262,7 +262,7 @@ def manager_reports():
     if not current_user.isManager():
         return "503 Not sufficent permission"
     reports = CarReport.query.filter_by(fixed=False).all()
-    engineers = User.query.filter_by(role=2).all()
+    engineers = User.query.orderby(desc(User.id)).filter_by(role=2).all()
     return render_template("users/manager/reports.html", reports=reports, engineers=engineers)
 
 @mod.route('/manager/reports/assign', methods=['POST'])
@@ -277,12 +277,35 @@ def manager_reports_assign():
         return '', 200
     return 'report not exist.', 404
 
+@mod.route('/engineer/reports', methods=['GET'])
+@login_required
+def engineer_reports():
+    if not current_user.isEngineer():
+        return "503 Not sufficent permission"
+    reports = CarReport.query.filter(and_(CarReport.fixed == False,
+                                          CarReport.fixer_id == current_user.id)) \
+                             .order_by(desc(CarReport.id)) \
+                             .all()
+    return render_template("users/engineer/reports.html", reports=reports)
+
+@mod.route('/engineer/reports/fixed', methods=['POST'])
+@login_required
+def engineer_reports_fixed():
+    if not current_user.isEngineer():
+        return "503 Not sufficent permission", 503
+    report = CarReport.query.filter_by(id=request.form['report_id']).first()
+    if report:
+        report.fixed = True
+        db.session.commit()
+        return '', 200
+    return 'report not exist.', 404
+
 @mod.route('/admin/users', methods=['GET'])
 @login_required
 def admin_users():
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
-    users = User.query.all()
+    users = User.query.orderby(desc(User.id)).all()
     return render_template("users/admin/users.html", users=users)
 
 @mod.route('/admin/users/create', methods=['GET', 'POST'])
