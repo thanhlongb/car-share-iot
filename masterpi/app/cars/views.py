@@ -27,12 +27,5 @@ def index():
     return render_template("cars/index.html", cars=cars)
     
 
-@mod.route('/search', methods=['GET', 'POST'])
-#TODO: implement https://sqlalchemy-searchable.readthedocs.io/en/latest/integrations.html or https://pythonhosted.org/Flask-WhooshAlchemy/
-def search_cars():
-    form = searchForm(request.form)
-    car = Car.query.search(form.keyWord).all()
-    if car:
-        return render_template("cars/details.html", car=car)
-    return render_template("404.html")
+
 
