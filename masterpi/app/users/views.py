@@ -4,12 +4,14 @@ from json import JSONEncoder
 import requests, json
 import qrcode
 import datetime
+import jsonify
+from ..charting.prepare_chart_data import get_line_chart_data, get_pie_chart_data, get_bar_chart_data
 
 from json import JSONEncoder
 from multiprocessing import Process
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from werkzeug.utils import secure_filename
 from flask_login import (
     current_user,
@@ -24,7 +26,7 @@ from app.users.forms import RegisterForm, LoginForm, UserForm, UserEditForm, Pho
 from app.users.models import User
 from app.cars.models import Car, CarReport
 from app.cars.forms import CarForm
-from app.bookings.models import Booking
+from app.bookings.models import Booking, BookingAction
 
 mod = Blueprint('users', __name__, url_prefix='/')
 api_mod = Blueprint('users_api', __name__, url_prefix='/api')
@@ -150,7 +152,9 @@ def login_redirect():
     if current_user.isManager() or current_user.isAdmin():
         return redirect(url_for('users.dashboard'))
     return redirect(url_for('users.home'))
- 
+
+
+
 @mod.route('/logout/')
 @login_required
 def logout():
@@ -176,7 +180,7 @@ def register():
                         first_name=form.first_name.data, 
                         last_name=form.last_name.data, 
                         password=generate_password_hash(form.password.data),
-                        date=datetime.datetime.now())
+                        date=datetime.datetime.now().strftime("%Y-%m-%d"))
             # Insert the record in our database and commit it
             db.session.add(user)
             db.session.commit()
@@ -191,8 +195,24 @@ def register():
 @mod.route('/dashboard/')
 @login_required
 def dashboard():
-    return render_template("users/dashboard.html")
-    
+    if not current_user.isAdmin() and not current_user.isManager():
+        return "503 Not sufficent permission"
+
+    line_chart_data = get_line_chart_data()
+    pie_chart_data = get_pie_chart_data()
+    bar_chart_data = get_bar_chart_data()
+    print(bar_chart_data['labels'])
+    print(bar_chart_data['values'])
+
+    return render_template("users/dashboard.html", 
+        line_chart_labels = line_chart_data['labels'],
+        line_chart_values = line_chart_data['values'],
+        pie_chart_labels = pie_chart_data['labels'],
+        pie_chart_values = pie_chart_data['values'],
+        bar_chart_labels = bar_chart_data['labels'],
+        bar_chart_values = bar_chart_data['values']
+    )
+
 @mod.route('/engineer/')
 @login_required
 def engineer():
@@ -296,7 +316,7 @@ def admin_users_create():
                     last_name=form.last_name.data,
                     role=form.role.data,
                     bluetooth_MAC = form.bluetooth_MAC.data,
-                    date=datetime.datetime.now())
+                    date=datetime.datetime.now().strftime("%Y-%m-%d"))
         # Insert the record in our database and commit it
         db.session.add(user)
         db.session.commit()
@@ -408,5 +428,3 @@ def api_engineer_unlock_car_by_bluetooth():
         return engineer.serialize(), 200
     else:
         return '{}', 401
-
-

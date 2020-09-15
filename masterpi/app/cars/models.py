@@ -44,6 +44,10 @@ class Car(db.Model):
 
     def __repr__(self):
         return '<Car %r>' % (self.id)
+    
+    def serialize_with_cols(self, cols):
+        data = {c: getattr(self, c) for c in cols}
+        return data
 
 class CarLocation(db.Model):
     __tablename__ = 'CarLocation'

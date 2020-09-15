@@ -27,6 +27,10 @@ class Booking(db.Model):
 
     def __repr__(self):
         return '<Booking %r>' % (self.id)
+    
+    def serialize_with_cols(self, cols):
+        data = {c: getattr(self, c) for c in cols}
+        return data
 
 class BookingAction(db.Model):
     __tablename__ = 'BookingAction'
@@ -41,3 +45,7 @@ class BookingAction(db.Model):
 
     def __repr__(self):
         return '<BookingAction %r>' % (self.id)
+
+    def serialize_with_cols(self, cols):
+        data = {c: getattr(self, c) for c in cols}
+        return data
