@@ -3,6 +3,9 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
 class Car(db.Model):
+    """ 
+    Declare Car table and its attribute
+    """
     __tablename__ = 'Car'
     id = db.Column(db.Integer, primary_key=True)
     make = db.Column(db.String(100))
@@ -17,6 +20,14 @@ class Car(db.Model):
 
     def __init__(self, make=None, color=None, body_type=None, 
                  seats=None, cost_per_hour=0):
+        """ Constructor for Car model
+        
+        :param str make: brand of the car
+        :param str color: color of the car
+        :param str body_type: body type of car
+        :param int seats: number of seat
+        :param int cost_per_hour: cost per hour 
+        """
         self.make = make
         self.color = color
         self.body_type = body_type
@@ -25,15 +36,21 @@ class Car(db.Model):
 
     @property
     def available(self):
+        """ check car avalability
+        """
         return not (self.booked or self.fixing)
 
     @property
     def booked(self):
+        """ Check the booking status of car
+        """
         return self.bookings and \
                 (self.bookings[-1].booked or self.bookings[-1].unlocked)
 
     @property
     def fixing(self):
+        """ check fixing status of car
+        """
         return self.reports and not self.reports[-1].fixed
 
     @property
@@ -46,6 +63,9 @@ class Car(db.Model):
         return '<Car %r>' % (self.id)
 
 class CarLocation(db.Model):
+    """
+    Declare Carlocation table and its attributes
+    """
     __tablename__ = 'CarLocation'
     id = db.Column(db.Integer, primary_key=True)
     car_id = db.Column(db.Integer, db.ForeignKey('Car.id'))
@@ -53,6 +73,11 @@ class CarLocation(db.Model):
     creation_time = db.Column(db.DateTime(timezone=True), server_default=func.now())
 
     def __init__(self, car_id, location=None):
+        """ Constructor for the CarLocation
+        
+        :param int car_id: id of an existing car
+        :param str location: location of an existing car
+        """
         self.car_id = car_id
         self.location = location
 
@@ -60,6 +85,7 @@ class CarLocation(db.Model):
         return '<CarLocation %r>' % (self.id)
 
 class CarReport(db.Model):
+    """ Declare CarReport table and car attribute"""
     __tablename__ = 'CarReport'
     id = db.Column(db.Integer, primary_key=True)
     car_id = db.Column(db.Integer, db.ForeignKey('Car.id'))
