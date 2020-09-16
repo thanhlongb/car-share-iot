@@ -5,19 +5,21 @@ import pickle
 PORT = 65000         
 ADDRESS = ("", PORT)
 
-def send_credentials(action, username, password=None):
+def send_credentials(action, car_id, username, password=None):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect(ADDRESS)
         credentials = {}
         if action == 1:
             credentials = {
                 "action" : 1,
+                "car_id" : car_id,
                 "username" : username,
                 "password" : password
             } 
         else:
             credentials = {
                 "action" : 2,
+                "car_id" : car_id,
                 "username" : username,
             } 
         s.sendall(pickle.dumps(credentials))

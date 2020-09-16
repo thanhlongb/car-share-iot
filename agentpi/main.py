@@ -19,14 +19,15 @@ from facial_recognition.recognize import recognize
 from qr_code import get_QR_encryption
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 from pisocket import client
-
 from detect_nearby_device import detect
 
 GET_FACE_ENCODINGS_API = "https://127.0.0.1:5000/api/face_encodings/"
 ENGINEER_LOGIN_BY_QR_CODE_API = "https://127.0.0.1:5000/api/engineer_unlock_car_QR/"
+LOGOUT_API = "https://127.0.0.1:5000/api/logout/"
 warnings.simplefilter('ignore',InsecureRequestWarning)
 car_locked = True
 program_exit = False
+CAR_ID = 1
 
 #--------------------------------- Menu ---------------------------------#
 FORMAT = MenuFormatBuilder() \
@@ -129,6 +130,11 @@ def create_main_menu(user_menu, engineer_menu):
 def user_logout():
     global car_locked
     car_locked = True
+    param = {
+        "car_id" : CAR_ID
+    }
+    requests.post(LOGOUT_API, param ,verify=False)
+
 
 def shutdown():
     global program_exit
@@ -157,7 +163,7 @@ def user_login_with_credentials(main_menu, user_menu):
     main_menu.pause()
     username = input('Username: ')
     password = getpass.getpass('Password: ')
-    res_dict = client.send_credentials(1, username, password)
+    res_dict = client.send_credentials(1, CAR_ID, username, password)
     if len(res_dict) == 0:
         handle_fail_user_login(True, main_menu)
     else:
@@ -174,7 +180,7 @@ def handle_facial_recognition_result(username, main_menu, user_menu):
     if username == 'unknown':
         handle_fail_user_login(False, main_menu)
     else:
-        res_dict = client.send_credentials(2, username)
+        res_dict = client.send_credentials(2, CAR_ID, username)
         if len(res_dict) == 0:
             handle_fail_user_login(False, main_menu)
         else:
@@ -231,9 +237,9 @@ def detect_bluetooth_device(main_menu, engineer_menu):
         if program_exit:
             return
         if car_locked:
-            print('Detecting')
+            # print('Detecting')
             engineer_username = detect()
-            print(engineer_username)
+            # print(engineer_username)
             if engineer_username != '':
                 handle_success_engineer_login(engineer_username, engineer_menu)
         time.sleep(5)

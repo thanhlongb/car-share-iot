@@ -375,7 +375,13 @@ def admin_users_delete():
 def api_login_by_credentials():
     user = User.query.filter_by(username=request.form['username']).first()
     if user and check_password_hash(user.password, request.form['password']):
-        return user.serialize(), 200
+        car = Car.query.filter_by(id = request.form['car_id']).first()
+        if car.booked and car.bookings[-1].user_id == user.id:
+            bookingAction = BookingAction(car.bookings[-1].id, "unlocked")
+            db.session.add(bookingAction)
+            db.session.commit()
+            return user.serialize(), 200
+        return '{}', 401
     else:
         return '{}', 401
 
@@ -383,12 +389,22 @@ def api_login_by_credentials():
 def api_login_by_facial_recognition():
     user = User.query.filter_by(username=request.form['username']).first()
     if user:
-        return user.serialize(), 200
+        car = Car.query.filter_by(id = request.form['car_id']).first()
+        if car.booked and car.bookings[-1].user_id == user.id:
+            bookingAction = BookingAction(car.bookings[-1].id, "unlocked")
+            db.session.add(bookingAction)
+            db.session.commit()
+            return user.serialize(), 200
     else:
         return '{}', 401
 
+@api_mod.route('/logout/', methods=['POST'])
 def api_logout():
-    pass
+    car = Car.query.filter_by(id = request.form['car_id']).first()
+    bookingAction = BookingAction(car.bookings[-1].id, "returned")
+    db.session.add(bookingAction)
+    db.session.commit()
+    return '{}', 200
 
 @api_mod.route('/face_encodings/', methods=['GET'])
 def face_encodings():
