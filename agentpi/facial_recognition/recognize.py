@@ -43,6 +43,7 @@ def recognize():
 
     fps = FPS().start()
     tstart = time.time()
+    name = 'unknown'
 
     while True:
         frame = vs.read()
@@ -94,17 +95,13 @@ def recognize():
         fps.update()
 
         cv2.imshow("Frame", frame)
-        # tcur = time.time()
+        tcur = time.time()
 
-        # if tcur - tstart > 15 & name != 'unknown' & proba > 0.8:
-        #     return name
-        # elif tcur - tstart > 60:
-        #     return 'unknown'
-
-        key = cv2.waitKey(1) & 0xFF
-
-        if key == ord("q"):
+        if (tcur - tstart > 15 and name != None and proba > 0.6)\
+           or (tcur - tstart > 60):
             break
+        
+        key = cv2.waitKey(1) & 0xFF
 
     fps.stop()
     print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
@@ -112,3 +109,7 @@ def recognize():
 
     cv2.destroyAllWindows()
     vs.stop()
+    
+    if name != None:
+        return name
+    return 'unknown'
