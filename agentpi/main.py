@@ -185,6 +185,7 @@ def user_login_with_facial_recognition(main_menu, user_menu):
     train_model(new_encodings_data)
     print('[INFO] Initializing...')
     username = recognize()
+    print(username)
     handle_facial_recognition_result(username, main_menu, user_menu)
 
 #---- Engineer login with QR code ----#
