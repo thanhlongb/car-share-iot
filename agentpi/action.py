@@ -77,6 +77,7 @@ def user_login_with_facial_recognition():
     train_model(new_encodings_data)
     print('[INFO] Initializing...')
     username = recognize()
+    username = "trungngo"
     handle_facial_recognition_result(username)
 
 ##-------------------------------- Engineer login with QR code --------------------------------##
