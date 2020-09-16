@@ -15,8 +15,16 @@ mod = Blueprint('cars', __name__, url_prefix='/cars')
 
 @mod.route('/details/<id>', methods=['GET'])
 def details(id):
+    """ 
+    **Get detail information about the car**
+
+    :param id: id of the car
+    :type id: int
+
+    :status 200: success
+    :status 404: failed
+    """
     car = Car.query.filter_by(id=id).first()
-    # carLocation = CarLocation.query.filter_by(id=id).first()
     if car.locations:
         gmap = StaticMap(car.current_location, id)
         carMap = gmap.create_map()
@@ -29,7 +37,15 @@ def details(id):
 
 @mod.route('/', methods=['GET'])
 @login_required
-def index(): 
+def index():
+    """
+    **Get list of available car**
+
+    This function allow user to get list of cars and its detail information
+
+    :status 200: success
+    :status 404: failed
+    """
     cars = Car.query.all()
     return render_template("cars/index.html", cars=cars)
     
