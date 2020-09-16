@@ -15,15 +15,15 @@ class StaticMap:
 
     def create_map(self):
         geolocation = self.get_location_coordinate()
-        description = "car {}".format(car_id)
-        gmap = Map(
-            identifier="car location",
-            varname="gmap",
+        description = "car {}".format(self.car_id)
+        carMap = Map(
+            identifier="carMap",
+            varname="carMap",
             lat=geolocation[0],
             lng=geolocation[1],
             markers={
-                icons.dots.blue: [(10.78403000000003, 106.69434000000007, description)],
+                icons.dots.blue: [(geolocation[0], geolocation[1], description)],
             },
             style="height:400px;width:600px;margin:0;",
         )
-        return gmap
+        return carMap

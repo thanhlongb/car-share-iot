@@ -7,6 +7,8 @@ from flask_login import (
 from app import db
 from app.cars.models import Car, CarReport, CarLocation
 from app.cars.maps import StaticMap
+from flask_googlemaps import  Map, icons
+
 
 mod = Blueprint('cars', __name__, url_prefix='/cars')
 
@@ -14,9 +16,12 @@ mod = Blueprint('cars', __name__, url_prefix='/cars')
 @mod.route('/details/<id>', methods=['GET'])
 def details(id):
     car = Car.query.filter_by(id=id).first()
-    carLocation = CarLocation.query.filter_by(id=id).first()
-    gmap = StaticMap(carLocation.location, car.id)
-    carMap = gmap.create_map()
+    # carLocation = CarLocation.query.filter_by(id=id).first()
+    if car.locations:
+        gmap = StaticMap(car.current_location, id)
+        carMap = gmap.create_map()
+    else:
+        carMap = None
     if car:
         return render_template("cars/details.html", car=car, carMap=carMap)
     return render_template("404.html")

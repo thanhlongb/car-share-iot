@@ -39,10 +39,14 @@
                         </tr>
                     </tbody>
                 </table>
-                <div>    
-                    {{ carMap.html }}
-                </div>
             </div>
+        </div>
+        <div> 
+            {% if carMap %}   
+            {{ carMap.html }}
+            {% else %}
+            <h4>This car location is not recorded yet.</h4>
+            {% endif %}
         </div>
 </div>
 
@@ -50,5 +54,5 @@
 
 {% block script %}
     {{ super() }}
-    {{ gmap.js }}
+    {{ carMap.js }}
 {% endblock %}
