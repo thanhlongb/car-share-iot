@@ -17,7 +17,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             print("Connected to {}".format(addr))
             data = conn.recv(4096)
             credentials = pickle.loads(data)
-            print(credentials)
             if credentials['action'] == 1:
                 response = requests.post(
                     "https://127.0.0.1:5000/api/login_by_credentials/", 
