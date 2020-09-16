@@ -157,7 +157,7 @@ def user_login_with_credentials(main_menu, user_menu):
     main_menu.pause()
     username = input('Username: ')
     password = getpass.getpass('Password: ')
-    res_dict = client.send_credentials(username, password)
+    res_dict = client.send_credentials(1, username, password)
     if len(res_dict) == 0:
         handle_fail_user_login(True, main_menu)
     else:
@@ -174,7 +174,11 @@ def handle_facial_recognition_result(username, main_menu, user_menu):
     if username == 'unknown':
         handle_fail_user_login(False, main_menu)
     else:
-        handle_success_user_login(username, user_menu)
+        res_dict = client.send_credentials(2, username)
+        if len(res_dict) == 0:
+            handle_fail_user_login(False, main_menu)
+        else:
+            handle_success_user_login(username, user_menu)
 
 def user_login_with_facial_recognition(main_menu, user_menu):
     global car_locked
@@ -185,7 +189,6 @@ def user_login_with_facial_recognition(main_menu, user_menu):
     train_model(new_encodings_data)
     print('[INFO] Initializing...')
     username = recognize()
-    print(username)
     handle_facial_recognition_result(username, main_menu, user_menu)
 
 #---- Engineer login with QR code ----#

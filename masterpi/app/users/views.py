@@ -371,10 +371,18 @@ def admin_users_delete():
     return 'user not exist.', 404
 
 ################################ User unlock car ######################################
-@api_mod.route('/login/', methods=['POST'])
-def api_login():
+@api_mod.route('/login_by_credentials/', methods=['POST'])
+def api_login_by_credentials():
     user = User.query.filter_by(username=request.form['username']).first()
     if user and check_password_hash(user.password, request.form['password']):
+        return user.serialize(), 200
+    else:
+        return '{}', 401
+
+@api_mod.route('/login_by_facial_recognition/', methods=['POST'])
+def api_login_by_facial_recognition():
+    user = User.query.filter_by(username=request.form['username']).first()
+    if user:
         return user.serialize(), 200
     else:
         return '{}', 401
