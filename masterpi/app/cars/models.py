@@ -85,7 +85,7 @@ class CarLocation(db.Model):
         return '<CarLocation %r>' % (self.id)
 
 class CarReport(db.Model):
-    """ Declare CarReport table and car attribute"""
+    """ Declare CarReport table and its attribute"""
     __tablename__ = 'CarReport'
     id = db.Column(db.Integer, primary_key=True)
     car_id = db.Column(db.Integer, db.ForeignKey('Car.id'))
@@ -95,12 +95,18 @@ class CarReport(db.Model):
     update_time = db.Column(db.DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, car_id):
+        """ constructor of CarReport
+        """
         self.car_id = car_id
 
     def setFixer(self, fixer_id):
+        """ Set fixer id 
+        """
         self.fixer_id = fixer_id
 
     def setFixed(self, fixed=True):
+        """ set fixed id
+        """
         self.fixed = fixed
 
     def __repr__(self):
