@@ -60,7 +60,7 @@ def create_engineer_menu():
         exit_option_text="Logout and lock car"
     )
     exit_item = FunctionItem("Logout and lock car", 
-        user_logout, 
+        engineer_logout, 
         should_exit=True
     )    
     menu.append_item(exit_item)
@@ -135,6 +135,9 @@ def user_logout():
     }
     requests.post(LOGOUT_API, param ,verify=False)
 
+def engineer_logout():
+    global car_locked
+    car_locked = True
 
 def shutdown():
     global program_exit
