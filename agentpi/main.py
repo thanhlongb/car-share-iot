@@ -192,13 +192,14 @@ def handle_facial_recognition_result(username, main_menu, user_menu):
 def user_login_with_facial_recognition(main_menu, user_menu):
     global CAR_LOCKED
     CAR_LOCKED = False
-    main_menu.pause()
+    # main_menu.pause()
     new_encodings_data = update_facial_encodings()
     print('[INFO] Training new model...')
     train_model(new_encodings_data)
     print('[INFO] Initializing...')
     username = recognize()
-    handle_facial_recognition_result(username, main_menu, user_menu)
+    print(username)
+    # handle_facial_recognition_result(username, main_menu, user_menu)
 
 #---- Engineer login with QR code ----#
 def handle_fail_engineer_login(main_menu):
@@ -240,9 +241,7 @@ def detect_bluetooth_device(main_menu, engineer_menu):
         if PROGRAM_EXIT:
             return
         if CAR_LOCKED:
-            # print('Detecting')
             engineer_username = detect()
-            # print(engineer_username)
             if engineer_username != '':
                 handle_success_engineer_login(engineer_username, engineer_menu)
         time.sleep(5)
@@ -251,11 +250,12 @@ if __name__ == '__main__':
     user_menu = create_user_menu()
     engineer_menu = create_engineer_menu()
     main_menu = create_main_menu(user_menu, engineer_menu)
-    bluetooth_device_detector = threading.Thread(
-        target=detect_bluetooth_device,
-        args=(main_menu, engineer_menu, ),
-    )
-    main_menu.start()
-    bluetooth_device_detector.start()
-    main_menu.join()
-    bluetooth_device_detector.join()
+    # bluetooth_device_detector = threading.Thread(
+    #     target=detect_bluetooth_device,
+    #     args=(main_menu, engineer_menu, ),
+    # )
+    # main_menu.start()
+    # bluetooth_device_detector.start()
+    # main_menu.join()
+    # bluetooth_device_detector.join()
+    user_login_with_facial_recognition(user_menu, main_menu)
