@@ -153,8 +153,6 @@ def login_redirect():
         return redirect(url_for('users.dashboard'))
     return redirect(url_for('users.home'))
 
-
-
 @mod.route('/logout/')
 @login_required
 def logout():
