@@ -30,7 +30,7 @@ from app.bookings.models import Booking, BookingAction
 
 mod = Blueprint('users', __name__, url_prefix='/')
 api_mod = Blueprint('users_api', __name__, url_prefix='/api')
-UPLOAD_FOLDER_URL = 'app/facial_recognition/dataset'
+FACE_UPLOAD_FOLDER_URL = 'app/facial_recognition/dataset'
 QR_UPLOAD_FOLDER_URL = 'app/qr_code'
 
 class NumpyArrayEncoder(json.JSONEncoder):
