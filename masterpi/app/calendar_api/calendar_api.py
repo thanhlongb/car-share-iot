@@ -14,14 +14,31 @@ from datetime import datetime, date, timedelta
 
 
 class CalendarApi:
+    """ This class create the google calenar api for adding event to the calendar
+    """
 
     def __init__(self, title, description, attendee, start, duration):
+        """ Constructor for the class
+
+        :param str title: title of the event
+        :param str description: description of the event
+        :param str attendee: email of the user
+        :param datetime start: time start event
+        :param int duration: duration of car booked 
+
+        """
         service = self.authorization()
         end = start + timedelta(hours=duration)
         self.event_states = self.add_event(title, description, attendee, 
                                             start.isoformat(), end.isoformat(), service)
 
     def authorization(self):
+        """
+        Authorize the token and create a Google Calendar service
+
+        :return: calendar service
+        """
+
         SCOPES = ["https://www.googleapis.com/auth/calendar"]
         creds  = None
         token_file = Path("./credentials/token.pickle")
@@ -44,6 +61,22 @@ class CalendarApi:
         return calendar_service
 
     def add_event(self, title, description, attendee, start, end, service: build):
+        """
+        Add event to the calendar
+
+        :param str title: title of the event
+        :param str description: description of the event
+        :param str attendee: email of the user
+        :param datetime start: time start event
+        :param datetime end: time end event
+        :param service: the calendar service
+
+        :return: an event object
+        :rtype: Event
+
+
+        """
+
         event = {"summary": title,
                  "start": {"dateTime": start, "timeZone": str(get_localzone())},
                  "end": {"dateTime": end, "timeZone": str(get_localzone())},
