@@ -3,12 +3,14 @@ import numpy as np
 from json import JSONEncoder
 import requests, json
 import qrcode
+import datetime
+import jsonify
 
 from json import JSONEncoder
 from multiprocessing import Process
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
-from sqlalchemy import or_, and_, desc
+from sqlalchemy import or_, and_, desc, func
 from werkzeug.utils import secure_filename
 from flask_login import (
     current_user,
@@ -23,12 +25,13 @@ from app.users.forms import RegisterForm, LoginForm, UserForm, UserEditForm, Pho
 from app.users.models import User
 from app.cars.models import Car, CarReport
 from app.cars.forms import CarForm
-from app.bookings.models import Booking
+from app.bookings.models import Booking, BookingAction
 from ..facial_recognition.encode_faces import encode
+from ..charting.prepare_chart_data import get_line_chart_data, get_pie_chart_data, get_bar_chart_data
 
 mod = Blueprint('users', __name__, url_prefix='/')
 api_mod = Blueprint('users_api', __name__, url_prefix='/api')
-UPLOAD_FOLDER_URL = 'app/facial_recognition/dataset'
+FACE_UPLOAD_FOLDER_URL = 'app/facial_recognition/dataset'
 QR_UPLOAD_FOLDER_URL = 'app/qr_code'
 
 class NumpyArrayEncoder(json.JSONEncoder):
@@ -211,7 +214,21 @@ def register():
 def dashboard():
     """ Redirect to dashboard
     """
-    return render_template("users/dashboard.html")  
+    if not (current_user.isAdmin() or current_user.isManager()):
+        return "503 Not sufficent permission"
+
+    line_chart_data = get_line_chart_data()
+    pie_chart_data = get_pie_chart_data()
+    bar_chart_data = get_bar_chart_data()
+
+    return render_template("users/dashboard.html", 
+        line_chart_labels = line_chart_data['labels'],
+        line_chart_values = line_chart_data['values'],
+        pie_chart_labels = pie_chart_data['labels'],
+        pie_chart_values = pie_chart_data['values'],
+        bar_chart_labels = bar_chart_data['labels'],
+        bar_chart_values = bar_chart_data['values']
+    ) 
     
 @mod.route('/engineer/')
 @login_required
@@ -499,8 +516,8 @@ def admin_users_delete():
     return 'user not exist.', 404
 
 ################################ User unlock car ######################################
-@api_mod.route('/login/', methods=['POST'])
-def api_login():
+@api_mod.route('/login_by_credentials/', methods=['POST'])
+def api_login_by_credentials():
     """ This function allow user to unlock car by using their account
 
     :reqheader Accept: application/json
@@ -508,16 +525,40 @@ def api_login():
     :<json str password: password of the user
     :status 200: login success
     :status 401: login failed
-
     """
+
     user = User.query.filter_by(username=request.form['username']).first()
     if user and check_password_hash(user.password, request.form['password']):
-        return user.serialize(), 200
+        car = Car.query.filter_by(id = request.form['car_id']).first()
+        if car.booked and car.bookings[-1].user_id == user.id:
+            bookingAction = BookingAction(car.bookings[-1].id, "unlocked")
+            db.session.add(bookingAction)
+            db.session.commit()
+            return user.serialize(), 200
+        return '{}', 401
     else:
         return '{}', 401
 
+@api_mod.route('/login_by_facial_recognition/', methods=['POST'])
+def api_login_by_facial_recognition():
+    user = User.query.filter_by(username=request.form['username']).first()
+    if user:
+        car = Car.query.filter_by(id = request.form['car_id']).first()
+        if car.booked and car.bookings[-1].user_id == user.id:
+            bookingAction = BookingAction(car.bookings[-1].id, "unlocked")
+            db.session.add(bookingAction)
+            db.session.commit()
+            return user.serialize(), 200
+    else:
+        return '{}', 401
+
+@api_mod.route('/logout/', methods=['POST'])
 def api_logout():
-    pass
+    car = Car.query.filter_by(id = request.form['car_id']).first()
+    bookingAction = BookingAction(car.bookings[-1].id, "returned")
+    db.session.add(bookingAction)
+    db.session.commit()
+    return '{}', 200
 
 @api_mod.route('/face_encodings/', methods=['GET'])
 def face_encodings():
