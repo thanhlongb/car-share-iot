@@ -22,6 +22,10 @@ with app.app_context():
 def not_found(error):
     return render_template('404.html'), 404
 
+@app.errorhandler(403)
+def not_found(error):
+    return render_template('403.html'), 403
+
 from app.users.views import mod as usersModule
 from app.users.views import api_mod as usersAPIModule
 from app.cars.views import mod as carsModule
