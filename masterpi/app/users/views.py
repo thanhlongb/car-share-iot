@@ -128,9 +128,11 @@ def google_callback():
 @login_required
 def login_redirect():
     if current_user.isEngineer():
-        return redirect(url_for('users.engineer'))
-    if current_user.isManager() or current_user.isAdmin():
+        return redirect(url_for('users.engineer_reports'))
+    if current_user.isManager():
         return redirect(url_for('users.dashboard'))
+    if current_user.isAdmin():
+        return redirect(url_for('users.admin_pages'))
     return redirect(url_for('users.home'))
  
 @mod.route('/logout/')
@@ -184,7 +186,7 @@ def engineer():
 def admin_bookings():
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
-    bookings = Booking.query.orderby(desc(Booking.id)).all()
+    bookings = Booking.query.order_by(desc(Booking.id)).all()
     return render_template("users/admin/bookings.html", bookings=bookings)
 
 @mod.route('/admin/cars', methods=['GET'])
@@ -192,7 +194,7 @@ def admin_bookings():
 def admin_cars():
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
-    cars = Car.query.orderby(desc(Car.id)).all()
+    cars = Car.query.order_by(desc(Car.id)).all()
     return render_template("users/admin/cars.html", cars=cars)
 
 @mod.route('/admin/cars/create', methods=['GET', 'POST'])
@@ -262,7 +264,7 @@ def manager_reports():
     if not current_user.isManager():
         return "503 Not sufficent permission"
     reports = CarReport.query.filter_by(fixed=False).all()
-    engineers = User.query.orderby(desc(User.id)).filter_by(role=2).all()
+    engineers = User.query.order_by(desc(User.id)).filter_by(role=2).all()
     return render_template("users/manager/reports.html", reports=reports, engineers=engineers)
 
 @mod.route('/manager/reports/assign', methods=['POST'])
@@ -300,12 +302,20 @@ def engineer_reports_fixed():
         return '', 200
     return 'report not exist.', 404
 
+
+@mod.route('/admin/pages', methods=['GET'])
+@login_required
+def admin_pages():
+    if not current_user.isAdmin():
+        return "503 Not sufficent permission"
+    return render_template("users/admin/pages.html")
+
 @mod.route('/admin/users', methods=['GET'])
 @login_required
 def admin_users():
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
-    users = User.query.orderby(desc(User.id)).all()
+    users = User.query.order_by(desc(User.id)).all()
     return render_template("users/admin/users.html", users=users)
 
 @mod.route('/admin/users/create', methods=['GET', 'POST'])

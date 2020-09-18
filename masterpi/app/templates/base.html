@@ -24,9 +24,6 @@
 		<div class="collapse navbar-collapse" id="navbarResponsive">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item"><a class="nav-link" href="{{ url_for('users.home') }}">Home</a></li>
-				{% if current_user.isAdmin() or current_user.isManager() %}
-					<li class="nav-item"><a class="nav-link" href="{{ url_for('users.dashboard') }}">Dashboard</a></li>
-				{% endif %}
 				{% if current_user.isAdmin() %}
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin pages</a>
@@ -37,18 +34,27 @@
 						</div>
 					</li>
 				{% endif %}
-				{% if current_user.isManager() %}
-					<li class="nav-item"><a class="nav-link" href="{{ url_for('users.manager_reports') }}">Reports</a></li>
-				{% endif %}
-				{% if current_user.isEngineer() %}
-					<li class="nav-item"><a class="nav-link" href="{{ url_for('users.engineer_reports') }}">Engineer page</a></li>
-				{% endif %}
 				<li class="nav-item"><a class="nav-link" href="{{ url_for('users.logout') }}">Logout</a></li>
 			</ul>
 			<div class="form-inline my-2 my-lg-0">
-				<a href="{{ url_for('cars.index') }}" class="btn btn-secondary my-2 my-sm-0" type="submit">
-					<i class="fa fa-car" aria-hidden="true"></i> Book a car
-				</a>
+				{% if current_user.isCustomer() %}
+					<a href="{{ url_for('cars.index') }}" class="btn btn-secondary my-2 my-sm-0" type="submit">
+						<i class="fa fa-car" aria-hidden="true"></i> Book a car
+					</a>
+				{% elif current_user.isEngineer() %}
+					<a href="{{ url_for('users.engineer_reports') }}" class="btn btn-secondary my-2 my-sm-0" type="submit">
+						<i class="fa fa-file" aria-hidden="true"></i> View car reports
+					</a>
+				{% elif current_user.isManager() %}
+					<a href="{{ url_for('users.dashboard') }}" class="btn btn-secondary my-2 my-sm-0" type="submit">
+						<i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard
+					</a>
+				{% elif current_user.isAdmin() %}
+					<a href="{{ url_for('users.admin_pages') }}" class="btn btn-secondary my-2 my-sm-0" type="submit">
+						<i class="fa fa-star" aria-hidden="true"></i> Admin pages
+					</a>
+				{% endif %}
+
 			</div>
 		</div>
 	</div>
