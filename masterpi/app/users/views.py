@@ -8,7 +8,7 @@ import jsonify
 
 from json import JSONEncoder
 from multiprocessing import Process
-from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, current_app
+from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, current_app, abort
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import or_, and_, desc, func
 from werkzeug.utils import secure_filename
@@ -215,7 +215,7 @@ def dashboard():
     """ Redirect to dashboard
     """
     if not (current_user.isAdmin() or current_user.isManager()):
-        return "503 Not sufficent permission"
+        abort(403)
 
     line_chart_data = get_line_chart_data()
     pie_chart_data = get_pie_chart_data()
@@ -243,7 +243,7 @@ def admin_bookings():
     """ Redirect the admin to booking page which show the list of bookings
     """
     if not current_user.isAdmin():
-        return "503 Not sufficent permission"
+        abort(403)
     bookings = Booking.query.order_by(desc(Booking.id)).all()
     return render_template("users/admin/bookings.html", bookings=bookings)
 
@@ -253,7 +253,7 @@ def admin_cars():
     """ Redirect the admin to car page which show the list of cars
     """
     if not current_user.isAdmin():
-        return "503 Not sufficent permission"
+        abort(403)
     cars = Car.query.order_by(desc(Car.id)).all()
     return render_template("users/admin/cars.html", cars=cars)
 
@@ -272,7 +272,7 @@ def admin_cars_create():
         :status 400: bad request
     """
     if not current_user.isAdmin():
-        return "503 Not sufficent permission"
+        abort(403)
     form = CarForm(request.form)
     if form.validate_on_submit():
         car = Car(make=form.make.data, 
@@ -299,10 +299,10 @@ def admin_cars_edit(car_id):
     :status 503: Not sufficent permission
     """
     if not current_user.isAdmin():
-        return "503 Not sufficent permission"
+        abort(403)
     car = Car.query.filter_by(id=car_id).first()
     if not car: 
-        return "400 car not exists"
+        abort(404)
     form = CarForm(obj=car)
     if form.validate_on_submit():
         form.populate_obj(car)
@@ -323,7 +323,7 @@ def admin_cars_delete():
 
     """
     if not current_user.isAdmin():
-        return "503 Not sufficent permission", 503
+        abort(403), 503
     car = Car.query.filter_by(id=request.form['car_id']).first()
     if car:
         db.session.delete(car)
@@ -342,7 +342,7 @@ def admin_cars_report():
         :status 400: car not exist
     """
     if not current_user.isAdmin():
-        return "503 Not sufficent permission", 503
+        abort(403), 503
     car = Car.query.filter_by(id=request.form['car_id']).first()
     if car:
         car_report = CarReport(car.id)
@@ -355,7 +355,7 @@ def admin_cars_report():
 @login_required
 def manager_reports():
     if not current_user.isManager():
-        return "503 Not sufficent permission"
+        abort(403)
     reports = CarReport.query.filter_by(fixed=False).all()
     engineers = User.query.order_by(desc(User.id)).filter_by(role=2).all()
     return render_template("users/manager/reports.html", reports=reports, engineers=engineers)
@@ -364,7 +364,7 @@ def manager_reports():
 @login_required
 def manager_reports_assign():
     if not current_user.isManager():
-        return "503 Not sufficent permission", 503
+        abort(403), 503
     report = CarReport.query.filter_by(id=request.form['report_id']).first()
     if report:
         report.fixer_id = request.form['engineer_id']
@@ -381,7 +381,7 @@ def manager_reports_assign():
 @login_required
 def engineer_reports():
     if not current_user.isEngineer():
-        return "503 Not sufficent permission"
+        abort(403)
     reports = CarReport.query.filter(and_(CarReport.fixed == False,
                                           CarReport.fixer_id == current_user.id)) \
                              .order_by(desc(CarReport.id)) \
@@ -392,7 +392,7 @@ def engineer_reports():
 @login_required
 def engineer_reports_fixed():
     if not current_user.isEngineer():
-        return "503 Not sufficent permission", 503
+        abort(403), 503
     report = CarReport.query.filter_by(id=request.form['report_id']).first()
     if report:
         report.fixed = True
@@ -405,7 +405,7 @@ def engineer_reports_fixed():
 @login_required
 def admin_pages():
     if not current_user.isAdmin():
-        return "503 Not sufficent permission"
+        abort(403)
     return render_template("users/admin/pages.html")
 
 @mod.route('/admin/users', methods=['GET'])
@@ -414,7 +414,7 @@ def admin_users():
     """ Redirect admin to user management page
     """
     if not current_user.isAdmin():
-        return "503 Not sufficent permission"
+        abort(403)
     users = User.query.order_by(desc(User.id)).all()
     return render_template("users/admin/users.html", users=users)
 
@@ -435,7 +435,7 @@ def admin_users_create():
         :status 400: car not exist
     """
     if not current_user.isAdmin():
-        return "503 Not sufficent permission"
+        abort(403)
     form = UserForm(request.form)
     if form.validate_on_submit():
         user = User(form.email.data,
@@ -470,10 +470,10 @@ def admin_users_edit(user_id):
     :status 503: Not sufficent permission
     """
     if not current_user.isAdmin():
-        return "503 Not sufficent permission"
+        abort(403)
     user = User.query.filter_by(id=user_id).first()
     if not user: 
-        return "400 user not exists"
+        abort(400)
     form = UserEditForm(obj=user)
     if form.validate_on_submit():
         form.populate_obj(user)
@@ -499,7 +499,7 @@ def admin_users_delete():
 
     """
     if not current_user.isAdmin():
-        return "503 Not sufficent permission", 503
+        abort(403), 503
     user = User.query.filter_by(id=request.form['user_id']).first()
     if user:
 
@@ -513,7 +513,7 @@ def admin_users_delete():
         db.session.delete(user)
         db.session.commit()
         return '', 200
-    return 'user not exist.', 404
+    abort(404)
 
 ################################ User unlock car ######################################
 @api_mod.route('/login_by_credentials/', methods=['POST'])
