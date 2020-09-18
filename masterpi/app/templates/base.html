@@ -25,6 +25,12 @@
 		<div class="collapse navbar-collapse" id="navbarResponsive">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item"><a class="nav-link" href="{{ url_for('users.home') }}">Home</a></li>
+				{% if current_user.isAdmin() or current_user.isManager() %}
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('users.dashboard') }}">Dashboard</a></li>
+				{% endif %}
+				{% if current_user.isCustomer() %}
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('users.photos_upload') }}">Facial recognition</a></li>
+				{% endif %}
 				{% if current_user.isAdmin() %}
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin pages</a>
