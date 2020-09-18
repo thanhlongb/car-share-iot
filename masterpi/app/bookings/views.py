@@ -1,9 +1,10 @@
-from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
+from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, current_app
 from flask_login import current_user
 
 from app import db
 from app.bookings.models import Booking, BookingAction
 from app.cars.models import Car, CarLocation, CarReport
+from app.cars.utils import get_current_location_coordinate, get_current_location_name
 from app.calendar_api.calendar_api import CalendarApi
 from app.users.models import User
 
@@ -78,7 +79,12 @@ def return_():
     bookingAction = BookingAction(request.form['booking_id'], "returned")
     db.session.add(bookingAction)
     booking = Booking.query.get(request.form['booking_id'])
-    carLocation = CarLocation(booking.car_id, "Ho Chi Minh City")
+    current_location_coordinate = get_current_location_coordinate()
+    current_location_name = get_current_location_name(**current_location_coordinate)
+    carLocation = CarLocation(booking.car_id,
+                              long=current_location_coordinate['lng'],
+                              lat=current_location_coordinate['lat'],
+                              location=current_location_name)
     db.session.add(carLocation)
     db.session.commit()
     return '', 200

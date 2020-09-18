@@ -24,6 +24,7 @@ from app import db, login_manager, client, mail
 from app.users.forms import RegisterForm, LoginForm, UserForm, UserEditForm, PhotosForm
 from app.users.models import User
 from app.cars.models import Car, CarReport
+from app.cars.maps import StaticMap
 from app.cars.forms import CarForm
 from app.bookings.models import Booking, BookingAction
 from ..facial_recognition.encode_faces import encode
@@ -386,7 +387,18 @@ def engineer_reports():
                                           CarReport.fixer_id == current_user.id)) \
                              .order_by(desc(CarReport.id)) \
                              .all()
-    return render_template("users/engineer/reports.html", reports=reports)
+    if (reports):
+        gmap = StaticMap(reports[0].car.current_location, 
+                         reports[0].car.current_coordinate[0],
+                         reports[0].car.current_coordinate[1])
+        for report in reports[1:]:
+            gmap.add_location(report.car.current_location, 
+                              report.car.current_coordinate[0],
+                              report.car.current_coordinate[1])
+        carMap = gmap.create_map()   
+    else:
+        carMap = None     
+    return render_template("users/engineer/reports.html", reports=reports, carMap=carMap)
 
 @mod.route('/engineer/reports/fixed', methods=['POST'])
 @login_required
