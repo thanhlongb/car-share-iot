@@ -16,15 +16,15 @@ from flask_login import (
     login_user,
     logout_user,
 )
+from flask_mail import Message
 
-
-from ..facial_recognition.encode_faces import encode
-from app import db, login_manager, client
+from app import db, login_manager, client, mail
 from app.users.forms import RegisterForm, LoginForm, UserForm, UserEditForm, PhotosForm
 from app.users.models import User
 from app.cars.models import Car, CarReport
 from app.cars.forms import CarForm
 from app.bookings.models import Booking
+from ..facial_recognition.encode_faces import encode
 
 mod = Blueprint('users', __name__, url_prefix='/')
 api_mod = Blueprint('users_api', __name__, url_prefix='/api')
@@ -294,6 +294,11 @@ def manager_reports_assign():
     if report:
         report.fixer_id = request.form['engineer_id']
         db.session.commit()
+        fixer = User.query.filter_by(id=request.form['engineer_id']).first()
+        # send email to fixer
+        email = Message("There is a new vehicle with issues reported!",
+                        recipients=[fixer.email])
+        mail.send(email)
         return '', 200
     return 'report not exist.', 404
 
