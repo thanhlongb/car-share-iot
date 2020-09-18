@@ -1,7 +1,11 @@
 import os, pickle, requests, json
 import numpy as np
-from multiprocessing import Process
 from json import JSONEncoder
+import requests, json
+import qrcode
+
+from json import JSONEncoder
+from multiprocessing import Process
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import or_, and_, desc
@@ -16,15 +20,16 @@ from flask_mail import Message
 
 from app import db, login_manager, client, mail
 from app.users.forms import RegisterForm, LoginForm, UserForm, UserEditForm, PhotosForm
-# from ..facial_recognition.encode_faces import encode
 from app.users.models import User
 from app.cars.models import Car, CarReport
 from app.cars.forms import CarForm
 from app.bookings.models import Booking
+from ..facial_recognition.encode_faces import encode
 
 mod = Blueprint('users', __name__, url_prefix='/')
 api_mod = Blueprint('users_api', __name__, url_prefix='/api')
 UPLOAD_FOLDER_URL = 'app/facial_recognition/dataset'
+QR_UPLOAD_FOLDER_URL = 'app/qr_code'
 
 class NumpyArrayEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -37,6 +42,18 @@ class NumpyArrayEncoder(json.JSONEncoder):
         else:
             return super(NumpyArrayEncoder, self).default(obj)
 
+def generate_qr_code(old_engineer_name, new_engineer_name):
+    print(old_engineer_name)
+    if old_engineer_name != '':
+        oldfilename = old_engineer_name + '.png'
+        dir = os.path.join(QR_UPLOAD_FOLDER_URL, oldfilename)
+        if os.path.exists(dir):
+            os.remove(dir)
+    
+    newfilename = new_engineer_name + '.png'
+    directory = os.path.join(QR_UPLOAD_FOLDER_URL, newfilename)
+    img = qrcode.make(new_engineer_name)
+    img.save(directory)
     
 @login_manager.user_loader
 def load_user(user_id):
@@ -336,14 +353,20 @@ def admin_users_create():
                     password=generate_password_hash(form.password.data),
                     first_name=form.first_name.data,
                     last_name=form.last_name.data,
-                    role=form.role.data)
+                    role=form.role.data,
+                    bluetooth_MAC = form.bluetooth_MAC.data)
         # Insert the record in our database and commit it
         db.session.add(user)
         db.session.commit()
+
+        #Generate QR code
+        if form.role.data == '2':
+            generate_qr_code('', form.username.data)
+
         flash('User added.')
         return redirect(url_for('users.admin_users_create'))
         # redirect user to the 'home' method of the user module.    
-    return render_template("users/admin/users-create.html", form=form)    
+    return render_template("users/admin/users-create.html", form=form)   
 
 @mod.route('/admin/users/edit/<user_id>', methods=['GET', 'POST'])
 @login_required
@@ -357,6 +380,11 @@ def admin_users_edit(user_id):
     if form.validate_on_submit():
         form.populate_obj(user)
         db.session.commit()
+
+        #generate new QR code
+        if form.role.data == '2':
+            generate_qr_code(user.getUsername(), form.username.data)
+        
         flash('User information updated.')
     return render_template("users/admin/users-edit.html", form=form)
 
@@ -367,11 +395,20 @@ def admin_users_delete():
         return "503 Not sufficent permission", 503
     user = User.query.filter_by(id=request.form['user_id']).first()
     if user:
+
+        #delete qr_code
+        if user.getRole() == 'engineer':
+            filename = user.getUsername() + '.png'
+            directory = os.path.join(QR_UPLOAD_FOLDER_URL, filename)
+            if os.path.exists(directory):
+                os.remove(directory)
+
         db.session.delete(user)
         db.session.commit()
         return '', 200
     return 'user not exist.', 404
 
+################################ User unlock car ######################################
 @api_mod.route('/login/', methods=['POST'])
 def api_login():
     user = User.query.filter_by(username=request.form['username']).first()
@@ -379,6 +416,9 @@ def api_login():
         return user.serialize(), 200
     else:
         return '{}', 401
+
+def api_logout():
+    pass
 
 @api_mod.route('/face_encodings/', methods=['GET'])
 def face_encodings():
@@ -397,7 +437,7 @@ def photos_upload():
         if form.validate_on_submit():
             user = User.query.filter_by(id=current_user.id).first()
             username = user.username
-            directory = os.path.join(UPLOAD_FOLDER_URL, username)
+            directory = os.path.join(FACE_UPLOAD_FOLDER_URL, username)
             if not os.path.exists(directory):
                 os.makedirs(directory)
             for f in request.files.getlist('images'):
@@ -407,3 +447,21 @@ def photos_upload():
             thread.run()
             return render_template("users/photos-upload.html", form=form, uploaded=True)
     return render_template("users/photos-upload.html", form=form, uploaded=False)
+
+
+################################ Engineer unlock car ######################################
+@api_mod.route('/engineer_unlock_car_QR/', methods=['POST'])
+def api_engineer_unlock_car_by_QR():
+    engineer = User.query.filter_by(username=request.form['username']).first()
+    if engineer and engineer.isEngineer():
+        return engineer.serialize(), 200
+    else:
+        return '{}', 401
+
+@api_mod.route('/engineer_unlock_car_bluetooth/', methods=['POST'])
+def api_engineer_unlock_car_by_bluetooth():
+    engineer = User.query.filter_by(bluetooth_MAC=request.form['bluetooth_MAC']).first()
+    if engineer and engineer.isEngineer():
+        return engineer.serialize(), 200
+    else:
+        return '{}', 401
