@@ -10,30 +10,15 @@ import cv2
 import os
 import time
 
-# ap = argparse.ArgumentParser()
-# ap.add_argument("-d", "--detector", required=True)
-# #ap.add_argument("-m", "--embedding_model", required=True)
-# ap.add_argument("-r", "--recognizer", required=True)
-# ap.add_argument("-l", "--le", required=True)
-# ap.add_argument("-c", "--confidence", type=float, default=0.5)
-# args = vars(ap.parse_args())
-
 DEPLOY_PROTOTXT_PATH = 'facial_recognition/pretrained_model/deploy.prototxt'
 RES10_300X300_PATH = 'facial_recognition/pretrained_model/res10_300x300_ssd_iter_140000.caffemodel'
 RECOGNIZER_PATH = 'facial_recognition/output/recognizer.pickle'
 LABEL_ENCODER_PATH = 'facial_recognition/output/le.pickle'
 CONFIDENCE = 0.5
 
-# print("[INFO] loading face detector...")
-# protoPath = os.path.sep.join([args["detector"], "deploy.prototxt"])
-# modelPath = os.path.sep.join([args["detector"],
-#   "res10_300x300_ssd_iter_140000.caffemodel"])
 def recognize():
     detector = cv2.dnn.readNetFromCaffe(DEPLOY_PROTOTXT_PATH, RES10_300X300_PATH)
     
-    #print("[INFO] loading face recognizer...")
-    #embedder = cv2.dnn.readNetFromTorch(args["embedding_model"])
-
     recognizer = pickle.loads(open(RECOGNIZER_PATH, "rb").read())
     le = pickle.loads(open(LABEL_ENCODER_PATH, "rb").read())
 

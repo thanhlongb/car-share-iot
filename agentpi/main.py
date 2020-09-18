@@ -192,14 +192,14 @@ def handle_facial_recognition_result(username, main_menu, user_menu):
 def user_login_with_facial_recognition(main_menu, user_menu):
     global CAR_LOCKED
     CAR_LOCKED = False
-    # main_menu.pause()
+    main_menu.pause()
     new_encodings_data = update_facial_encodings()
     print('[INFO] Training new model...')
     train_model(new_encodings_data)
     print('[INFO] Initializing...')
     username = recognize()
     print(username)
-    # handle_facial_recognition_result(username, main_menu, user_menu)
+    handle_facial_recognition_result(username, main_menu, user_menu)
 
 #---- Engineer login with QR code ----#
 def handle_fail_engineer_login(main_menu):
@@ -258,3 +258,4 @@ if __name__ == '__main__':
     bluetooth_device_detector.start()
     main_menu.join()
     bluetooth_device_detector.join()
+

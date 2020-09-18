@@ -39,6 +39,3 @@ def encode():
 	f.write(pickle.dumps(data))
 	f.close()
 	print('[INFO] Done encoding faces!')
-	
-if __name__ =='__main__':
-	encode()
