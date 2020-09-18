@@ -41,8 +41,9 @@ class CalendarApi:
 
         SCOPES = ["https://www.googleapis.com/auth/calendar"]
         creds  = None
-        token_file = Path("./credentials/token.pickle")
-
+        
+        token_file = Path("app/calendar_api/credentials/token.pickle")
+        # print(token_file)
         if token_file.exists():
             with open(token_file, "rb") as token:
                 creds = load(token)
@@ -51,7 +52,7 @@ class CalendarApi:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file('./credentials/credentials.json', SCOPES)
+                flow = InstalledAppFlow.from_client_secrets_file('app/calendar_api/credentials/credentials.json', SCOPES)
                 creds = flow.run_local_server(port=0)
             with open(token_file, "wb") as token:
                 dump(creds, token)
@@ -92,6 +93,6 @@ class CalendarApi:
 # if __name__ == "__main__":
 #     plan = CalendarApi("test", 
 #                         "ádasdasdasdas",
-#                         "tmq2706@gmail.com", 
+#                         "nqtrung02022000@gmail.com", 
 #                         datetime.now(), 2)
 #     print(plan.event_states)

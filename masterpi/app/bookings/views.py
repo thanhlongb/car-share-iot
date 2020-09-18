@@ -91,10 +91,9 @@ def add_event_for_calendar(booking, bookingAction):
 
     """
     user = User.query.filter_by(id = booking.user_id).first()
-    calendar = CalendarApi()
     title = "Book car {}".format(booking.car_id)
     description = "You have booked car {} at {} for {} hours. Your booking id is {}".format(booking.car_id, 
                                                                                             bookingAction.creation_time, 
                                                                                             booking.duration, 
                                                                                             booking.id)
-    event = CalendarApi(title, description, user.email, datetime.now(), booking.duration)
+    event = CalendarApi(title, description, user.email, bookingAction.creation_time, booking.duration)
