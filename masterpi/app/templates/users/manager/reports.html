@@ -27,7 +27,7 @@
             <td>{{ report.id }}</td>
             <td>{{ report.car.make }}</td>
             <td id="fixer-name{{ report.id }}">
-                {{ report.fixer.first_name + ' ' + report.fixer.last_name if report.fixer else '(not assigned)' }}
+                {{ report.fixer.username if report.fixer else '(not assigned)' }}
             </td>
             <td class="timeago" datetime="{{ report.creation_time }}"></td>
             <td>
@@ -95,6 +95,8 @@
               type: 'POST',
               beforeSend: function() {
                 $('#row' + report_id).addClass('table-info');
+                $('#assign-btn').prop('disabled', true);
+                $('#assign-btn').text("Assigning");
               },
               success: function(res) {
                   $('#assign-btn' + report_id).hide();
@@ -106,6 +108,10 @@
               error: function(error) {
                   $('#assign-modal').modal('hide');
                   $('#row' + report_id).removeClass('table-info');
+              },
+              complete: function() {
+                $('#assign-btn').text("Assign");
+                $('#assign-btn').prop('disabled', false);
               }
           })
       });

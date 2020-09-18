@@ -42,7 +42,7 @@
               <button onclick='delete_car({{ car.id }})' type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-modal" title="Delete">
                 <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
-              {% if not car.fixing %}
+              {% if not (car.fixing or car.booked) %}
               <button id="report-btn{{ car.id }}" onclick='report_car({{ car.id }})' type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#report-modal"  title="Report">
                 <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
               </button>
