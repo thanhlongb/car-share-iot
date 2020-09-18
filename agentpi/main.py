@@ -19,14 +19,15 @@ from facial_recognition.recognize import recognize
 from qr_code import get_QR_encryption
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 from pisocket import client
-
 from detect_nearby_device import detect
 
-GET_FACE_ENCODINGS_API = "https://127.0.0.1:5000/api/users/face_encodings/"
-ENGINEER_LOGIN_BY_QR_CODE_API = "https://127.0.0.1:5000/api/users/engineer_unlock_car_QR/"
+GET_FACE_ENCODINGS_API = "https://127.0.0.1:5000/api/face_encodings/"
+ENGINEER_LOGIN_BY_QR_CODE_API = "https://127.0.0.1:5000/api/engineer_unlock_car_QR/"
+LOGOUT_API = "https://127.0.0.1:5000/api/logout/"
 warnings.simplefilter('ignore',InsecureRequestWarning)
-car_locked = True
-program_exit = False
+CAR_LOCKED = True
+PROGRAM_EXIT = False
+CAR_ID = 1
 
 #--------------------------------- Menu ---------------------------------#
 FORMAT = MenuFormatBuilder() \
@@ -59,7 +60,7 @@ def create_engineer_menu():
         exit_option_text="Logout and lock car"
     )
     exit_item = FunctionItem("Logout and lock car", 
-        user_logout, 
+        engineer_logout, 
         should_exit=True
     )    
     menu.append_item(exit_item)
@@ -127,12 +128,20 @@ def create_main_menu(user_menu, engineer_menu):
 #--------------------------------- Action ---------------------------------#
 #---- User logout ----#
 def user_logout():
-    global car_locked
-    car_locked = True
+    global CAR_LOCKED
+    CAR_LOCKED = True
+    param = {
+        "car_id" : CAR_ID
+    }
+    requests.post(LOGOUT_API, param ,verify=False)
+
+def engineer_logout():
+    global CAR_LOCKED
+    CAR_LOCKED = True
 
 def shutdown():
-    global program_exit
-    program_exit = True
+    global PROGRAM_EXIT
+    PROGRAM_EXIT = True
 
 #---- User login with credentials ----#
 def handle_fail_user_login(use_credentials, main_menu):
@@ -141,8 +150,8 @@ def handle_fail_user_login(use_credentials, main_menu):
     else:
         print("Cannot recognize user's face! Please try again.")
     time.sleep(2)
-    global car_locked
-    car_locked = True
+    global CAR_LOCKED
+    CAR_LOCKED = True
     main_menu.resume()
 
 def handle_success_user_login(username, user_menu):
@@ -152,12 +161,12 @@ def handle_success_user_login(username, user_menu):
     user_menu.show()
 
 def user_login_with_credentials(main_menu, user_menu):
-    global car_locked
-    car_locked = False
+    global CAR_LOCKED
+    CAR_LOCKED = False
     main_menu.pause()
     username = input('Username: ')
     password = getpass.getpass('Password: ')
-    res_dict = client.send_credentials(username, password)
+    res_dict = client.send_credentials(1, CAR_ID, username, password)
     if len(res_dict) == 0:
         handle_fail_user_login(True, main_menu)
     else:
@@ -174,30 +183,35 @@ def handle_facial_recognition_result(username, main_menu, user_menu):
     if username == 'unknown':
         handle_fail_user_login(False, main_menu)
     else:
-        handle_success_user_login(username, user_menu)
+        res_dict = client.send_credentials(2, CAR_ID, username)
+        if len(res_dict) == 0:
+            handle_fail_user_login(False, main_menu)
+        else:
+            handle_success_user_login(username, user_menu)
 
 def user_login_with_facial_recognition(main_menu, user_menu):
-    global car_locked
-    car_locked = False
-    main_menu.pause()
+    global CAR_LOCKED
+    CAR_LOCKED = False
+    # main_menu.pause()
     new_encodings_data = update_facial_encodings()
     print('[INFO] Training new model...')
     train_model(new_encodings_data)
     print('[INFO] Initializing...')
     username = recognize()
-    handle_facial_recognition_result(username, main_menu, user_menu)
+    print(username)
+    # handle_facial_recognition_result(username, main_menu, user_menu)
 
 #---- Engineer login with QR code ----#
 def handle_fail_engineer_login(main_menu):
-    global car_locked
-    car_locked = True
+    global CAR_LOCKED
+    CAR_LOCKED = True
     print('The QR code used is invalid. Please try again!')
     time.sleep(2)
     main_menu.resume()
 
 def handle_success_engineer_login(engineer_username, engineer_menu):
-    global car_locked
-    car_locked = False
+    global CAR_LOCKED
+    CAR_LOCKED = False
     print("\n\nWelcome engineer '{}' to the car".format(engineer_username))
     time.sleep(2)
     tempMenu = ConsoleMenu.currently_active_menu
@@ -209,8 +223,8 @@ def handle_success_engineer_login(engineer_username, engineer_menu):
     tempMenu.resume()
 
 def engineer_login_with_QR_code(main_menu, engineer_menu):
-    global car_locked
-    car_locked = False
+    global CAR_LOCKED
+    CAR_LOCKED = False
     engineer_username = get_QR_encryption()
     Params = {'username' : engineer_username}
     response = requests.post(ENGINEER_LOGIN_BY_QR_CODE_API, Params, verify=False)
@@ -222,14 +236,12 @@ def engineer_login_with_QR_code(main_menu, engineer_menu):
 
 def detect_bluetooth_device(main_menu, engineer_menu):
     while True:
-        global program_exit
-        global car_locked
-        if program_exit:
+        global PROGRAM_EXIT
+        global CAR_LOCKED
+        if PROGRAM_EXIT:
             return
-        if car_locked:
-            print('Detecting')
+        if CAR_LOCKED:
             engineer_username = detect()
-            print(engineer_username)
             if engineer_username != '':
                 handle_success_engineer_login(engineer_username, engineer_menu)
         time.sleep(5)
