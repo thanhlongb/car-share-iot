@@ -40,3 +40,11 @@ GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configura
 # RECAPTCHA_PUBLIC_KEY = '6LeYIbsSAAAAACRPIllxA7wvXjIE411PfdB2gt2J'
 # RECAPTCHA_PRIVATE_KEY = '6LeYIbsSAAAAAJezaIq3Ft_hSTo0YtyeFG-JgRtu'
 # RECAPTCHA_OPTIONS = {'theme': 'white'}
+
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 587
+MAIL_USERNAME = 'buith4nhlong@gmail.com'
+MAIL_USE_TLS = True
+MAIL_USE_SSL = False
+MAIL_PASSWORD = 'cdoqpguqcktubuxu'
+MAIL_DEFAULT_SENDER = 'buith4nhlong@gmail.com'

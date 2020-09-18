@@ -12,8 +12,9 @@ from flask_login import (
     login_user,
     logout_user,
 )
+from flask_mail import Message
 
-from app import db, login_manager, client
+from app import db, login_manager, client, mail
 from app.users.forms import RegisterForm, LoginForm, UserForm, UserEditForm, PhotosForm
 # from ..facial_recognition.encode_faces import encode
 from app.users.models import User
@@ -276,6 +277,11 @@ def manager_reports_assign():
     if report:
         report.fixer_id = request.form['engineer_id']
         db.session.commit()
+        fixer = User.query.filter_by(id=request.form['engineer_id']).first()
+        # send email to fixer
+        email = Message("There is a new vehicle with issues reported!",
+                        recipients=[fixer.email])
+        mail.send(email)
         return '', 200
     return 'report not exist.', 404
 
