@@ -41,6 +41,18 @@
                 </table>
             </div>
         </div>
+        <div> 
+            {% if carMap %}   
+            {{ carMap.html }}
+            {% else %}
+            <h4>This car location is not recorded yet.</h4>
+            {% endif %}
+        </div>
 </div>
 
+{% endblock %}
+
+{% block script %}
+    {{ super() }}
+    {{ carMap.js }}
 {% endblock %}
