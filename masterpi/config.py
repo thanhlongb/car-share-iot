@@ -5,19 +5,11 @@ DEBUG = True
 SECRET_KEY = '''wrg)_4')@(<VcJxc37"lG;.hC^LT.7X_+Flv2X0w7W&je3>HDTXA*)Ff'xk#D*5'''
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-DATABASE_HOST = 'nwhazdrp7hdpd4a4.cbetxkdyhwsb.us-east-1.rds.amazonaws.com'
+DATABASE_HOST = '35.187.227.56'
 DATABASE_PORT = 3306
-DATABASE_USER = 'dwnmrp5llieowj19'
-DATABASE_PASSWORD = 'i1dtel962z0lo3jy'
-DATABASE_NAME = 'ejdr1o1zohrodiw4'
-
-# FIXME: remove later
-# Uncomment if you want to use Google Cloud DB
-# DATABASE_HOST = '35.187.227.56'
-# DATABASE_PORT = 3306
-# DATABASE_USER = 'root'
-# DATABASE_PASSWORD = 'C3lz4Jemuga0LNFK'
-# DATABASE_NAME = 'carshareiot'
+DATABASE_USER = 'root'
+DATABASE_PASSWORD = 'C3lz4Jemuga0LNFK'
+DATABASE_NAME = 'carshareiot'
 
 SQLALCHEMY_DATABASE_URI = (
     'mysql+mysqlconnector://{user}:{pasw}@{host}:{port}/{name}').format(
@@ -36,11 +28,6 @@ GOOGLE_CLIENT_ID = '''798556033482-18bih5lt883gvriclvr7fdger63hcnb4.apps.googleu
 GOOGLE_CLIENT_SECRET = '''3azjWEwWkaMvMHPA_ue7FfR-'''
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 GOOGLE_MAP_API_KEY = "AIzaSyC4l8KgttHz2TGU96K88shTXGpm17xvF20"
-
-# RECAPTCHA_USE_SSL = False
-# RECAPTCHA_PUBLIC_KEY = '6LeYIbsSAAAAACRPIllxA7wvXjIE411PfdB2gt2J'
-# RECAPTCHA_PRIVATE_KEY = '6LeYIbsSAAAAAJezaIq3Ft_hSTo0YtyeFG-JgRtu'
-# RECAPTCHA_OPTIONS = {'theme': 'white'}
 
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 587
