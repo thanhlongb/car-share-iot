@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin Pages:</h2>
+<div class="row">
+    <div class="col-lg-4">
+            <a href="{{ url_for('users.admin_users') }}">
+                <h3 class="card-header text-center shadow">
+                    <i class="fa fa-user" aria-hidden="true"></i> Users
+                </h3>
+            </a>
+    </div>
+    <div class="col-lg-4">
+            <a href="{{ url_for('users.admin_cars') }}">
+                <h3 class="card-header text-center shadow">
+                    <i class="fa fa-car" aria-hidden="true"></i> Cars
+                </h3>
+            </a>
+    </div>
+    <div class="col-lg-4">
+            <a href="{{ url_for('users.admin_bookings') }}">
+                <h3 class="card-header text-center shadow">
+                    <i class="fa fa-bookmark" aria-hidden="true"></i> Bookings
+                </h3>
+            </a>
+    </div>
+</div>
+{% endblock %}
