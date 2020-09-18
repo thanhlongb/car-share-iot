@@ -4,6 +4,10 @@ from flask_login import current_user
 from app import db
 from app.bookings.models import Booking, BookingAction
 from app.cars.models import Car, CarLocation, CarReport
+from app.calendar_api.calendar_api import CalendarApi
+from app.users.models import User
+
+from datetime import datetime
 
 mod = Blueprint('bookings', __name__, url_prefix = '/bookings')
 
@@ -18,6 +22,7 @@ def book():
     bookingAction = BookingAction(booking.id, "created")
     db.session.add(bookingAction)
     db.session.commit()
+    add_event_for_calendar(booking, bookingAction)
     return '', 200
 
 @mod.route('/unlock', methods = ['POST'])
@@ -43,3 +48,14 @@ def return_():
     db.session.add(carLocation)
     db.session.commit()
     return '', 200
+
+def add_event_for_calendar(booking, bookingAction):
+    user = User.query.filter_by(id = booking.user_id).first()
+    calendar = CalendarApi()
+    title = "Book car {}".format(car.id)
+    description = "You have booked car {} at {} for {} hours. Your booking id is {}".format(booking.car_id, 
+                                                                                            bookingAction.creation_time, 
+                                                                                            booking.duration, 
+                                                                                            booking.id)
+    event = calendar.create_event(title, datetime.now(), description, calendar.create_attendee(user.email))
+    calendar.send_invitation(event)

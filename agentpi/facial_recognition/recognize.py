@@ -94,17 +94,17 @@ def recognize():
         fps.update()
 
         cv2.imshow("Frame", frame)
-        tcur = time.time()
+        # tcur = time.time()
 
-        if tcur - tstart > 15 & name != 'unknown' & proba > 0.8:
-            return name
-        elif tcur - tstart > 60:
-            return 'unknown'
+        # if tcur - tstart > 15 & name != 'unknown' & proba > 0.8:
+        #     return name
+        # elif tcur - tstart > 60:
+        #     return 'unknown'
 
-        # key = cv2.waitKey(1) & 0xFF
+        key = cv2.waitKey(1) & 0xFF
 
-        # if key == ord("q"):
-        #     break
+        if key == ord("q"):
+            break
 
     fps.stop()
     print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
