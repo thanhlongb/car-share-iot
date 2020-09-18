@@ -26,7 +26,9 @@ def details(id):
     """
     car = Car.query.filter_by(id=id).first()
     if car.locations:
-        gmap = StaticMap(car.current_location, id)
+        gmap = StaticMap(car.current_location, 
+                         car.current_coordinate[0],
+                         car.current_coordinate[1])
         carMap = gmap.create_map()
     else:
         carMap = None

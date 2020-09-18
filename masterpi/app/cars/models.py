@@ -59,6 +59,12 @@ class Car(db.Model):
             return 'undefined'
         return self.locations[-1].location
 
+    @property
+    def current_coordinate(self):
+        if not self.locations:
+            return (0,0)
+        return (self.locations[-1].lat, self.locations[-1].long) 
+
     def __repr__(self):
         return '<Car %r>' % (self.id)
 
@@ -70,9 +76,11 @@ class CarLocation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     car_id = db.Column(db.Integer, db.ForeignKey('Car.id'))
     location = db.Column(db.String(100))
+    long = db.Column(db.Float())
+    lat = db.Column(db.Float())
     creation_time = db.Column(db.DateTime(timezone=True), server_default=func.now())
 
-    def __init__(self, car_id, location=None):
+    def __init__(self, car_id, location=None, long=None, lat=None):
         """ Constructor for the CarLocation
         
         :param int car_id: id of an existing car
@@ -80,6 +88,8 @@ class CarLocation(db.Model):
         """
         self.car_id = car_id
         self.location = location
+        self.long = long
+        self.lat = lat
 
     def __repr__(self):
         return '<CarLocation %r>' % (self.id)

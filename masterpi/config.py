@@ -29,6 +29,10 @@ GOOGLE_CLIENT_SECRET = '''3azjWEwWkaMvMHPA_ue7FfR-'''
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 GOOGLE_MAP_API_KEY = "AIzaSyC4l8KgttHz2TGU96K88shTXGpm17xvF20"
 
+GOOGLE_API_KEY = "AIzaSyCH7UhWjoVtJIapFiTSRrU5_jNFKlhwF9g"
+GOOGLE_GEOLOCATION_API_URL = "https://www.googleapis.com/geolocation/v1/geolocate?key={key}"
+GOOGLE_GEOCODING_API_URL = "https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{long}&key={key}"
+
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 587
 MAIL_USERNAME = 'buith4nhlong@gmail.com'
