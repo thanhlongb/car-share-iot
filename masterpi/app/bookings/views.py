@@ -9,10 +9,20 @@ from app.users.models import User
 
 from datetime import datetime
 
+
 mod = Blueprint('bookings', __name__, url_prefix = '/bookings')
 
 @mod.route('/book', methods = ['POST'])
 def book():
+    """ This function allow user to book (POST) a car
+
+        When user book a car, a booking record and booking action is created 
+
+        :<json int car_id: id of a existing car
+        :<json int duration: book duration (hours)
+
+        :status 200: book created
+    """
     car = Car.query.filter_by(id = request.form['car_id']).first()
     if car:
         user_id = current_user.id
@@ -27,6 +37,14 @@ def book():
 
 @mod.route('/unlock', methods = ['POST'])
 def unlock():
+    """ This function allow user to unlock (POST) a car
+
+        a booking action record is created
+
+        :<json int booking_id: id of a booking record
+
+        :status 200: book created
+    """
     bookingAction = BookingAction(request.form['booking_id'], "unlocked")
     db.session.add(bookingAction)
     db.session.commit()
@@ -34,6 +52,14 @@ def unlock():
 
 @mod.route('/cancel', methods = ['POST'])
 def cancel():
+    """ This function allow user to cancel (POST) a booking
+        
+        a booking action record is created
+
+        :<json int booking_id: id of a booking record
+
+        :status 200: book canceled
+    """
     bookingAction = BookingAction(request.form['booking_id'], "cancelled")
     db.session.add(bookingAction)
     db.session.commit()
@@ -41,6 +67,14 @@ def cancel():
 
 @mod.route('/return', methods = ['POST'])
 def return_():
+    """ This function allow user to return (POST) a car
+
+        a booking action record is created
+
+        :<json int booking_id: id of a booking record
+
+        :status 200: return succeed 
+    """
     bookingAction = BookingAction(request.form['booking_id'], "returned")
     db.session.add(bookingAction)
     booking = Booking.query.get(request.form['booking_id'])
@@ -50,12 +84,17 @@ def return_():
     return '', 200
 
 def add_event_for_calendar(booking, bookingAction):
+    """ This function will sent a calendar event to user who book the car 
+
+    :param booking: booking of the car
+    :param bookingAction: the booking action record of the car
+
+    """
     user = User.query.filter_by(id = booking.user_id).first()
     calendar = CalendarApi()
-    title = "Book car {}".format(car.id)
+    title = "Book car {}".format(booking.car_id)
     description = "You have booked car {} at {} for {} hours. Your booking id is {}".format(booking.car_id, 
                                                                                             bookingAction.creation_time, 
                                                                                             booking.duration, 
                                                                                             booking.id)
-    event = calendar.create_event(title, datetime.now(), description, calendar.create_attendee(user.email))
-    calendar.send_invitation(event)
+    event = CalendarApi(title, description, user.email, datetime.now(), booking.duration)

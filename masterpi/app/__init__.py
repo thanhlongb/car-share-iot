@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
 from oauthlib.oauth2 import WebApplicationClient
+from flask_googlemaps import GoogleMaps, Map, icons
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -12,6 +13,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 mail = Mail(app)
 mail.init_app(app)
+GoogleMaps(app, key=app.config['GOOGLE_MAP_API_KEY'])
 
 with app.app_context():
     client = WebApplicationClient(app.config['GOOGLE_CLIENT_ID'])
