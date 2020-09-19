@@ -250,12 +250,11 @@ if __name__ == '__main__':
     user_menu = create_user_menu()
     engineer_menu = create_engineer_menu()
     main_menu = create_main_menu(user_menu, engineer_menu)
-    # bluetooth_device_detector = threading.Thread(
-    #     target=detect_bluetooth_device,
-    #     args=(main_menu, engineer_menu, ),
-    # )
-    # main_menu.start()
-    # bluetooth_device_detector.start()
-    # main_menu.join()
-    # bluetooth_device_detector.join()
-    user_login_with_facial_recognition(user_menu, main_menu)
+    bluetooth_device_detector = threading.Thread(
+        target=detect_bluetooth_device,
+        args=(main_menu, engineer_menu, ),
+    )
+    main_menu.start()
+    bluetooth_device_detector.start()
+    main_menu.join()
+    bluetooth_device_detector.join()
