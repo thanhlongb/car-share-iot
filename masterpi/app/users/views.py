@@ -177,8 +177,7 @@ def register():
                         username=form.username.data, 
                         first_name=form.first_name.data, 
                         last_name=form.last_name.data, 
-                        password=generate_password_hash(form.password.data),
-                        date=datetime.datetime.now().strftime("%Y-%m-%d"))
+                        password=generate_password_hash(form.password.data))
             # Insert the record in our database and commit it
             db.session.add(user)
             db.session.commit()
@@ -199,8 +198,6 @@ def dashboard():
     line_chart_data = get_line_chart_data()
     pie_chart_data = get_pie_chart_data()
     bar_chart_data = get_bar_chart_data()
-    print(bar_chart_data['labels'])
-    print(bar_chart_data['values'])
 
     return render_template("users/dashboard.html", 
         line_chart_labels = line_chart_data['labels'],
@@ -313,8 +310,7 @@ def admin_users_create():
                     first_name=form.first_name.data,
                     last_name=form.last_name.data,
                     role=form.role.data,
-                    bluetooth_MAC = form.bluetooth_MAC.data,
-                    date=datetime.datetime.now().strftime("%Y-%m-%d"))
+                    bluetooth_MAC = form.bluetooth_MAC.data,)
         # Insert the record in our database and commit it
         db.session.add(user)
         db.session.commit()

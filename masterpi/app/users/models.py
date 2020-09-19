@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.inspection import inspect
+from sqlalchemy.sql import func
 from app.users import constants as USER
 from flask_login import UserMixin
 
@@ -21,11 +22,11 @@ class User(UserMixin, db.Model):
     bluetooth_MAC = db.Column(db.String(100), nullable=True)
     facial_recognition = db.Column(db.Boolean, default=False)
     google_login = db.Column(db.Boolean, default=False)
-    date = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.DateTime(timezone=True), server_default=func.now())
 
     def __init__(self, email, username=None, password=None,
                        role=None, first_name=None, last_name=None, 
-                       bluetooth_MAC=None, date=None):
+                       bluetooth_MAC=None):
         self.email = email
         self.username = username
         self.password = password
@@ -33,7 +34,6 @@ class User(UserMixin, db.Model):
         self.first_name = first_name
         self.last_name = last_name
         self.bluetooth_MAC = bluetooth_MAC
-        self.date = date
 
     def isAdmin(self):
         return self.role == 0
@@ -56,7 +56,12 @@ class User(UserMixin, db.Model):
         return data
 
     def serialize_with_cols(self, cols):
-        data = {c: getattr(self, c) for c in cols}
+        data = {}
+        for c in cols:
+            if c == 'date':
+                data[c] = getattr(self, c).strftime("%Y-%m-%d")
+            else: 
+                data[c] = getattr(self, c)
         return data
 
     def __repr__(self):
