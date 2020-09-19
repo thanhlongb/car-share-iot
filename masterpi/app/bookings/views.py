@@ -32,7 +32,9 @@ def book():
     bookingAction = BookingAction(booking.id, "created")
     db.session.add(bookingAction)
     db.session.commit()
-    add_event_for_calendar(booking, bookingAction)
+    event = add_event_for_calendar(booking, bookingAction)
+    booking.calendar_api = event['id']
+    db.session.commit()
     return '', 200
 
 @mod.route('/unlock', methods = ['POST'])
@@ -61,6 +63,9 @@ def cancel():
         :status 200: book canceled
     """
     bookingAction = BookingAction(request.form['booking_id'], "cancelled")
+    booking = Booking.query.filter_by(id = request.form['booking_id']).first()
+    if booking.calendar_id:
+        delete_event_calendar(booking.calendar_id)
     db.session.add(bookingAction)
     db.session.commit()
     return '', 200
@@ -96,4 +101,14 @@ def add_event_for_calendar(booking, bookingAction):
                                                                                             bookingAction.creation_time, 
                                                                                             booking.duration, 
                                                                                             booking.id)
-    event = CalendarApi(title, description, user.email, bookingAction.creation_time, booking.duration)
+    calendar = CalendarApi()
+    event = calendar.add_event(title, description, user.email, bookingAction.creation_time, booking.duration)
+    return event
+
+def delete_event_calendar(event_id):
+    """ this function delete event on the calendar
+
+    :param str event_id: calender event id
+    """
+    calendar = CalendarApi()
+    event = calendar.delete_event(event_id)

@@ -11,21 +11,26 @@ class Booking(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('User.id'))
     car_id = db.Column(db.Integer, db.ForeignKey('Car.id'))
     duration = db.Column(db.Integer)
+    calendar_id= db.Column(db.String(100))
     actions = relationship("BookingAction")
     user = relationship("User")
     car = relationship("Car")
+    
 
-    def __init__(self, user_id, car_id, duration=0):
+    def __init__(self, user_id, car_id, duration=0, calendar_id=None):
         """
         Constructor of the Booking class
 
         :param int user_id: id of existing user
         :param int car_id: id of the existing car
         :param int duration: rent duration
+        :param str calendar_id: event id of calendar
         """
         self.user_id = user_id
         self.car_id = car_id
         self.duration = duration
+        self.calendar_id=calendar_id
+
 
     @property
     def booked(self):
