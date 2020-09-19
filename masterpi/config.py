@@ -5,11 +5,18 @@ DEBUG = True
 SECRET_KEY = '''wrg)_4')@(<VcJxc37"lG;.hC^LT.7X_+Flv2X0w7W&je3>HDTXA*)Ff'xk#D*5'''
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-DATABASE_HOST = '35.187.227.56'
+# DATABASE_HOST = '35.187.227.56'
+# DATABASE_PORT = 3306
+# DATABASE_USER = 'root'
+# DATABASE_PASSWORD = 'C3lz4Jemuga0LNFK'
+# DATABASE_NAME = 'carshareiot'
+
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+DATABASE_HOST = 'nwhazdrp7hdpd4a4.cbetxkdyhwsb.us-east-1.rds.amazonaws.com'
 DATABASE_PORT = 3306
-DATABASE_USER = 'root'
-DATABASE_PASSWORD = 'C3lz4Jemuga0LNFK'
-DATABASE_NAME = 'carshareiot'
+DATABASE_USER = 'dwnmrp5llieowj19'
+DATABASE_PASSWORD = 'i1dtel962z0lo3jy'
+DATABASE_NAME = 'ejdr1o1zohrodiw4'
 
 SQLALCHEMY_DATABASE_URI = (
     'mysql+mysqlconnector://{user}:{pasw}@{host}:{port}/{name}').format(
