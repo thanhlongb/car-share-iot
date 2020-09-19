@@ -6,7 +6,7 @@
         <form method="POST" action="." enctype="multipart/form-data">
             {{ form.csrf_token }}
             {{ render_field(form.images, class="form-control") }}
-            <button type="submit">Upload</button>
+            <button type="submit" class="btn btn-secondary">Upload</button>
         </form>
     {% else %}
         <p>Upload completed</p>
