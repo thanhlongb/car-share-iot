@@ -17,7 +17,7 @@ class CalendarApi:
     """ This class create the google calenar api for adding event to the calendar
     """
 
-    def __init__(self, title, description, attendee, start, duration):
+    def __init__(self):
         """ Constructor for the class
 
         :param str title: title of the event
@@ -27,10 +27,10 @@ class CalendarApi:
         :param int duration: duration of car booked 
 
         """
-        service = self.authorization()
-        end = start + timedelta(hours=duration)
-        self.event_states = self.add_event(title, description, attendee, 
-                                            start.isoformat(), end.isoformat(), service)
+        self.service = self.authorization()
+        # end = start + timedelta(hours=duration)
+        # self.event_states = self.add_event(title, description, attendee, 
+        #                                     start.isoformat(), end.isoformat(), service)
 
     def authorization(self):
         """
@@ -61,7 +61,7 @@ class CalendarApi:
 
         return calendar_service
 
-    def add_event(self, title, description, attendee, start, end, service: build):
+    def add_event(self, title, description, attendee, start, duration):
         """
         Add event to the calendar
 
@@ -69,7 +69,7 @@ class CalendarApi:
         :param str description: description of the event
         :param str attendee: email of the user
         :param datetime start: time start event
-        :param datetime end: time end event
+        :param int duration: duration of car booked 
         :param service: the calendar service
 
         :return: an event object
@@ -77,22 +77,23 @@ class CalendarApi:
 
 
         """
-
+        end = start + timedelta(hours=duration)
         event = {"summary": title,
-                 "start": {"dateTime": start, "timeZone": str(get_localzone())},
-                 "end": {"dateTime": end, "timeZone": str(get_localzone())},
+                 "start": {"dateTime": start.isoformat(), "timeZone": str(get_localzone())},
+                 "end": {"dateTime": end.isoformat(), "timeZone": str(get_localzone())},
                  "description": description,
                  "attendees": [{"email": attendee}],
                  "reminders": {"useDefault": True}
                 }
-        event = service.events().insert(calendarId="primary", sendNotifications=True, body=event).execute()
+        event = self.service.events().insert(calendarId="primary", sendNotifications=True, body=event).execute()
 
         return event
 
+    
+    def delete_event(self, event_id):
+        '''
+        This function delete calendar event
 
-# if __name__ == "__main__":
-#     plan = CalendarApi("test", 
-#                         "ádasdasdasdas",
-#                         "nqtrung02022000@gmail.com", 
-#                         datetime.now(), 2)
-#     print(plan.event_states)
+        :param str event_id: id of deleted event
+        '''
+        self.service.events().delete(calendarId='primary', eventId=event_id).execute()
