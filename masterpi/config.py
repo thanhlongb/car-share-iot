@@ -5,18 +5,33 @@ DEBUG = True
 SECRET_KEY = '''wrg)_4')@(<VcJxc37"lG;.hC^LT.7X_+Flv2X0w7W&je3>HDTXA*)Ff'xk#D*5'''
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-DATABASE_HOST = '35.187.227.56'
+# DATABASE_HOST = '35.187.227.56'
+# DATABASE_PORT = 3306
+# DATABASE_USER = 'root'
+# DATABASE_PASSWORD = 'C3lz4Jemuga0LNFK'
+# DATABASE_NAME = 'carshareiot'
+
+DATABASE_HOST = 'localhost'
 DATABASE_PORT = 3306
 DATABASE_USER = 'root'
-DATABASE_PASSWORD = 'C3lz4Jemuga0LNFK'
+DATABASE_PASSWORD = 'Quang123'
 DATABASE_NAME = 'carshareiot'
 
+# SQLALCHEMY_DATABASE_URI = (
+#     'mysql+mysqlconnector://{user}:{pasw}@{host}:{port}/{name}').format(
+#     user=DATABASE_USER,
+#     pasw=DATABASE_PASSWORD,
+#     host=DATABASE_HOST,
+#     port=DATABASE_PORT,
+#     name=DATABASE_NAME
+# )
+
+
 SQLALCHEMY_DATABASE_URI = (
-    'mysql+mysqlconnector://{user}:{pasw}@{host}:{port}/{name}').format(
+    'mysql://{user}:{pasw}@{host}/{name}').format(
     user=DATABASE_USER,
     pasw=DATABASE_PASSWORD,
     host=DATABASE_HOST,
-    port=DATABASE_PORT,
     name=DATABASE_NAME
 )
 DATABASE_CONNECT_OPTIONS = {}
