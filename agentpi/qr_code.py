@@ -1,12 +1,15 @@
+import time
 from imutils.video import VideoStream
 from pyzbar import pyzbar
-import datetime
 import imutils
-import time
-import cv2
 
 def get_QR_encryption():
-	print("[INFO] starting video stream...")
+	"""
+	Detect and get decoded message from QR code
+
+    :return: decoded message
+    """
+	print("[INFO] starting camera...")
 	vs = VideoStream(src = 0).start()
 	time.sleep(2.0)
 	tstart = time.time()

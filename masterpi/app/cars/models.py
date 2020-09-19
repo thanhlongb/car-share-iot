@@ -34,6 +34,10 @@ class Car(db.Model):
         self.seats = seats
         self.cost_per_hour = cost_per_hour
 
+    def serialize_with_cols(self, cols):
+        data = {c: getattr(self, c) for c in cols}
+        return data
+
     @property
     def available(self):
         """ check car avalability
