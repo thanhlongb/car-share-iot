@@ -7,6 +7,17 @@ PORT = 65000
 ADDRESS = ("", PORT)
 
 def send_credentials(action, car_id, username, password=None):
+    '''
+    Send user login credentials to MP for authentication and 
+    get result
+
+    :args:
+        -   action: 1 for username/password credentials
+                    2 for facial recognition
+        -   car_id: Car id
+        -   username: username
+        -   password: password if use action 1
+    '''
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect(ADDRESS)
         credentials = {}
