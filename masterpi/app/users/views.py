@@ -26,7 +26,7 @@ from app.users.models import User
 from app.cars.models import Car, CarReport
 from app.cars.forms import CarForm
 from app.bookings.models import Booking, BookingAction
-from ..facial_recognition.encode_faces import encode
+# from ..facial_recognition.encode_faces import encode
 from ..charting.prepare_chart_data import get_line_chart_data, get_pie_chart_data, get_bar_chart_data
 
 mod = Blueprint('users', __name__, url_prefix='/')
@@ -572,27 +572,27 @@ def face_encodings():
     encodings_json = json.dumps(encodings, cls=NumpyArrayEncoder)
     return encodings_json
 
-@mod.route('/photos-upload/', methods=['GET', 'POST'])
-@login_required
-def photos_upload():
-    """
-    Upload photos
-    """
-    form = PhotosForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            user = User.query.filter_by(id=current_user.id).first()
-            username = user.username
-            directory = os.path.join(FACE_UPLOAD_FOLDER_URL, username)
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-            for f in request.files.getlist('images'):
-                filename = secure_filename(f.filename)
-                f.save(os.path.join(directory, filename))
-            thread = Process(target=encode)
-            thread.run()
-            return render_template("users/photos-upload.html", form=form, uploaded=True)
-    return render_template("users/photos-upload.html", form=form, uploaded=False)
+# @mod.route('/photos-upload/', methods=['GET', 'POST'])
+# @login_required
+# def photos_upload():
+#     """
+#     Upload photos
+#     """
+#     form = PhotosForm()
+#     if request.method == 'POST':
+#         if form.validate_on_submit():
+#             user = User.query.filter_by(id=current_user.id).first()
+#             username = user.username
+#             directory = os.path.join(FACE_UPLOAD_FOLDER_URL, username)
+#             if not os.path.exists(directory):
+#                 os.makedirs(directory)
+#             for f in request.files.getlist('images'):
+#                 filename = secure_filename(f.filename)
+#                 f.save(os.path.join(directory, filename))
+#             thread = Process(target=encode)
+#             thread.run()
+#             return render_template("users/photos-upload.html", form=form, uploaded=True)
+#     return render_template("users/photos-upload.html", form=form, uploaded=False)
 
 
 ################################ Engineer unlock car ######################################
