@@ -31,7 +31,7 @@ def unlock():
 
         a booking action record is created
 
-        :<json int booking_id: id of a booking record
+        :param int booking_id: id of a booking record
 
         :status 200: book created
     """
@@ -46,7 +46,7 @@ def cancel():
         
         a booking action record is created
 
-        :<json int booking_id: id of a booking record
+        :param int booking_id: id of a booking record
 
         :status 200: book canceled
     """
@@ -61,7 +61,7 @@ def return_():
 
         a booking action record is created
 
-        :<json int booking_id: id of a booking record
+        :param int booking_id: id of a booking record
 
         :status 200: return succeed 
     """

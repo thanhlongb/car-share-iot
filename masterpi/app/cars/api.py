@@ -15,12 +15,26 @@ api_mod = Blueprint('car', __name__, url_prefix='/api')
 #----------------- cars API -----------------#
 @api_mod.route('/cars/', methods=['GET'])
 def get_cars():
+    """ Get all car record 
+
+    :returns: list of cars in JSON format
+    """
     cars = Car.query.order_by(desc(Car.id)).all()
     data = [r.serialize() for r in cars]
     return jsonify(data)
 
 @api_mod.route('/cars/create', methods=['POST'])
 def cars_create():
+    """ Create a car record
+
+        :param string make: car brand
+        :param string color: car color
+        :param string body_type: car body type
+        :param int seats: number of seats
+        :param int cost_per_hour: cost per hour
+
+        :returns: Car in JSON format
+    """
     form = CarForm(request.form)
     car = Car(make=form.make.data, 
                 color=form.color.data,
@@ -33,6 +47,10 @@ def cars_create():
 
 @api_mod.route('/cars/edit/<car_id>', methods=['POST'])
 def cars_update(car_id):
+    """ Update car record
+
+        :param car_id: id of existing car
+    """
     car = Car.query.filter_by(id=car_id).first()
     if not car: 
         return "400 car not exists"
@@ -43,6 +61,10 @@ def cars_update(car_id):
 
 @api_mod.route('/cars/delete', methods=['DELETE'])
 def users_delete():
+    """ Delete a car
+
+    :param car_id: id of existing car
+    """
     car = Car.query.filter_by(id=request.form['car_id']).first()
     if car:
         db.session.delete(car)
@@ -53,6 +75,8 @@ def users_delete():
 #----------------- cars report API -----------------#
 @api_mod.route('/cars/report', methods=['POST'])
 def cars_report():
+    """ Return all report of the car
+    """
     car = Car.query.filter_by(id=request.form['car_id']).first()
     if car:
         car_report = CarReport(car.id)
@@ -63,6 +87,8 @@ def cars_report():
 
 @api_mod.route('/cars/reports/assign', methods=['POST'])
 def reports_assign():
+    """ Assign a task 
+    """
     report = CarReport.query.filter_by(id=request.form['report_id']).first()
     if report:
         report.fixer_id = request.form['engineer_id']
@@ -76,6 +102,8 @@ def reports_assign():
 
 @api_mod.route('/engineer/reports/fixed', methods=['POST'])
 def reports_fixed():
+    """ Update a report
+    """
     report = CarReport.query.filter_by(id=request.form['report_id']).first()
     if report:
         report.fixed = True
