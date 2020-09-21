@@ -38,6 +38,6 @@ def send_credentials(action, car_id, username, password=None):
             } 
         s.sendall(pickle.dumps(credentials))
         response = s.recv(100000)
-        response_dict = response.decode('utf-8')
+        response_dict = json.loads(response.decode('utf-8'))
         
     return response_dict
