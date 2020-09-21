@@ -5,7 +5,7 @@ import sys
 import getpass
 import warnings
 import requests
-import keyboard
+from pynput.keyboard import Key, Controller
 from consolemenu import *
 from consolemenu.format import *
 from consolemenu.items import *
@@ -287,7 +287,9 @@ def handle_success_engineer_login(engineer_username, engineer_menu):
     time.sleep(2)
     tempMenu = ConsoleMenu.currently_active_menu
     tempMenu.pause()
-    keyboard.press_and_release('enter')
+    keyboard = Controller()
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
     engineer_menu.title = engineer_username  + ' | Car unlocked'
     engineer_menu.start()
     engineer_menu.join()
