@@ -37,6 +37,7 @@ def send_credentials(action, car_id, username, password=None):
                 "date" : datetime.datetime.now()
             } 
         s.sendall(pickle.dumps(credentials))
-        response = s.recv(4096)
-        response_dict = pickle.loads(response).json()
+        response = s.recv(100000)
+        response_dict = response.decode('utf-8')
+        
     return response_dict

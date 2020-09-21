@@ -35,7 +35,8 @@ def activate():
                         verify=False
                 )
                 print("Sending data back.")
-                conn.sendall(pickle.dumps(response))
+                data = json.dumps(response.json())
+                conn.sendall(bytes(data, encoding='utf-8'))
                 print("Disconnecting from client.")
 
             print("Closing listening socket.")
