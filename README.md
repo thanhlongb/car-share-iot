@@ -124,4 +124,4 @@ The project is developed with the support of Git for code management.
 ### Trello  
 In the development process, our team decided to applied scrum methodology to planning and developing the product. Firstly, our teams develop user stories based on the document. Then we decided that each sprint length is a week, after each sprint, a meeting is conducted to review the work and move to next sprint.
 
-![trello](img/Trello.png)
+![Trello](http://g.recordit.co/qYJXyKfjpt.gif)
