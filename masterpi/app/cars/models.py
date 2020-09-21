@@ -1,4 +1,5 @@
 from app import db
+from sqlalchemy.inspection import inspect
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -69,6 +70,10 @@ class Car(db.Model):
             return (0,0)
         return (self.locations[-1].lat, self.locations[-1].long) 
 
+    def serialize(self):
+        data = {c: getattr(self, c) for c in inspect(self).attrs.keys()}
+        return data
+
     def __repr__(self):
         return '<Car %r>' % (self.id)
 
@@ -124,6 +129,10 @@ class CarReport(db.Model):
         """ set fixed id
         """
         self.fixed = fixed
+
+    def serialize(self):
+        data = {c: getattr(self, c) for c in inspect(self).attrs.keys()}
+        return data
 
     def __repr__(self):
         return '<CarReport %r>' % (self.id)
