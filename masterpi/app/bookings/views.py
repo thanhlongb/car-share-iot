@@ -40,11 +40,11 @@ def book():
 def unlock():
     """ This function allow user to unlock (POST) a car
 
-        a booking action record is created
+        a booking action record for unlock is created
 
         :<json int booking_id: id of a booking record
 
-        :status 200: book created
+        :status 200: car unlocked
     """
     bookingAction = BookingAction(request.form['booking_id'], "unlocked")
     db.session.add(bookingAction)
@@ -55,7 +55,7 @@ def unlock():
 def cancel():
     """ This function allow user to cancel (POST) a booking
         
-        a booking action record is created
+        a booking action record for cancel booking is created
 
         :<json int booking_id: id of a booking record
 

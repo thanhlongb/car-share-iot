@@ -1,6 +1,5 @@
 from imutils import paths
 import face_recognition
-import argparse
 import pickle
 import cv2
 import os
@@ -11,6 +10,10 @@ ENCODINGS_URL = 'app/facial_recognition/output/encodings.pickle'
 DETECTION_METHOD = 'cnn'
 
 def encode():
+	"""
+	encode all faces from images in the dataset to
+	128-dimension vectors using provided cnn model.
+    """
 	print("[INFO] quantifying faces...")
 	imagePaths = list(paths.list_images(DATASET_URL))
 	knownEncodings = []
