@@ -15,12 +15,20 @@ api_mod = Blueprint('user', __name__, url_prefix='/api')
 
 @api_mod.route('/users/', methods=['GET'])
 def get_users():
+    """ Get all users record 
+    
+    :returns: a list of users in json format
+    """
     users = User.query.order_by(desc(User.id)).all()
     data = [r.serialize() for r in users]
     return jsonify(data)
 
 @api_mod.route('/users/create/', methods=['POST'])
 def users_create():
+    """ Create a new user using HTTP post methods
+
+    :returns: user in json format
+    """
     form = RegisterForm(request.form)
     user = User.query.filter(or_(User.username == form.username.data, 
                                      User.email == form.email.data)).first()
@@ -39,6 +47,12 @@ def users_create():
 
 @api_mod.route('/users/edit/<user_id>', methods=['POST'])
 def users_update(user_id):
+    """ Update user information using HTTP POST methods
+
+    :param user_id: id of existing user
+
+    :returns: user in JSON format
+    """
     user = User.query.filter_by(id=user_id).first()
     if not user: 
         return "400 user not exists"
@@ -49,6 +63,11 @@ def users_update(user_id):
 
 @api_mod.route('/users/delete', methods=['DELETE'])
 def users_delete():
+    """ Delete user record using HTTP DELETE methods
+
+    :param user_id: id of existing user
+
+    """
     user = User.query.filter_by(id=request.form['user_id']).first()
     if user:
         db.session.delete(user)
