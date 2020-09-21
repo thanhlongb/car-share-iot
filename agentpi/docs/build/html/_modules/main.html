@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>main &#8212; Car Share Iot - Agent Pi 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">getpass</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">keyboard</span>
+<span class="kn">from</span> <span class="nn">consolemenu</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">consolemenu.format</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">consolemenu.items</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">requests.packages.urllib3.exceptions</span> <span class="kn">import</span> <span class="n">InsecureRequestWarning</span>
+<span class="kn">from</span> <span class="nn">facial_recognition.train_model</span> <span class="kn">import</span> <span class="n">train_model</span>
+<span class="kn">from</span> <span class="nn">facial_recognition.recognize</span> <span class="kn">import</span> <span class="n">recognize</span>
+<span class="kn">from</span> <span class="nn">qr_code</span> <span class="kn">import</span> <span class="n">get_QR_encryption</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/..&quot;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pisocket</span> <span class="kn">import</span> <span class="n">client</span>
+<span class="kn">from</span> <span class="nn">detect_nearby_device</span> <span class="kn">import</span> <span class="n">detect</span>
+
+<span class="n">GET_FACE_ENCODINGS_API</span> <span class="o">=</span> <span class="s2">&quot;https://127.0.0.1:5000/api/face_encodings/&quot;</span>
+<span class="n">ENGINEER_LOGIN_BY_QR_CODE_API</span> <span class="o">=</span> <span class="s2">&quot;https://127.0.0.1:5000/api/engineer_unlock_car_QR/&quot;</span>
+<span class="n">LOGOUT_API</span> <span class="o">=</span> <span class="s2">&quot;https://127.0.0.1:5000/api/logout/&quot;</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span><span class="n">InsecureRequestWarning</span><span class="p">)</span>
+<span class="n">CAR_LOCKED</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">PROGRAM_EXIT</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">CAR_ID</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">#--------------------------------- Menu ---------------------------------#</span>
+<span class="n">FORMAT</span> <span class="o">=</span> <span class="n">MenuFormatBuilder</span><span class="p">()</span> \
+            <span class="o">.</span><span class="n">set_border_style_type</span><span class="p">(</span><span class="n">MenuBorderStyleType</span><span class="o">.</span><span class="n">HEAVY_BORDER</span><span class="p">)</span> \
+            <span class="o">.</span><span class="n">set_prompt</span><span class="p">(</span><span class="s2">&quot;SELECT&gt;&quot;</span><span class="p">)</span> \
+            <span class="o">.</span><span class="n">set_title_align</span><span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">)</span> \
+            <span class="o">.</span><span class="n">set_subtitle_align</span><span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">)</span> \
+            <span class="o">.</span><span class="n">set_left_margin</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> \
+            <span class="o">.</span><span class="n">set_right_margin</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> \
+            <span class="o">.</span><span class="n">show_header_bottom_border</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1">#----- User menu -----#</span>
+<div class="viewcode-block" id="create_user_menu"><a class="viewcode-back" href="../main.html#main.create_user_menu">[docs]</a><span class="k">def</span> <span class="nf">create_user_menu</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Create customer menu</span>
+
+<span class="sd">    :return: usermenu as a ConoleMenu object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu</span> <span class="o">=</span> <span class="n">ConsoleMenu</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">formatter</span><span class="o">=</span><span class="n">FORMAT</span><span class="p">,</span>
+        <span class="n">show_exit_option</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">exit_item</span> <span class="o">=</span> <span class="n">FunctionItem</span><span class="p">(</span><span class="s2">&quot;Logout and lock car&quot;</span><span class="p">,</span>
+        <span class="n">user_logout</span><span class="p">,</span>
+        <span class="n">should_exit</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">menu</span><span class="o">.</span><span class="n">append_item</span><span class="p">(</span><span class="n">exit_item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">menu</span></div>
+
+<span class="c1">#----- Engineer menu -----#</span>
+<div class="viewcode-block" id="create_engineer_menu"><a class="viewcode-back" href="../main.html#main.create_engineer_menu">[docs]</a><span class="k">def</span> <span class="nf">create_engineer_menu</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Create engineer menu</span>
+
+<span class="sd">    :return: engineermenu as a ConoleMenu object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu</span> <span class="o">=</span> <span class="n">ConsoleMenu</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">formatter</span><span class="o">=</span><span class="n">FORMAT</span><span class="p">,</span>
+        <span class="n">show_exit_option</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">exit_option_text</span><span class="o">=</span><span class="s2">&quot;Logout and lock car&quot;</span>
+    <span class="p">)</span>
+    <span class="n">exit_item</span> <span class="o">=</span> <span class="n">FunctionItem</span><span class="p">(</span><span class="s2">&quot;Logout and lock car&quot;</span><span class="p">,</span>
+        <span class="n">engineer_logout</span><span class="p">,</span>
+        <span class="n">should_exit</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">menu</span><span class="o">.</span><span class="n">append_item</span><span class="p">(</span><span class="n">exit_item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">menu</span></div>
+
+<span class="c1">#----- Main menu -----#</span>
+<div class="viewcode-block" id="create_main_menu"><a class="viewcode-back" href="../main.html#main.create_main_menu">[docs]</a><span class="k">def</span> <span class="nf">create_main_menu</span><span class="p">(</span><span class="n">user_menu</span><span class="p">,</span> <span class="n">engineer_menu</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Create engineer menu</span>
+
+<span class="sd">    :args:   - user_menu : customer menu object</span>
+<span class="sd">             - engineer_menu : engineer menu object</span>
+
+<span class="sd">    :return: main menu as a ConsoleMenu objects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu</span> <span class="o">=</span> <span class="n">ConsoleMenu</span><span class="p">(</span>
+        <span class="s2">&quot;Main menu | Car locked&quot;</span><span class="p">,</span>
+        <span class="n">formatter</span><span class="o">=</span><span class="n">FORMAT</span><span class="p">,</span>
+        <span class="n">show_exit_option</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="c1">#Customer section</span>
+    <span class="n">customer_login_submenu</span> <span class="o">=</span> <span class="n">SelectionMenu</span><span class="p">([],</span>
+        <span class="s1">&#39;Customer login | Car locked&#39;</span><span class="p">,</span>
+        <span class="n">formatter</span><span class="o">=</span><span class="n">FORMAT</span><span class="p">,</span>
+        <span class="n">exit_option_text</span><span class="o">=</span><span class="s2">&quot;Return to Main menu&quot;</span>
+    <span class="p">)</span>
+    <span class="n">credentials_login_item</span> <span class="o">=</span> <span class="n">FunctionItem</span><span class="p">(</span><span class="s2">&quot;Use username/password&quot;</span><span class="p">,</span>
+        <span class="n">user_login_with_credentials</span><span class="p">,</span>
+        <span class="n">menu</span><span class="o">=</span><span class="n">customer_login_submenu</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">menu</span><span class="p">,</span> <span class="n">user_menu</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">facial_login_item</span> <span class="o">=</span> <span class="n">FunctionItem</span><span class="p">(</span><span class="s2">&quot;Use facial recognition&quot;</span><span class="p">,</span>
+        <span class="n">user_login_with_facial_recognition</span><span class="p">,</span>
+        <span class="n">menu</span><span class="o">=</span><span class="n">customer_login_submenu</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">menu</span><span class="p">,</span> <span class="n">user_menu</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">customer_login_submenu</span><span class="o">.</span><span class="n">append_item</span><span class="p">(</span><span class="n">facial_login_item</span><span class="p">)</span>
+    <span class="n">customer_login_submenu</span><span class="o">.</span><span class="n">append_item</span><span class="p">(</span><span class="n">credentials_login_item</span><span class="p">)</span>
+    <span class="n">customer_login_submenu_item</span> <span class="o">=</span> <span class="n">SubmenuItem</span><span class="p">(</span><span class="s2">&quot;Customer login&quot;</span><span class="p">,</span>
+        <span class="n">customer_login_submenu</span><span class="p">,</span>
+        <span class="n">menu</span>
+    <span class="p">)</span>
+
+    <span class="c1">#engineer section</span>
+    <span class="n">engineer_login_submenu</span> <span class="o">=</span> <span class="n">SelectionMenu</span><span class="p">([],</span>
+        <span class="s1">&#39;Engineer login | Car locked&#39;</span><span class="p">,</span>
+        <span class="n">formatter</span><span class="o">=</span><span class="n">FORMAT</span><span class="p">,</span>
+        <span class="n">exit_option_text</span><span class="o">=</span><span class="s2">&quot;Return to Main menu&quot;</span>
+    <span class="p">)</span>
+    <span class="n">QR_code_login_item</span> <span class="o">=</span> <span class="n">FunctionItem</span><span class="p">(</span><span class="s2">&quot;Use QR code&quot;</span><span class="p">,</span>
+        <span class="n">engineer_login_with_QR_code</span><span class="p">,</span>
+        <span class="n">menu</span><span class="o">=</span><span class="n">engineer_login_submenu</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">menu</span><span class="p">,</span> <span class="n">engineer_menu</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">engineer_login_submenu</span><span class="o">.</span><span class="n">append_item</span><span class="p">(</span><span class="n">QR_code_login_item</span><span class="p">)</span>
+    <span class="n">engineer_login_submenu_item</span> <span class="o">=</span> <span class="n">SubmenuItem</span><span class="p">(</span>
+        <span class="s2">&quot;Engineer login&quot;</span><span class="p">,</span>
+        <span class="n">engineer_login_submenu</span><span class="p">,</span>
+        <span class="n">menu</span>
+    <span class="p">)</span>
+
+    <span class="n">exit_item</span> <span class="o">=</span> <span class="n">FunctionItem</span><span class="p">(</span><span class="s2">&quot;Exit&quot;</span><span class="p">,</span>
+        <span class="n">shutdown</span><span class="p">,</span>
+        <span class="n">should_exit</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="n">menu</span><span class="o">.</span><span class="n">append_item</span><span class="p">(</span><span class="n">customer_login_submenu_item</span><span class="p">)</span>
+    <span class="n">menu</span><span class="o">.</span><span class="n">append_item</span><span class="p">(</span><span class="n">engineer_login_submenu_item</span><span class="p">)</span>
+    <span class="n">menu</span><span class="o">.</span><span class="n">append_item</span><span class="p">(</span><span class="n">exit_item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">menu</span></div>
+
+<span class="c1">#--------------------------------- Action ---------------------------------#</span>
+<span class="c1">#---- User logout ----#</span>
+<div class="viewcode-block" id="user_logout"><a class="viewcode-back" href="../main.html#main.user_logout">[docs]</a><span class="k">def</span> <span class="nf">user_logout</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Customer logout, create return action and save to database</span>
+<span class="sd">    through MP API</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">CAR_LOCKED</span>
+    <span class="n">CAR_LOCKED</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">param</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;car_id&quot;</span> <span class="p">:</span> <span class="n">CAR_ID</span>
+    <span class="p">}</span>
+    <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">LOGOUT_API</span><span class="p">,</span> <span class="n">param</span> <span class="p">,</span><span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="engineer_logout"><a class="viewcode-back" href="../main.html#main.engineer_logout">[docs]</a><span class="k">def</span> <span class="nf">engineer_logout</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Engineer logout</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">CAR_LOCKED</span>
+    <span class="n">CAR_LOCKED</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="shutdown"><a class="viewcode-back" href="../main.html#main.shutdown">[docs]</a><span class="k">def</span> <span class="nf">shutdown</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Console application shutdown</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">PROGRAM_EXIT</span>
+    <span class="n">PROGRAM_EXIT</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<span class="c1">#---- User login with credentials ----#</span>
+<div class="viewcode-block" id="handle_fail_user_login"><a class="viewcode-back" href="../main.html#main.handle_fail_user_login">[docs]</a><span class="k">def</span> <span class="nf">handle_fail_user_login</span><span class="p">(</span><span class="n">use_credentials</span><span class="p">,</span> <span class="n">main_menu</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Handle when customer&#39;s login information is wrong</span>
+
+<span class="sd">    :args:</span>
+<span class="sd">        -   user_credentials: Customer&#39;s login credentials</span>
+<span class="sd">        -   main_menu: Main menu object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">use_credentials</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Wrong username/password! Please try again.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot recognize user&#39;s face! Please try again.&quot;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">global</span> <span class="n">CAR_LOCKED</span>
+    <span class="n">CAR_LOCKED</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">main_menu</span><span class="o">.</span><span class="n">resume</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="handle_success_user_login"><a class="viewcode-back" href="../main.html#main.handle_success_user_login">[docs]</a><span class="k">def</span> <span class="nf">handle_success_user_login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">user_menu</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Handle when customer&#39;s login information is right</span>
+<span class="sd">    :args:</span>
+<span class="sd">        -   user_credentials: Customer&#39;s login credentials</span>
+<span class="sd">        -   main_menu: Main menu object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Welcome user &#39;</span><span class="si">{}</span><span class="s2">&#39; to the car&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">user_menu</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">username</span> <span class="o">+</span> <span class="s1">&#39; | Car unlocked&#39;</span>
+    <span class="n">user_menu</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="user_login_with_credentials"><a class="viewcode-back" href="../main.html#main.user_login_with_credentials">[docs]</a><span class="k">def</span> <span class="nf">user_login_with_credentials</span><span class="p">(</span><span class="n">main_menu</span><span class="p">,</span> <span class="n">user_menu</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Handle customer login by credentials option</span>
+<span class="sd">    :args:</span>
+<span class="sd">        -   main_menu: Main menu object</span>
+<span class="sd">        -   user_menu: User menu object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">CAR_LOCKED</span>
+    <span class="n">CAR_LOCKED</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">main_menu</span><span class="o">.</span><span class="n">pause</span><span class="p">()</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Username: &#39;</span><span class="p">)</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s1">&#39;Password: &#39;</span><span class="p">)</span>
+    <span class="n">res_dict</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">send_credentials</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">CAR_ID</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">handle_fail_user_login</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">main_menu</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">handle_success_user_login</span><span class="p">(</span><span class="n">res_dict</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">],</span> <span class="n">user_menu</span><span class="p">)</span></div>
+
+<span class="c1">#---- User login with facial recognition 3----#</span>
+<div class="viewcode-block" id="update_facial_encodings"><a class="viewcode-back" href="../main.html#main.update_facial_encodings">[docs]</a><span class="k">def</span> <span class="nf">update_facial_encodings</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Call MP API to update encodings.pickle</span>
+<span class="sd">    :return:</span>
+<span class="sd">        -   response_pickle: face encodings as dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[INFO] Updating face encodings from server...&#39;</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GET_FACE_ENCODINGS_API</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">response_pickle</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">response_pickle</span></div>
+
+<div class="viewcode-block" id="handle_facial_recognition_result"><a class="viewcode-back" href="../main.html#main.handle_facial_recognition_result">[docs]</a><span class="k">def</span> <span class="nf">handle_facial_recognition_result</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">main_menu</span><span class="p">,</span> <span class="n">user_menu</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Handle the result of facial recognition</span>
+<span class="sd">    :args:</span>
+<span class="sd">        -   username:   username of recognized user</span>
+<span class="sd">        -   main_menu:  Main menu object</span>
+<span class="sd">        -   user_menu:  User menu object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">username</span> <span class="o">==</span> <span class="s1">&#39;unknown&#39;</span><span class="p">:</span>
+        <span class="n">handle_fail_user_login</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">main_menu</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res_dict</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">send_credentials</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">CAR_ID</span><span class="p">,</span> <span class="n">username</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">handle_fail_user_login</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">main_menu</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">handle_success_user_login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">user_menu</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="user_login_with_facial_recognition"><a class="viewcode-back" href="../main.html#main.user_login_with_facial_recognition">[docs]</a><span class="k">def</span> <span class="nf">user_login_with_facial_recognition</span><span class="p">(</span><span class="n">main_menu</span><span class="p">,</span> <span class="n">user_menu</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Process of user login by facial recognition</span>
+<span class="sd">    :args:</span>
+<span class="sd">        -   main_menu:  Main menu object</span>
+<span class="sd">        -   user_menu:  User menu object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">CAR_LOCKED</span>
+    <span class="n">CAR_LOCKED</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">main_menu</span><span class="o">.</span><span class="n">pause</span><span class="p">()</span>
+    <span class="n">new_encodings_data</span> <span class="o">=</span> <span class="n">update_facial_encodings</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[INFO] Training new model...&#39;</span><span class="p">)</span>
+    <span class="n">train_model</span><span class="p">(</span><span class="n">new_encodings_data</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[INFO] Initializing...&#39;</span><span class="p">)</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">recognize</span><span class="p">()</span>
+    <span class="n">handle_facial_recognition_result</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">main_menu</span><span class="p">,</span> <span class="n">user_menu</span><span class="p">)</span></div>
+
+<span class="c1">#---- Engineer login with QR code ----#</span>
+<div class="viewcode-block" id="handle_fail_engineer_login"><a class="viewcode-back" href="../main.html#main.handle_fail_engineer_login">[docs]</a><span class="k">def</span> <span class="nf">handle_fail_engineer_login</span><span class="p">(</span><span class="n">main_menu</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Handle fail engineer login</span>
+<span class="sd">    :args:</span>
+<span class="sd">        -   main_menu: Main menu object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">CAR_LOCKED</span>
+    <span class="n">CAR_LOCKED</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The QR code used is invalid. Please try again!&#39;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">main_menu</span><span class="o">.</span><span class="n">resume</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="handle_success_engineer_login"><a class="viewcode-back" href="../main.html#main.handle_success_engineer_login">[docs]</a><span class="k">def</span> <span class="nf">handle_success_engineer_login</span><span class="p">(</span><span class="n">engineer_username</span><span class="p">,</span> <span class="n">engineer_menu</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Handle successful engineer login</span>
+<span class="sd">    :args:</span>
+<span class="sd">        -   engineer_username: engineer&#39;s username</span>
+<span class="sd">        -   engineer_menu: Engineer menu object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">CAR_LOCKED</span>
+    <span class="n">CAR_LOCKED</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Welcome engineer &#39;</span><span class="si">{}</span><span class="s2">&#39; to the car&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">engineer_username</span><span class="p">))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">tempMenu</span> <span class="o">=</span> <span class="n">ConsoleMenu</span><span class="o">.</span><span class="n">currently_active_menu</span>
+    <span class="n">tempMenu</span><span class="o">.</span><span class="n">pause</span><span class="p">()</span>
+    <span class="n">keyboard</span><span class="o">.</span><span class="n">press_and_release</span><span class="p">(</span><span class="s1">&#39;enter&#39;</span><span class="p">)</span>
+    <span class="n">engineer_menu</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">engineer_username</span>  <span class="o">+</span> <span class="s1">&#39; | Car unlocked&#39;</span>
+    <span class="n">engineer_menu</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">engineer_menu</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">tempMenu</span><span class="o">.</span><span class="n">resume</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="engineer_login_with_QR_code"><a class="viewcode-back" href="../main.html#main.engineer_login_with_QR_code">[docs]</a><span class="k">def</span> <span class="nf">engineer_login_with_QR_code</span><span class="p">(</span><span class="n">main_menu</span><span class="p">,</span> <span class="n">engineer_menu</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Process of engineer login by scanning QR code</span>
+<span class="sd">    :args:</span>
+<span class="sd">        -   main_menu: Main menu object</span>
+<span class="sd">        -   engineer_menu: Engineer menu object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">CAR_LOCKED</span>
+    <span class="n">CAR_LOCKED</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">engineer_username</span> <span class="o">=</span> <span class="n">get_QR_encryption</span><span class="p">()</span>
+    <span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;username&#39;</span> <span class="p">:</span> <span class="n">engineer_username</span><span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">ENGINEER_LOGIN_BY_QR_CODE_API</span><span class="p">,</span> <span class="n">Params</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">response_json</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">response_json</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">handle_success_engineer_login</span><span class="p">(</span><span class="n">response_json</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">],</span> <span class="n">main_menu</span><span class="p">,</span> <span class="n">engineer_menu</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">handle_fail_engineer_login</span><span class="p">(</span><span class="n">main_menu</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="detect_bluetooth_device"><a class="viewcode-back" href="../main.html#main.detect_bluetooth_device">[docs]</a><span class="k">def</span> <span class="nf">detect_bluetooth_device</span><span class="p">(</span><span class="n">main_menu</span><span class="p">,</span> <span class="n">engineer_menu</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Automatically detect nearby Bluetooth devices and check</span>
+<span class="sd">    if it belongs to an engineer.</span>
+<span class="sd">    :args:</span>
+<span class="sd">        -   main_menu: Main menu object</span>
+<span class="sd">        -   engineer_menu: Engineer menu object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">global</span> <span class="n">PROGRAM_EXIT</span>
+        <span class="k">global</span> <span class="n">CAR_LOCKED</span>
+        <span class="k">if</span> <span class="n">PROGRAM_EXIT</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">CAR_LOCKED</span><span class="p">:</span>
+            <span class="n">engineer_username</span> <span class="o">=</span> <span class="n">detect</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">engineer_username</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">handle_success_engineer_login</span><span class="p">(</span><span class="n">engineer_username</span><span class="p">,</span> <span class="n">engineer_menu</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Main program</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user_menu</span> <span class="o">=</span> <span class="n">create_user_menu</span><span class="p">()</span>
+    <span class="n">engineer_menu</span> <span class="o">=</span> <span class="n">create_engineer_menu</span><span class="p">()</span>
+    <span class="n">main_menu</span> <span class="o">=</span> <span class="n">create_main_menu</span><span class="p">(</span><span class="n">user_menu</span><span class="p">,</span> <span class="n">engineer_menu</span><span class="p">)</span>
+    <span class="n">bluetooth_device_detector</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">detect_bluetooth_device</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">main_menu</span><span class="p">,</span> <span class="n">engineer_menu</span><span class="p">,</span> <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">main_menu</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">bluetooth_device_detector</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">main_menu</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">bluetooth_device_detector</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Car Share Iot - Agent Pi</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">Main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../facial_recognition.html">Facial Recognition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../qr_code.html">QR code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../detect_nearby_device.html">Detect nearby devices</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tran Minh Quang, Ngo Quang Trung, Bui Thanh Long, Ha Hoang Phuc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

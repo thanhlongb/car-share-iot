@@ -33,8 +33,234 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="main">
-<h1>Main<a class="headerlink" href="#main" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-main">
+<span id="main"></span><h1>Main<a class="headerlink" href="#module-main" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="main.create_engineer_menu">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">create_engineer_menu</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#create_engineer_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.create_engineer_menu" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Create engineer menu</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>engineermenu as a ConoleMenu object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.create_main_menu">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">create_main_menu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_menu</span></em>, <em class="sig-param"><span class="n">engineer_menu</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#create_main_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.create_main_menu" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Create engineer menu</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Args</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>user_menu : customer menu object</p></li>
+<li><p>engineer_menu : engineer menu object</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>main menu as a ConsoleMenu objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.create_user_menu">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">create_user_menu</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#create_user_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.create_user_menu" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Create customer menu</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>usermenu as a ConoleMenu object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.detect_bluetooth_device">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">detect_bluetooth_device</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">main_menu</span></em>, <em class="sig-param"><span class="n">engineer_menu</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#detect_bluetooth_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.detect_bluetooth_device" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Automatically detect nearby Bluetooth devices and check</p>
+</div></blockquote>
+<p>if it belongs to an engineer.
+:args:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>main_menu: Main menu object</p></li>
+<li><p>engineer_menu: Engineer menu object</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.engineer_login_with_QR_code">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">engineer_login_with_QR_code</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">main_menu</span></em>, <em class="sig-param"><span class="n">engineer_menu</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#engineer_login_with_QR_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.engineer_login_with_QR_code" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Process of engineer login by scanning QR code</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Args</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>main_menu: Main menu object</p></li>
+<li><p>engineer_menu: Engineer menu object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.engineer_logout">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">engineer_logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#engineer_logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.engineer_logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Engineer logout</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.handle_facial_recognition_result">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">handle_facial_recognition_result</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">main_menu</span></em>, <em class="sig-param"><span class="n">user_menu</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#handle_facial_recognition_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.handle_facial_recognition_result" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Handle the result of facial recognition</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Args</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>username:   username of recognized user</p></li>
+<li><p>main_menu:  Main menu object</p></li>
+<li><p>user_menu:  User menu object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.handle_fail_engineer_login">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">handle_fail_engineer_login</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">main_menu</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#handle_fail_engineer_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.handle_fail_engineer_login" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Handle fail engineer login</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Args</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>main_menu: Main menu object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.handle_fail_user_login">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">handle_fail_user_login</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">use_credentials</span></em>, <em class="sig-param"><span class="n">main_menu</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#handle_fail_user_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.handle_fail_user_login" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Handle when customer’s login information is wrong</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Args</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>user_credentials: Customer’s login credentials</p></li>
+<li><p>main_menu: Main menu object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.handle_success_engineer_login">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">handle_success_engineer_login</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">engineer_username</span></em>, <em class="sig-param"><span class="n">engineer_menu</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#handle_success_engineer_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.handle_success_engineer_login" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Handle successful engineer login</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Args</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>engineer_username: engineer’s username</p></li>
+<li><p>engineer_menu: Engineer menu object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.handle_success_user_login">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">handle_success_user_login</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">user_menu</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#handle_success_user_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.handle_success_user_login" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Handle when customer’s login information is right</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Args</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>user_credentials: Customer’s login credentials</p></li>
+<li><p>main_menu: Main menu object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.shutdown">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#shutdown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Console application shutdown</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.update_facial_encodings">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">update_facial_encodings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#update_facial_encodings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.update_facial_encodings" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Call MP API to update encodings.pickle</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>response_pickle: face encodings as dict</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.user_login_with_credentials">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">user_login_with_credentials</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">main_menu</span></em>, <em class="sig-param"><span class="n">user_menu</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#user_login_with_credentials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.user_login_with_credentials" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Handle customer login by credentials option</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Args</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>main_menu: Main menu object</p></li>
+<li><p>user_menu: User menu object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.user_login_with_facial_recognition">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">user_login_with_facial_recognition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">main_menu</span></em>, <em class="sig-param"><span class="n">user_menu</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#user_login_with_facial_recognition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.user_login_with_facial_recognition" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Process of user login by facial recognition</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Args</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>main_menu:  Main menu object</p></li>
+<li><p>user_menu:  User menu object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.user_logout">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">user_logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#user_logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.user_logout" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Customer logout, create return action and save to database</p>
+</div></blockquote>
+<p>through MP API</p>
+</dd></dl>
+
 </div>
 
 
