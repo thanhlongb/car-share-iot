@@ -1,14 +1,11 @@
-from imutils.video import VideoStream
-from imutils.video import FPS
-import face_recognition
-import numpy as np
-import argparse
-import imutils
 import pickle
 import time
+import imutils
 import cv2
-import os
-import time
+import numpy as np
+import face_recognition
+from imutils.video import VideoStream
+from imutils.video import FPS
 
 DEPLOY_PROTOTXT_PATH = 'facial_recognition/pretrained_model/deploy.prototxt'
 RES10_300X300_PATH = 'facial_recognition/pretrained_model/res10_300x300_ssd_iter_140000.caffemodel'
@@ -17,8 +14,15 @@ LABEL_ENCODER_PATH = 'facial_recognition/output/le.pickle'
 CONFIDENCE = 0.5
 
 def recognize():
+    """
+	Open picamera and use the trained model to recognize the 
+    customer.
+
+    :return: - username, or label of the recognized person.
+             - 'unknown' if the person is not recognized.
+    """
     detector = cv2.dnn.readNetFromCaffe(DEPLOY_PROTOTXT_PATH, RES10_300X300_PATH)
-    
+
     recognizer = pickle.loads(open(RECOGNIZER_PATH, "rb").read())
     le = pickle.loads(open(LABEL_ENCODER_PATH, "rb").read())
 
@@ -56,12 +60,8 @@ def recognize():
                 if fW < 20 or fH < 20:
                     continue
 
-                #faceBlob = cv2.dnn.blobFromImage(face, 1.0 / 255,
-                #   (96, 96), (0, 0, 0), swapRB=True, crop=False)
-                #embedder.setInput(faceBlob)
-                #vec = embedder.forward()
                 coor = [((startY, startX + (endX - startX), startY + (endY - startY), startX))]
-            
+
                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 encodings = face_recognition.face_encodings(rgb_frame, coor)
 
@@ -85,7 +85,7 @@ def recognize():
         if (tcur - tstart > 15 and name != None and proba > 0.6)\
            or (tcur - tstart > 60):
             break
-        
+
         key = cv2.waitKey(1) & 0xFF
 
     fps.stop()
@@ -94,7 +94,7 @@ def recognize():
 
     cv2.destroyAllWindows()
     vs.stop()
-    
+
     if name != None:
         return name
     return 'unknown'
