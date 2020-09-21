@@ -5,6 +5,8 @@ from app.users import constants as USER
 from flask_login import UserMixin
 
 class User(UserMixin, db.Model):
+    """ User Models
+    """
     __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
