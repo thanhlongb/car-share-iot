@@ -117,11 +117,12 @@ We have create 4 accounts present 4 types of users in the application:
 ### Git
 The project is developed with the support of Git for code management.   
 
-![git_commit_summarize](./img/git-commit-summarize.png)  
-![git_branches](./git-branches.png)
+![git_commit_summarize](img/git-commit.png)   
+
+![git_branches](img/git-branches.png)
 
 ### Trello  
 In the development process, our team decided to applied scrum methodology to planning and developing the product. Firstly, our teams develop user stories based on the document. Then we decided that each sprint length is a week, after each sprint, a meeting is conducted to review the work and move to next sprint. 
 
-![trello](./Trello.png)
+![trello](img/Trello.png)
 
