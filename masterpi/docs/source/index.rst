@@ -41,21 +41,14 @@ Users API
 
 Models
 ++++++
-.. autoclass:: app.users.usersModels
+.. automodule:: app.users.models
     :members:
     :undoc-members:
 
 
 Views
 +++++
-.. autoclass:: app.users.usersViews
-    :members:
-    :undoc-members:
-
-
-REST APIs
-+++++++++
-.. autoclass:: app.users.UsersAPI
+.. automodule:: app.users.views
     :members:
     :undoc-members:
 
@@ -65,46 +58,34 @@ Cars API
 
 Models
 ++++++
-.. autoclass:: app.cars.models
+.. automodule:: app.cars.models
     :members:
     :undoc-members:
 
 
 Views
 +++++
-.. autoclass:: app.cars.views
+.. automodule:: app.cars.views
     :members:
     :undoc-members:
 
-
-REST APIs
-+++++++++
-.. autoclass:: app.cars.api
-    :members:
-    :undoc-members:
 
 Bookings API
 ------------
 
 Models
 ++++++
-.. autoclass:: app.bookings.models
+.. automodule:: app.bookings.models
     :members:
     :undoc-members:
 
 
 Views
 +++++
-.. autoclass:: app.bookings.views
+.. automodule:: app.bookings.views
     :members:
     :undoc-members:
 
-
-REST APIs
-+++++++++
-.. autoclass:: app.bookings.api
-    :members:
-    :undoc-members:
 
 
 Indices and tables

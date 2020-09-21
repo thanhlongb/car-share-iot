@@ -68,34 +68,34 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">last_name</span> <span class="o">=</span> <span class="n">last_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bluetooth_MAC</span> <span class="o">=</span> <span class="n">bluetooth_MAC</span>
 
-    <span class="k">def</span> <span class="nf">isAdmin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="mi">0</span>
+<div class="viewcode-block" id="User.isAdmin"><a class="viewcode-back" href="../../../index.html#app.users.models.User.isAdmin">[docs]</a>    <span class="k">def</span> <span class="nf">isAdmin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="mi">0</span></div>
 
-    <span class="k">def</span> <span class="nf">isManager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="mi">1</span>
+<div class="viewcode-block" id="User.isManager"><a class="viewcode-back" href="../../../index.html#app.users.models.User.isManager">[docs]</a>    <span class="k">def</span> <span class="nf">isManager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="mi">1</span></div>
 
-    <span class="k">def</span> <span class="nf">isEngineer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="mi">2</span> 
+<div class="viewcode-block" id="User.isEngineer"><a class="viewcode-back" href="../../../index.html#app.users.models.User.isEngineer">[docs]</a>    <span class="k">def</span> <span class="nf">isEngineer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="mi">2</span> </div>
 
-    <span class="k">def</span> <span class="nf">isCustomer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="mi">3</span>
+<div class="viewcode-block" id="User.isCustomer"><a class="viewcode-back" href="../../../index.html#app.users.models.User.isCustomer">[docs]</a>    <span class="k">def</span> <span class="nf">isCustomer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="mi">3</span></div>
 
-    <span class="k">def</span> <span class="nf">getRole</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">USER</span><span class="o">.</span><span class="n">ROLE</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">role</span><span class="p">]</span>
+<div class="viewcode-block" id="User.getRole"><a class="viewcode-back" href="../../../index.html#app.users.models.User.getRole">[docs]</a>    <span class="k">def</span> <span class="nf">getRole</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">USER</span><span class="o">.</span><span class="n">ROLE</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">role</span><span class="p">]</span></div>
 
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="User.serialize"><a class="viewcode-back" href="../../../index.html#app.users.models.User.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">inspect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
         <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="n">data</span></div>
 
-    <span class="k">def</span> <span class="nf">serialize_with_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+<div class="viewcode-block" id="User.serialize_with_cols"><a class="viewcode-back" href="../../../index.html#app.users.models.User.serialize_with_cols">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_with_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span> 
                 <span class="n">data</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="n">data</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;&lt;User </span><span class="si">%r</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">)</span></div>
