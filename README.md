@@ -1,6 +1,6 @@
 # Car Share IOT
 
-**Car Share IoT** is our project for final assignment of Programming IoT Course. It is a automatic car share system with a web application which allow user to rent a car through the website, report the car status, lock and unlock the car using traditional password, facial recognition or bluetooth. The web application is also a platform to manage and track the car rental history, car status and basic analytics for manager. 
+**Car Share IoT** is our project for final assignment of Programming IoT Course. It is a automatic car share system with a web application which allow user to rent a car through the website, report the car status, lock and unlock the car using traditional password, facial recognition or bluetooth. The web application is also a platform to manage and track the car rental history, car status and basic analytics for manager.
 
 ## Table of Contents
 
@@ -12,9 +12,9 @@
 
 ## Installation
 
-Overall, the project have two main parts: `masterpi` and `agentpi`. The `materpi` hold the code for web application and the `agentpi` hold the methods for unlock the car such as facial recognition, bluetooth. 
+Overall, the project have two main parts: `masterpi` and `agentpi`. The `materpi` hold the code for web application and the `agentpi` hold the methods for unlock the car such as facial recognition, bluetooth.
 
-### Clone 
+### Clone
 
 - Clone this repo to your local machine using `https://github.com/thanhlongb/car-share-iot`
 
@@ -42,7 +42,7 @@ $ python3 run.py
 
 ```shell
 $ cd agentpi
-$ workon 
+$ workon
 $ python3 main.py
 ```
 
@@ -52,13 +52,13 @@ For **masterpi**
 
 ```shell
 $ cd pisocket
-$ python3 server.py 
+$ python3 server.py
 ```
 
 For **agentpi**
 ```shell
 $ cd pisocket
-$ python3 client.py 
+$ python3 client.py
 ```
 ---
 
@@ -70,7 +70,7 @@ There are 4 types of user will interact with the application:
 - Manager   
 - Admin  
 
-The role is defined by user's credentials when login to the website. Different user will have different access and function in the application. 
+The role is defined by user's credentials when login to the website. Different user will have different access and function in the application.
 ### Features for customer  
 - Register new account
 - login using account which is registered
@@ -89,7 +89,7 @@ The role is defined by user's credentials when login to the website. Different u
 - Chang the status of the car  
 ### Manager
 - Show list of car reports
-- Assign task for engineer 
+- Assign task for engineer
 - Dashboard to show some data analytics which have several charts for business analytics  
 ### Admin
 - View car rental history
@@ -122,7 +122,6 @@ The project is developed with the support of Git for code management.
 ![git_branches](img/git-branches.png)
 
 ### Trello  
-In the development process, our team decided to applied scrum methodology to planning and developing the product. Firstly, our teams develop user stories based on the document. Then we decided that each sprint length is a week, after each sprint, a meeting is conducted to review the work and move to next sprint. 
+In the development process, our team decided to applied scrum methodology to planning and developing the product. Firstly, our teams develop user stories based on the document. Then we decided that each sprint length is a week, after each sprint, a meeting is conducted to review the work and move to next sprint.
 
 ![trello](img/Trello.png)
-
