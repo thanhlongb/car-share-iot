@@ -1,3 +1,8 @@
+"""
+.. module:: bookingsModel
+   :synopsis: Create models related to booking function: Booking, BookingAction
+
+"""
 from app import db
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship

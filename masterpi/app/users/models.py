@@ -1,3 +1,8 @@
+"""
+.. module:: userModels
+   :synopsis: Create model for user
+
+"""
 from app import db
 from sqlalchemy.inspection import inspect
 from sqlalchemy.sql import func

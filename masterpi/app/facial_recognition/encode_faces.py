@@ -1,3 +1,7 @@
+"""
+.. module:: face_recognition
+
+"""
 from imutils import paths
 import face_recognition
 import argparse

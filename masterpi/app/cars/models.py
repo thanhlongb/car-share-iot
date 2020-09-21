@@ -1,3 +1,8 @@
+"""
+.. module:: carsModels
+   :synopsis: Create models related to cars function: Car, CarLocation, CarReport
+
+"""
 from app import db
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship

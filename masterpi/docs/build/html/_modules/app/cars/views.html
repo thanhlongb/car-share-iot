@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>app.cars.views &#8212; Car Share Iot 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for app.cars.views</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: carsView</span>
+<span class="sd">   :synopsis: List of API for cars function</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span>
+<span class="kn">from</span> <span class="nn">flask_login</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">current_user</span><span class="p">,</span>
+    <span class="n">login_required</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">app.cars.models</span> <span class="kn">import</span> <span class="n">Car</span><span class="p">,</span> <span class="n">CarReport</span><span class="p">,</span> <span class="n">CarLocation</span>
+<span class="kn">from</span> <span class="nn">app.cars.maps</span> <span class="kn">import</span> <span class="n">StaticMap</span>
+<span class="kn">from</span> <span class="nn">flask_googlemaps</span> <span class="kn">import</span>  <span class="n">Map</span><span class="p">,</span> <span class="n">icons</span>
+
+
+<span class="n">mod</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;cars&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/cars&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="details"><a class="viewcode-back" href="../../../index.html#app.cars.views.details">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/details/&lt;id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">details</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    **Get detail information about the car**</span>
+
+<span class="sd">    :param id: id of the car</span>
+<span class="sd">    :type id: int</span>
+
+<span class="sd">    :status 200: success</span>
+<span class="sd">    :status 404: failed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">car</span><span class="o">.</span><span class="n">locations</span><span class="p">:</span>
+        <span class="n">gmap</span> <span class="o">=</span> <span class="n">StaticMap</span><span class="p">(</span><span class="n">car</span><span class="o">.</span><span class="n">current_location</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
+        <span class="n">carMap</span> <span class="o">=</span> <span class="n">gmap</span><span class="o">.</span><span class="n">create_map</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">carMap</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">car</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;cars/details.html&quot;</span><span class="p">,</span> <span class="n">car</span><span class="o">=</span><span class="n">car</span><span class="p">,</span> <span class="n">carMap</span><span class="o">=</span><span class="n">carMap</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;404.html&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="index"><a class="viewcode-back" href="../../../index.html#app.cars.views.index">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Get list of available car**</span>
+
+<span class="sd">    This function allow user to get list of cars and its detail information</span>
+
+<span class="sd">    :status 200: success</span>
+<span class="sd">    :status 404: failed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cars</span> <span class="o">=</span> <span class="n">Car</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;cars/index.html&quot;</span><span class="p">,</span> <span class="n">cars</span><span class="o">=</span><span class="n">cars</span><span class="p">)</span></div>
+    
+
+
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Car Share Iot</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tran Minh Quang, Ngo Quang Trung, Bui Thanh Long, Ha Hoang Phuc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

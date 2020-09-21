@@ -1,3 +1,8 @@
+"""
+.. module:: carMaps
+   :synopsis: Create google maps object
+
+"""
 import geocoder
 from flask_googlemaps import  Map, icons
 

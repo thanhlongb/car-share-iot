@@ -1,3 +1,8 @@
+"""
+.. module:: carsView
+   :synopsis: List of API for cars function
+
+"""
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
 from flask_login import (
     current_user,

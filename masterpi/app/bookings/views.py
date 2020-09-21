@@ -1,3 +1,8 @@
+"""
+.. module:: bookingsView
+   :synopsis: show booking api
+
+"""
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
 from flask_login import current_user
 
