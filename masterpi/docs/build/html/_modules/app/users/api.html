@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>app.users.api &#8212; Car Share Iot 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for app.users.api</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">pickle</span><span class="o">,</span> <span class="nn">requests</span><span class="o">,</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+<span class="kn">from</span> <span class="nn">werkzeug.security</span> <span class="kn">import</span> <span class="n">check_password_hash</span><span class="p">,</span> <span class="n">generate_password_hash</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">or_</span><span class="p">,</span> <span class="n">and_</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">func</span>
+
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">login_manager</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mail</span>
+<span class="kn">from</span> <span class="nn">app.users.forms</span> <span class="kn">import</span> <span class="n">RegisterForm</span><span class="p">,</span> <span class="n">LoginForm</span><span class="p">,</span> <span class="n">UserForm</span><span class="p">,</span> <span class="n">UserEditForm</span><span class="p">,</span> <span class="n">PhotosForm</span>
+<span class="kn">from</span> <span class="nn">app.users.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">app.cars.models</span> <span class="kn">import</span> <span class="n">Car</span><span class="p">,</span> <span class="n">CarReport</span>
+<span class="kn">from</span> <span class="nn">app.cars.forms</span> <span class="kn">import</span> <span class="n">CarForm</span>
+<span class="kn">from</span> <span class="nn">app.bookings.models</span> <span class="kn">import</span> <span class="n">Booking</span><span class="p">,</span> <span class="n">BookingAction</span>
+
+<span class="n">api_mod</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/api&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="get_users"><a class="viewcode-back" href="../../../users.html#app.users.api.get_users">[docs]</a><span class="nd">@api_mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_users</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Get all users record </span>
+<span class="sd">    </span>
+<span class="sd">    :returns: a list of users in json format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">users</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="users_create"><a class="viewcode-back" href="../../../users.html#app.users.api.users_create">[docs]</a><span class="nd">@api_mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users/create/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">users_create</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Create a new user using HTTP post methods</span>
+
+<span class="sd">    :returns: user in json format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">RegisterForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">or_</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                                     <span class="n">User</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="n">form</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">data</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+        <span class="c1"># create an user instance not yet stored in the database</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                    <span class="n">username</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                    <span class="n">first_name</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">first_name</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                    <span class="n">last_name</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">last_name</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                    <span class="n">password</span><span class="o">=</span><span class="n">generate_password_hash</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+        <span class="c1"># Insert the record in our database and commit it</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">user</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{},</span> <span class="mi">401</span></div>
+
+<div class="viewcode-block" id="users_update"><a class="viewcode-back" href="../../../users.html#app.users.api.users_update">[docs]</a><span class="nd">@api_mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users/edit/&lt;user_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">users_update</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Update user information using HTTP POST methods</span>
+
+<span class="sd">    :param user_id: id of existing user</span>
+
+<span class="sd">    :returns: user in JSON format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="s2">&quot;400 user not exists&quot;</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">UserEditForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+    <span class="n">form</span><span class="o">.</span><span class="n">populate_obj</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">user</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="mi">200</span></div>
+
+<div class="viewcode-block" id="users_delete"><a class="viewcode-back" href="../../../users.html#app.users.api.users_delete">[docs]</a><span class="nd">@api_mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users/delete&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">users_delete</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Delete user record using HTTP DELETE methods</span>
+
+<span class="sd">    :param user_id: id of existing user</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">user</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="mi">200</span>
+    <span class="k">return</span> <span class="s1">&#39;user not exist.&#39;</span><span class="p">,</span> <span class="mi">404</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Car Share Iot</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../users.html">Users API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cars.html">Cars API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../bookings.html">Bookings API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tran Minh Quang, Ngo Quang Trung, Bui Thanh Long, Ha Hoang Phuc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

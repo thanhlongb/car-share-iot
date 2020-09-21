@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Facial Recognition &#8212; Car Share Iot - Agent Pi 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="QR code" href="qr_code.html" />
+    <link rel="prev" title="Main" href="main.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="facial-recognition">
+<h1>Facial Recognition<a class="headerlink" href="#facial-recognition" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-facial_recognition.recognize">
+<span id="recognize"></span><h2>Recognize<a class="headerlink" href="#module-facial_recognition.recognize" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="facial_recognition.recognize.recognize">
+<code class="sig-prename descclassname">facial_recognition.recognize.</code><code class="sig-name descname">recognize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/facial_recognition/recognize.html#recognize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#facial_recognition.recognize.recognize" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Open picamera and use the trained model to recognize the</p>
+</div></blockquote>
+<p>customer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>username, or label of the recognized person.</p></li>
+<li><p>’unknown’ if the person is not recognized.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-facial_recognition.train_model">
+<span id="train-model"></span><h2>Train model<a class="headerlink" href="#module-facial_recognition.train_model" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="facial_recognition.train_model.train_model">
+<code class="sig-prename descclassname">facial_recognition.train_model.</code><code class="sig-name descname">train_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">encodings_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/facial_recognition/train_model.html#train_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#facial_recognition.train_model.train_model" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Train the SVM model using face encodings got from</p>
+</div></blockquote>
+<p>MP</p>
+<dl class="field-list simple">
+<dt class="field-odd">Args</dt>
+<dd class="field-odd"><p>encoding_data : encodings.pickle got updated from MP</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>username if sucessfully authenticated.</p></li>
+<li><p>empty string otherwise.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Car Share Iot - Agent Pi</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="main.html">Main</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Facial Recognition</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-facial_recognition.recognize">Recognize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-facial_recognition.train_model">Train model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qr_code.html">QR code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detect_nearby_device.html">Detect nearby devices</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="main.html" title="previous chapter">Main</a></li>
+      <li>Next: <a href="qr_code.html" title="next chapter">QR code</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tran Minh Quang, Ngo Quang Trung, Bui Thanh Long, Ha Hoang Phuc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/facial_recognition.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

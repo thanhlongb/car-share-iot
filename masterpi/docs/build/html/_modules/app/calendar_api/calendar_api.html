@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>app.calendar_api.calendar_api &#8212; Car Share Iot 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for app.calendar_api.calendar_api</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">pickle</span> <span class="kn">import</span> <span class="n">load</span>
+<span class="kn">from</span> <span class="nn">pickle</span> <span class="kn">import</span> <span class="n">dump</span>
+
+<span class="kn">from</span> <span class="nn">google.auth.transport.requests</span> <span class="kn">import</span> <span class="n">Request</span>
+<span class="kn">from</span> <span class="nn">google_auth_oauthlib.flow</span> <span class="kn">import</span> <span class="n">InstalledAppFlow</span>
+<span class="kn">from</span> <span class="nn">googleapiclient.discovery</span> <span class="kn">import</span> <span class="n">build</span>
+
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">oauth2client</span> <span class="kn">import</span> <span class="n">file</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">tools</span>
+<span class="kn">from</span> <span class="nn">tzlocal</span> <span class="kn">import</span> <span class="n">get_localzone</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">timedelta</span>
+
+
+<div class="viewcode-block" id="CalendarApi"><a class="viewcode-back" href="../../../utils.html#app.calendar_api.calendar_api.CalendarApi">[docs]</a><span class="k">class</span> <span class="nc">CalendarApi</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; This class create the google calenar api for adding event to the calendar</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Constructor for the class</span>
+
+<span class="sd">        :param str title: title of the event</span>
+<span class="sd">        :param str description: description of the event</span>
+<span class="sd">        :param str attendee: email of the user</span>
+<span class="sd">        :param datetime start: time start event</span>
+<span class="sd">        :param int duration: duration of car booked </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorization</span><span class="p">()</span>
+        <span class="c1"># end = start + timedelta(hours=duration)</span>
+        <span class="c1"># self.event_states = self.add_event(title, description, attendee, </span>
+        <span class="c1">#                                     start.isoformat(), end.isoformat(), service)</span>
+
+<div class="viewcode-block" id="CalendarApi.authorization"><a class="viewcode-back" href="../../../utils.html#app.calendar_api.calendar_api.CalendarApi.authorization">[docs]</a>    <span class="k">def</span> <span class="nf">authorization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Authorize the token and create a Google Calendar service</span>
+
+<span class="sd">        :return: calendar service</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">SCOPES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://www.googleapis.com/auth/calendar&quot;</span><span class="p">]</span>
+        <span class="n">creds</span>  <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="n">token_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;app/calendar_api/credentials/token.pickle&quot;</span><span class="p">)</span>
+        <span class="c1"># print(token_file)</span>
+        <span class="k">if</span> <span class="n">token_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">token_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">token</span><span class="p">:</span>
+                <span class="n">creds</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">creds</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">creds</span><span class="o">.</span><span class="n">valid</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">creds</span> <span class="ow">and</span> <span class="n">creds</span><span class="o">.</span><span class="n">expired</span> <span class="ow">and</span> <span class="n">creds</span><span class="o">.</span><span class="n">refresh_token</span><span class="p">:</span>
+                <span class="n">creds</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">Request</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">flow</span> <span class="o">=</span> <span class="n">InstalledAppFlow</span><span class="o">.</span><span class="n">from_client_secrets_file</span><span class="p">(</span><span class="s1">&#39;app/calendar_api/credentials/credentials.json&#39;</span><span class="p">,</span> <span class="n">SCOPES</span><span class="p">)</span>
+                <span class="n">creds</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">run_local_server</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">token_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">token</span><span class="p">:</span>
+                <span class="n">dump</span><span class="p">(</span><span class="n">creds</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+
+        <span class="n">calendar_service</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="s2">&quot;calendar&quot;</span><span class="p">,</span> <span class="s2">&quot;v3&quot;</span><span class="p">,</span> <span class="n">credentials</span> <span class="o">=</span><span class="n">creds</span> <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">calendar_service</span></div>
+
+<div class="viewcode-block" id="CalendarApi.add_event"><a class="viewcode-back" href="../../../utils.html#app.calendar_api.calendar_api.CalendarApi.add_event">[docs]</a>    <span class="k">def</span> <span class="nf">add_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">attendee</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add event to the calendar</span>
+
+<span class="sd">        :param str title: title of the event</span>
+<span class="sd">        :param str description: description of the event</span>
+<span class="sd">        :param str attendee: email of the user</span>
+<span class="sd">        :param datetime start: time start event</span>
+<span class="sd">        :param int duration: duration of car booked </span>
+<span class="sd">        :param service: the calendar service</span>
+
+<span class="sd">        :return: an event object</span>
+<span class="sd">        :rtype: Event</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+                 <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;dateTime&quot;</span><span class="p">:</span> <span class="n">start</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span> <span class="s2">&quot;timeZone&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_localzone</span><span class="p">())},</span>
+                 <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;dateTime&quot;</span><span class="p">:</span> <span class="n">end</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span> <span class="s2">&quot;timeZone&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_localzone</span><span class="p">())},</span>
+                 <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+                 <span class="s2">&quot;attendees&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">attendee</span><span class="p">}],</span>
+                 <span class="s2">&quot;reminders&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;useDefault&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+                <span class="p">}</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">events</span><span class="p">()</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">calendarId</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="n">sendNotifications</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">event</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">event</span></div>
+
+    
+<div class="viewcode-block" id="CalendarApi.delete_event"><a class="viewcode-back" href="../../../utils.html#app.calendar_api.calendar_api.CalendarApi.delete_event">[docs]</a>    <span class="k">def</span> <span class="nf">delete_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_id</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This function delete calendar event</span>
+
+<span class="sd">        :param str event_id: id of deleted event</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">events</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">calendarId</span><span class="o">=</span><span class="s1">&#39;primary&#39;</span><span class="p">,</span> <span class="n">eventId</span><span class="o">=</span><span class="n">event_id</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Car Share Iot</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../users.html">Users API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cars.html">Cars API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../bookings.html">Bookings API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tran Minh Quang, Ngo Quang Trung, Bui Thanh Long, Ha Hoang Phuc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
