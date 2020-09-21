@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Utils &#8212; Car Share Iot 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="utils">
+<h1>Utils<a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="calendar-api">
+<h2>calendar_api<a class="headerlink" href="#calendar-api" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-app.calendar_api.calendar_api"></span><dl class="py class">
+<dt id="app.calendar_api.calendar_api.CalendarApi">
+<em class="property">class </em><code class="sig-prename descclassname">app.calendar_api.calendar_api.</code><code class="sig-name descname">CalendarApi</code><a class="reference internal" href="_modules/app/calendar_api/calendar_api.html#CalendarApi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.calendar_api.calendar_api.CalendarApi" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class create the google calenar api for adding event to the calendar</p>
+<dl class="py method">
+<dt id="app.calendar_api.calendar_api.CalendarApi.add_event">
+<code class="sig-name descname">add_event</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">title</span></em>, <em class="sig-param"><span class="n">description</span></em>, <em class="sig-param"><span class="n">attendee</span></em>, <em class="sig-param"><span class="n">start</span></em>, <em class="sig-param"><span class="n">duration</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/calendar_api/calendar_api.html#CalendarApi.add_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.calendar_api.calendar_api.CalendarApi.add_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add event to the calendar</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – title of the event</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – description of the event</p></li>
+<li><p><strong>attendee</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – email of the user</p></li>
+<li><p><strong>start</strong> (<em>datetime</em>) – time start event</p></li>
+<li><p><strong>duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – duration of car booked</p></li>
+<li><p><strong>service</strong> – the calendar service</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an event object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Event</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="app.calendar_api.calendar_api.CalendarApi.authorization">
+<code class="sig-name descname">authorization</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/calendar_api/calendar_api.html#CalendarApi.authorization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.calendar_api.calendar_api.CalendarApi.authorization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Authorize the token and create a Google Calendar service</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>calendar service</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="app.calendar_api.calendar_api.CalendarApi.delete_event">
+<code class="sig-name descname">delete_event</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">event_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/calendar_api/calendar_api.html#CalendarApi.delete_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.calendar_api.calendar_api.CalendarApi.delete_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function delete calendar event</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>event_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – id of deleted event</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="charting">
+<h2>charting<a class="headerlink" href="#charting" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-app.charting.prepare_chart_data"></span><dl class="py function">
+<dt id="app.charting.prepare_chart_data.get_bar_chart_data">
+<code class="sig-prename descclassname">app.charting.prepare_chart_data.</code><code class="sig-name descname">get_bar_chart_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/charting/prepare_chart_data.html#get_bar_chart_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.charting.prepare_chart_data.get_bar_chart_data" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Get bookings data from database and preprocess</p>
+</div></blockquote>
+<p>for drawing bar chart.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dict{
+-   labels: list of chart labels
+-   values: list of chart values</p>
+</dd>
+</dl>
+<p>}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.charting.prepare_chart_data.get_line_chart_data">
+<code class="sig-prename descclassname">app.charting.prepare_chart_data.</code><code class="sig-name descname">get_line_chart_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/charting/prepare_chart_data.html#get_line_chart_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.charting.prepare_chart_data.get_line_chart_data" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Get users data from database and preprocess</p>
+</div></blockquote>
+<p>for drawing line chart.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dict{
+-   labels: list of chart labels
+-   values: list of chart values</p>
+</dd>
+</dl>
+<p>}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.charting.prepare_chart_data.get_pie_chart_data">
+<code class="sig-prename descclassname">app.charting.prepare_chart_data.</code><code class="sig-name descname">get_pie_chart_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/charting/prepare_chart_data.html#get_pie_chart_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.charting.prepare_chart_data.get_pie_chart_data" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Get cars data from database and preprocess</p>
+</div></blockquote>
+<p>for drawing pie chart.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dict{
+-   labels: list of chart labels
+-   values: list of chart values</p>
+</dd>
+</dl>
+<p>}</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-app.facial_recognition">
+<span id="facial-recognition"></span><h2>facial recognition<a class="headerlink" href="#module-app.facial_recognition" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Car Share Iot</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tran Minh Quang, Ngo Quang Trung, Bui Thanh Long, Ha Hoang Phuc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

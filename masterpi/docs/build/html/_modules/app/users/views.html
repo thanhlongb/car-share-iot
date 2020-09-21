@@ -1,0 +1,771 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>app.users.views &#8212; Car Share Iot 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for app.users.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">pickle</span><span class="o">,</span> <span class="nn">requests</span><span class="o">,</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">json</span> <span class="kn">import</span> <span class="n">JSONEncoder</span>
+<span class="kn">import</span> <span class="nn">requests</span><span class="o">,</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">qrcode</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">jsonify</span>
+
+<span class="kn">from</span> <span class="nn">json</span> <span class="kn">import</span> <span class="n">JSONEncoder</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">abort</span>
+<span class="kn">from</span> <span class="nn">werkzeug.security</span> <span class="kn">import</span> <span class="n">check_password_hash</span><span class="p">,</span> <span class="n">generate_password_hash</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">or_</span><span class="p">,</span> <span class="n">and_</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">func</span>
+<span class="kn">from</span> <span class="nn">werkzeug.utils</span> <span class="kn">import</span> <span class="n">secure_filename</span>
+<span class="kn">from</span> <span class="nn">flask_login</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">current_user</span><span class="p">,</span>
+    <span class="n">login_required</span><span class="p">,</span>
+    <span class="n">login_user</span><span class="p">,</span>
+    <span class="n">logout_user</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">flask_mail</span> <span class="kn">import</span> <span class="n">Message</span>
+
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">login_manager</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mail</span>
+<span class="kn">from</span> <span class="nn">app.users.forms</span> <span class="kn">import</span> <span class="n">RegisterForm</span><span class="p">,</span> <span class="n">LoginForm</span><span class="p">,</span> <span class="n">UserForm</span><span class="p">,</span> <span class="n">UserEditForm</span><span class="p">,</span> <span class="n">PhotosForm</span>
+<span class="kn">from</span> <span class="nn">app.users.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">app.cars.models</span> <span class="kn">import</span> <span class="n">Car</span><span class="p">,</span> <span class="n">CarReport</span>
+<span class="kn">from</span> <span class="nn">app.cars.maps</span> <span class="kn">import</span> <span class="n">StaticMap</span>
+<span class="kn">from</span> <span class="nn">app.cars.forms</span> <span class="kn">import</span> <span class="n">CarForm</span>
+<span class="kn">from</span> <span class="nn">app.bookings.models</span> <span class="kn">import</span> <span class="n">Booking</span><span class="p">,</span> <span class="n">BookingAction</span>
+<span class="c1"># from ..facial_recognition.encode_faces import encode</span>
+<span class="kn">from</span> <span class="nn">..charting.prepare_chart_data</span> <span class="kn">import</span> <span class="n">get_line_chart_data</span><span class="p">,</span> <span class="n">get_pie_chart_data</span><span class="p">,</span> <span class="n">get_bar_chart_data</span>
+
+<span class="n">mod</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="n">api_mod</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;users_api&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/api&#39;</span><span class="p">)</span>
+<span class="c1"># FACE_UPLOAD_FOLDER_URL = &#39;app/facial_recognition/dataset&#39;</span>
+<span class="n">QR_UPLOAD_FOLDER_URL</span> <span class="o">=</span> <span class="s1">&#39;app/qr_code&#39;</span>
+
+<div class="viewcode-block" id="NumpyArrayEncoder"><a class="viewcode-back" href="../../../users.html#app.users.views.NumpyArrayEncoder">[docs]</a><span class="k">class</span> <span class="nc">NumpyArrayEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
+<div class="viewcode-block" id="NumpyArrayEncoder.default"><a class="viewcode-back" href="../../../users.html#app.users.views.NumpyArrayEncoder.default">[docs]</a>    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">NumpyArrayEncoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="generate_qr_code"><a class="viewcode-back" href="../../../users.html#app.users.views.generate_qr_code">[docs]</a><span class="k">def</span> <span class="nf">generate_qr_code</span><span class="p">(</span><span class="n">old_engineer_name</span><span class="p">,</span> <span class="n">new_engineer_name</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">old_engineer_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">old_engineer_name</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">oldfilename</span> <span class="o">=</span> <span class="n">old_engineer_name</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span>
+        <span class="nb">dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">QR_UPLOAD_FOLDER_URL</span><span class="p">,</span> <span class="n">oldfilename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+    
+    <span class="n">newfilename</span> <span class="o">=</span> <span class="n">new_engineer_name</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span>
+    <span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">QR_UPLOAD_FOLDER_URL</span><span class="p">,</span> <span class="n">newfilename</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">qrcode</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">new_engineer_name</span><span class="p">)</span>
+    <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="load_user"><a class="viewcode-back" href="../../../users.html#app.users.views.load_user">[docs]</a><span class="nd">@login_manager</span><span class="o">.</span><span class="n">user_loader</span>
+<span class="k">def</span> <span class="nf">load_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Retrieve the user on the database using user id </span>
+
+<span class="sd">    :param int id: the id of user</span>
+<span class="sd">    </span>
+<span class="sd">    :return: return user object with corresponding user id</span>
+<span class="sd">    :rtype: User</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="unauthorized"><a class="viewcode-back" href="../../../users.html#app.users.views.unauthorized">[docs]</a><span class="nd">@login_manager</span><span class="o">.</span><span class="n">unauthorized_handler</span>
+<span class="k">def</span> <span class="nf">unauthorized</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Redirect the user to login page if the user type is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.login&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="home"><a class="viewcode-back" href="../../../users.html#app.users.views.home">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">home</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Redirect the user to home page which have booking history</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bookings</span> <span class="o">=</span> <span class="n">Booking</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">Booking</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/home.html&quot;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">current_user</span><span class="p">,</span> <span class="n">bookings</span><span class="o">=</span><span class="n">bookings</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="login"><a class="viewcode-back" href="../../../users.html#app.users.views.login">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function login using register account</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">current_user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.login_redirect&#39;</span><span class="p">))</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+    <span class="c1"># make sure data are valid, but doesn&#39;t validate password is right</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="c1"># we use werzeug to validate user&#39;s password</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">and</span> <span class="n">check_password_hash</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+            <span class="c1"># the session can&#39;t be modified as it&#39;s signed, </span>
+            <span class="c1"># it&#39;s a safe place to store the user id</span>
+            <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.login_redirect&#39;</span><span class="p">))</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Wrong username or password&#39;</span><span class="p">,</span> <span class="s1">&#39;error-message&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/login.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="google_login"><a class="viewcode-back" href="../../../users.html#app.users.views.google_login">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/google-login/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">google_login</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Login form using Google account</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">current_user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.login_redirect&#39;</span><span class="p">))</span>    
+    <span class="c1">#ref: https://realpython.com/flask-google-login/</span>
+    <span class="c1">#TODO: check if user&#39;s is logged in</span>
+    <span class="n">google_provider_cfg</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;GOOGLE_DISCOVERY_URL&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">authorization_endpoint</span> <span class="o">=</span> <span class="n">google_provider_cfg</span><span class="p">[</span><span class="s2">&quot;authorization_endpoint&quot;</span><span class="p">]</span>
+    <span class="n">request_uri</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">prepare_request_uri</span><span class="p">(</span>
+        <span class="n">authorization_endpoint</span><span class="p">,</span>
+        <span class="n">redirect_uri</span><span class="o">=</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.google_callback&#39;</span><span class="p">,</span> <span class="n">_external</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">scope</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;openid&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request_uri</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="google_callback"><a class="viewcode-back" href="../../../users.html#app.users.views.google_callback">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/google-login/callback&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">google_callback</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; retrieve user information in Google account</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#ref: https://realpython.com/flask-google-login/</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
+    <span class="n">google_provider_cfg</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;GOOGLE_DISCOVERY_URL&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">token_endpoint</span> <span class="o">=</span> <span class="n">google_provider_cfg</span><span class="p">[</span><span class="s2">&quot;token_endpoint&quot;</span><span class="p">]</span>
+    <span class="n">token_url</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">prepare_token_request</span><span class="p">(</span>
+        <span class="n">token_endpoint</span><span class="p">,</span>
+        <span class="n">authorization_response</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+        <span class="n">redirect_url</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">=</span><span class="n">code</span>
+    <span class="p">)</span>
+    <span class="n">token_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="n">token_url</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+        <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;GOOGLE_CLIENT_ID&#39;</span><span class="p">],</span> 
+              <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;GOOGLE_CLIENT_SECRET&#39;</span><span class="p">]),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Parse the tokens!</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">parse_request_body_response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">token_response</span><span class="o">.</span><span class="n">json</span><span class="p">()))</span>
+
+    <span class="n">userinfo_endpoint</span> <span class="o">=</span> <span class="n">google_provider_cfg</span><span class="p">[</span><span class="s2">&quot;userinfo_endpoint&quot;</span><span class="p">]</span>
+    <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_token</span><span class="p">(</span><span class="n">userinfo_endpoint</span><span class="p">)</span>
+    <span class="n">userinfo_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">userinfo_response</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">userinfo_response</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">],</span>
+                    <span class="n">username</span><span class="o">=</span><span class="n">userinfo_response</span><span class="p">[</span><span class="s1">&#39;sub&#39;</span><span class="p">],</span> 
+                    <span class="n">first_name</span><span class="o">=</span><span class="n">userinfo_response</span><span class="p">[</span><span class="s1">&#39;given_name&#39;</span><span class="p">],</span>
+                    <span class="n">last_name</span><span class="o">=</span><span class="n">userinfo_response</span><span class="p">[</span><span class="s1">&#39;family_name&#39;</span><span class="p">])</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.login_redirect&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="login_redirect"><a class="viewcode-back" href="../../../users.html#app.users.views.login_redirect">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login/redirect&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">login_redirect</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Redirect to page based on user role</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isEngineer</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.engineer_reports&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isManager</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.dashboard&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.admin_pages&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.home&#39;</span><span class="p">))</span></div>
+ 
+<div class="viewcode-block" id="logout"><a class="viewcode-back" href="../../../users.html#app.users.views.logout">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/logout/&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">logout</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; User logout </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logout_user</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.login&#39;</span><span class="p">))</span></div>
+  
+<div class="viewcode-block" id="register"><a class="viewcode-back" href="../../../users.html#app.users.views.register">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/register/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Registration Form for register new account</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">current_user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.login_redirect&#39;</span><span class="p">))</span>    
+    <span class="n">form</span> <span class="o">=</span> <span class="n">RegisterForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="c1"># check whether if there is user with the same username/email</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">or_</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                                     <span class="n">User</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="n">form</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">data</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+            <span class="c1"># create an user instance not yet stored in the database</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                        <span class="n">username</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                        <span class="n">first_name</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">first_name</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                        <span class="n">last_name</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">last_name</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                        <span class="n">password</span><span class="o">=</span><span class="n">generate_password_hash</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+            <span class="c1"># Insert the record in our database and commit it</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+            <span class="c1"># Log the user in, as he now has an id</span>
+            <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="c1"># redirect user to the &#39;home&#39; method of the user module.</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.login_redirect&#39;</span><span class="p">))</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Username or email is taken.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/register.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="dashboard"><a class="viewcode-back" href="../../../users.html#app.users.views.dashboard">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/dashboard/&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">dashboard</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Redirect to dashboard</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">()</span> <span class="ow">or</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isManager</span><span class="p">()):</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+
+    <span class="n">line_chart_data</span> <span class="o">=</span> <span class="n">get_line_chart_data</span><span class="p">()</span>
+    <span class="n">pie_chart_data</span> <span class="o">=</span> <span class="n">get_pie_chart_data</span><span class="p">()</span>
+    <span class="n">bar_chart_data</span> <span class="o">=</span> <span class="n">get_bar_chart_data</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/dashboard.html&quot;</span><span class="p">,</span> 
+        <span class="n">line_chart_labels</span> <span class="o">=</span> <span class="n">line_chart_data</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">],</span>
+        <span class="n">line_chart_values</span> <span class="o">=</span> <span class="n">line_chart_data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">],</span>
+        <span class="n">pie_chart_labels</span> <span class="o">=</span> <span class="n">pie_chart_data</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">],</span>
+        <span class="n">pie_chart_values</span> <span class="o">=</span> <span class="n">pie_chart_data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">],</span>
+        <span class="n">bar_chart_labels</span> <span class="o">=</span> <span class="n">bar_chart_data</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">],</span>
+        <span class="n">bar_chart_values</span> <span class="o">=</span> <span class="n">bar_chart_data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span>
+    <span class="p">)</span> </div>
+    
+<div class="viewcode-block" id="engineer"><a class="viewcode-back" href="../../../users.html#app.users.views.engineer">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/engineer/&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">engineer</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Redirect to engineering page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/engineer.html&quot;</span><span class="p">)</span></div>
+  
+<div class="viewcode-block" id="admin_bookings"><a class="viewcode-back" href="../../../users.html#app.users.views.admin_bookings">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/admin/bookings&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">admin_bookings</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Redirect the admin to booking page which show the list of bookings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+    <span class="n">bookings</span> <span class="o">=</span> <span class="n">Booking</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="n">Booking</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/admin/bookings.html&quot;</span><span class="p">,</span> <span class="n">bookings</span><span class="o">=</span><span class="n">bookings</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="admin_cars"><a class="viewcode-back" href="../../../users.html#app.users.views.admin_cars">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/admin/cars&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">admin_cars</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Redirect the admin to car page which show the list of cars</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+    <span class="n">cars</span> <span class="o">=</span> <span class="n">Car</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="n">Car</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/admin/cars.html&quot;</span><span class="p">,</span> <span class="n">cars</span><span class="o">=</span><span class="n">cars</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="admin_cars_create"><a class="viewcode-back" href="../../../users.html#app.users.views.admin_cars_create">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/admin/cars/create&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">admin_cars_create</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function allow admin to create a car record in the database</span>
+
+<span class="sd">        :reqheader Accept: application/json</span>
+<span class="sd">        :param string make: car brand</span>
+<span class="sd">        :param string color: car color</span>
+<span class="sd">        :param string body_type: car body type</span>
+<span class="sd">        :param int seats: number of seats</span>
+<span class="sd">        :param int cost_per_hour: cost per hour</span>
+<span class="sd">        </span>
+<span class="sd">        :status 200: car created</span>
+<span class="sd">        :status 400: bad request</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">CarForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="p">(</span><span class="n">make</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">make</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                  <span class="n">color</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                  <span class="n">body_type</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">body_type</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                  <span class="n">seats</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">seats</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                  <span class="n">cost_per_hour</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">cost_per_hour</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># Insert the record in our database and commit it</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">car</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Car added.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.admin_cars_create&#39;</span><span class="p">))</span>
+        <span class="c1"># redirect user to the &#39;home&#39; method of the user module.    </span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/admin/cars-create.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>    </div>
+
+<div class="viewcode-block" id="admin_cars_edit"><a class="viewcode-back" href="../../../users.html#app.users.views.admin_cars_edit">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/admin/cars/edit/&lt;car_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">admin_cars_edit</span><span class="p">(</span><span class="n">car_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Update car&#39;s properties</span>
+
+<span class="sd">    :param int car_id: id of an existing car</span>
+
+<span class="sd">    :status 200: car report updated</span>
+<span class="sd">    :status 400: car not exist</span>
+<span class="sd">    :status 503: Not sufficent permission</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+    <span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">car_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">car</span><span class="p">:</span> 
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">CarForm</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">car</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">populate_obj</span><span class="p">(</span><span class="n">car</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Car information updated.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/admin/cars-edit.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="admin_cars_delete"><a class="viewcode-back" href="../../../users.html#app.users.views.admin_cars_delete">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/admin/cars/delete&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">admin_cars_delete</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    This function allow admin to delete a car record in the database</span>
+
+<span class="sd">        :param car_id: id of the car</span>
+
+<span class="sd">        :status 201: car deleted</span>
+<span class="sd">        :status 404: car not exist</span>
+<span class="sd">        :status 503: Not sufficent permission</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">),</span> <span class="mi">503</span>
+    <span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;car_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">car</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">car</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">200</span>
+    <span class="k">return</span> <span class="s1">&#39;car not exist.&#39;</span><span class="p">,</span> <span class="mi">404</span></div>
+
+<div class="viewcode-block" id="admin_cars_report"><a class="viewcode-back" href="../../../users.html#app.users.views.admin_cars_report">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/admin/cars/report&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">admin_cars_report</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function allow admin to create a car report from the database</span>
+
+<span class="sd">        :reqheader Accept: application/json</span>
+<span class="sd">        :param int car_id: id of the car</span>
+
+<span class="sd">        :status 200: car report created</span>
+<span class="sd">        :status 400: car not exist</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">),</span> <span class="mi">503</span>
+    <span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;car_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">car</span><span class="p">:</span>
+        <span class="n">car_report</span> <span class="o">=</span> <span class="n">CarReport</span><span class="p">(</span><span class="n">car</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">car_report</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">200</span>
+    <span class="k">return</span> <span class="s1">&#39;car not exist.&#39;</span><span class="p">,</span> <span class="mi">404</span></div>
+
+<div class="viewcode-block" id="manager_reports"><a class="viewcode-back" href="../../../users.html#app.users.views.manager_reports">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/manager/reports&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">manager_reports</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function generate the report page of the user</span>
+
+<span class="sd">        :status 200: OK</span>
+<span class="sd">        :status 404: bad request</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isManager</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+    <span class="n">reports</span> <span class="o">=</span> <span class="n">CarReport</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">fixed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">engineers</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/manager/reports.html&quot;</span><span class="p">,</span> <span class="n">reports</span><span class="o">=</span><span class="n">reports</span><span class="p">,</span> <span class="n">engineers</span><span class="o">=</span><span class="n">engineers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="manager_reports_assign"><a class="viewcode-back" href="../../../users.html#app.users.views.manager_reports_assign">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/manager/reports/assign&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">manager_reports_assign</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function will let manager assign task for engineer by sending HTTP POST methods</span>
+
+<span class="sd">        :param str engineer_id: id of an existing engineering</span>
+
+<span class="sd">        :status 200: OK</span>
+<span class="sd">        :status 404: bad request</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isManager</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">),</span> <span class="mi">503</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="n">CarReport</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;report_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">report</span><span class="p">:</span>
+        <span class="n">report</span><span class="o">.</span><span class="n">fixer_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;engineer_id&#39;</span><span class="p">]</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">fixer</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;engineer_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="c1"># send email to fixer</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="s2">&quot;There is a new vehicle with issues reported!&quot;</span><span class="p">,</span>
+                        <span class="n">recipients</span><span class="o">=</span><span class="p">[</span><span class="n">fixer</span><span class="o">.</span><span class="n">email</span><span class="p">])</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">200</span>
+    <span class="k">return</span> <span class="s1">&#39;report not exist.&#39;</span><span class="p">,</span> <span class="mi">404</span></div>
+
+<div class="viewcode-block" id="engineer_reports"><a class="viewcode-back" href="../../../users.html#app.users.views.engineer_reports">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/engineer/reports&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">engineer_reports</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function generate the report page of the user</span>
+
+<span class="sd">        :status 200: OK</span>
+<span class="sd">        :status 404: bad request</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isEngineer</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+    <span class="n">reports</span> <span class="o">=</span> <span class="n">CarReport</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">and_</span><span class="p">(</span><span class="n">CarReport</span><span class="o">.</span><span class="n">fixed</span> <span class="o">==</span> <span class="kc">False</span><span class="p">,</span>
+                                          <span class="n">CarReport</span><span class="o">.</span><span class="n">fixer_id</span> <span class="o">==</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">))</span> \
+                             <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="n">CarReport</span><span class="o">.</span><span class="n">id</span><span class="p">))</span> \
+                             <span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">reports</span><span class="p">):</span>
+        <span class="n">gmap</span> <span class="o">=</span> <span class="n">StaticMap</span><span class="p">(</span><span class="n">reports</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">car</span><span class="o">.</span><span class="n">current_location</span><span class="p">,</span> 
+                         <span class="n">reports</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">car</span><span class="o">.</span><span class="n">current_coordinate</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                         <span class="n">reports</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">car</span><span class="o">.</span><span class="n">current_coordinate</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">reports</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">gmap</span><span class="o">.</span><span class="n">add_location</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">car</span><span class="o">.</span><span class="n">current_location</span><span class="p">,</span> 
+                              <span class="n">report</span><span class="o">.</span><span class="n">car</span><span class="o">.</span><span class="n">current_coordinate</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                              <span class="n">report</span><span class="o">.</span><span class="n">car</span><span class="o">.</span><span class="n">current_coordinate</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">carMap</span> <span class="o">=</span> <span class="n">gmap</span><span class="o">.</span><span class="n">create_map</span><span class="p">()</span>   
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">carMap</span> <span class="o">=</span> <span class="kc">None</span>     
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/engineer/reports.html&quot;</span><span class="p">,</span> <span class="n">reports</span><span class="o">=</span><span class="n">reports</span><span class="p">,</span> <span class="n">carMap</span><span class="o">=</span><span class="n">carMap</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="engineer_reports_fixed"><a class="viewcode-back" href="../../../users.html#app.users.views.engineer_reports_fixed">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/engineer/reports/fixed&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">engineer_reports_fixed</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function will let manager assign task for engineer by sending HTTP POST methods</span>
+
+<span class="sd">        :param str report_id: id of an existing engineering</span>
+
+<span class="sd">        :status 200: OK</span>
+<span class="sd">        :status 404: report not exist</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isEngineer</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">),</span> <span class="mi">503</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="n">CarReport</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;report_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">report</span><span class="p">:</span>
+        <span class="n">report</span><span class="o">.</span><span class="n">fixed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">200</span>
+    <span class="k">return</span> <span class="s1">&#39;report not exist.&#39;</span><span class="p">,</span> <span class="mi">404</span></div>
+
+
+<div class="viewcode-block" id="admin_pages"><a class="viewcode-back" href="../../../users.html#app.users.views.admin_pages">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/admin/pages&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">admin_pages</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/admin/pages.html&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="admin_users"><a class="viewcode-back" href="../../../users.html#app.users.views.admin_users">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/admin/users&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">admin_users</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Redirect admin to user management page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/admin/users.html&quot;</span><span class="p">,</span> <span class="n">users</span><span class="o">=</span><span class="n">users</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="admin_users_create"><a class="viewcode-back" href="../../../users.html#app.users.views.admin_users_create">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/admin/users/create&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">admin_users_create</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function allow admin to create a car report in the database</span>
+
+<span class="sd">        :reqheader Accept: application/json</span>
+<span class="sd">        :param str email: email of the user</span>
+<span class="sd">        :param str username: username of the user</span>
+<span class="sd">        :param str password: password of the user</span>
+<span class="sd">        :param str first_name: first name</span>
+<span class="sd">        :param str last_name: last name</span>
+<span class="sd">        :param int role: role of user</span>
+<span class="sd">        :param str bluetooth_MAC: mac address of user&#39;s bluetooth device</span>
+
+<span class="sd">        :status 200: car report created</span>
+<span class="sd">        :status 400: car not exist</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">UserForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">username</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">password</span><span class="o">=</span><span class="n">generate_password_hash</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">data</span><span class="p">),</span>
+                    <span class="n">first_name</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">first_name</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">last_name</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">last_name</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">role</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">role</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">bluetooth_MAC</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">bluetooth_MAC</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># Insert the record in our database and commit it</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+        <span class="c1">#Generate QR code</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">role</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;2&#39;</span><span class="p">:</span>
+            <span class="n">generate_qr_code</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;User added.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;users.admin_users_create&#39;</span><span class="p">))</span>
+        <span class="c1"># redirect user to the &#39;home&#39; method of the user module.    </span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/admin/users-create.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>   </div>
+
+<div class="viewcode-block" id="admin_users_edit"><a class="viewcode-back" href="../../../users.html#app.users.views.admin_users_edit">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/admin/users/edit/&lt;user_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">admin_users_edit</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Edit an existing user</span>
+
+<span class="sd">    :param int user_id: id of an existing user</span>
+
+<span class="sd">    :status 200: User report updated</span>
+<span class="sd">    :status 400: user not exist</span>
+<span class="sd">    :status 503: Not sufficent permission</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span> 
+        <span class="n">abort</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">UserEditForm</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">populate_obj</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+        <span class="c1">#generate new QR code</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">role</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;2&#39;</span><span class="p">:</span>
+            <span class="n">generate_qr_code</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">getUsername</span><span class="p">(),</span> <span class="n">form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;User information updated.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;users/admin/users-edit.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="admin_users_delete"><a class="viewcode-back" href="../../../users.html#app.users.views.admin_users_delete">[docs]</a><span class="nd">@mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/admin/users/delete&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">admin_users_delete</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function allow admin to delete an user record in the database</span>
+
+<span class="sd">    :param int user_id: id of the user</span>
+
+<span class="sd">    :status 201: user deleted</span>
+<span class="sd">    :status 404: user not exist</span>
+<span class="sd">    :status 503: Not sufficent permission</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">isAdmin</span><span class="p">():</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">),</span> <span class="mi">503</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+
+        <span class="c1">#delete qr_code</span>
+        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">getRole</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;engineer&#39;</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">getUsername</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span>
+            <span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">QR_UPLOAD_FOLDER_URL</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">200</span>
+    <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
+
+<span class="c1">################################ User unlock car ######################################</span>
+<div class="viewcode-block" id="api_login_by_credentials"><a class="viewcode-back" href="../../../users.html#app.users.views.api_login_by_credentials">[docs]</a><span class="nd">@api_mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login_by_credentials/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">api_login_by_credentials</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function allow user to unlock car by using their account</span>
+
+<span class="sd">    :param str username: user name of the user</span>
+<span class="sd">    :param str password: password of the user</span>
+
+<span class="sd">    :status 200: login success</span>
+<span class="sd">    :status 401: login failed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="ow">and</span> <span class="n">check_password_hash</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]):</span>
+        <span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;car_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">car</span><span class="o">.</span><span class="n">booked</span> <span class="ow">and</span> <span class="n">car</span><span class="o">.</span><span class="n">bookings</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="n">bookingAction</span> <span class="o">=</span> <span class="n">BookingAction</span><span class="p">(</span><span class="n">car</span><span class="o">.</span><span class="n">bookings</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">&quot;unlocked&quot;</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bookingAction</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">user</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">401</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">401</span></div>
+
+<div class="viewcode-block" id="api_login_by_facial_recognition"><a class="viewcode-back" href="../../../users.html#app.users.views.api_login_by_facial_recognition">[docs]</a><span class="nd">@api_mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login_by_facial_recognition/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">api_login_by_facial_recognition</span><span class="p">():</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+        <span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;car_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">car</span><span class="o">.</span><span class="n">booked</span> <span class="ow">and</span> <span class="n">car</span><span class="o">.</span><span class="n">bookings</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="n">bookingAction</span> <span class="o">=</span> <span class="n">BookingAction</span><span class="p">(</span><span class="n">car</span><span class="o">.</span><span class="n">bookings</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">&quot;unlocked&quot;</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bookingAction</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">user</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="mi">200</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">401</span></div>
+
+<div class="viewcode-block" id="api_logout"><a class="viewcode-back" href="../../../users.html#app.users.views.api_logout">[docs]</a><span class="nd">@api_mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/logout/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">api_logout</span><span class="p">():</span>
+    <span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;car_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">bookingAction</span> <span class="o">=</span> <span class="n">BookingAction</span><span class="p">(</span><span class="n">car</span><span class="o">.</span><span class="n">bookings</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">&quot;returned&quot;</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bookingAction</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">200</span></div>
+
+<div class="viewcode-block" id="face_encodings"><a class="viewcode-back" href="../../../users.html#app.users.views.face_encodings">[docs]</a><span class="nd">@api_mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/face_encodings/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">face_encodings</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function allow user to unlock car by using facial recognition</span>
+
+<span class="sd">    :status 200: login success</span>
+<span class="sd">    :status 401: login failed</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">encodings</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;app/facial_recognition/output/encodings.pickle&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">encodings_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">encodings</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NumpyArrayEncoder</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">encodings_json</span></div>
+
+<span class="c1"># @mod.route(&#39;/photos-upload/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])</span>
+<span class="c1"># @login_required</span>
+<span class="c1"># def photos_upload():</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Upload photos</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     form = PhotosForm()</span>
+<span class="c1">#     if request.method == &#39;POST&#39;:</span>
+<span class="c1">#         if form.validate_on_submit():</span>
+<span class="c1">#             user = User.query.filter_by(id=current_user.id).first()</span>
+<span class="c1">#             username = user.username</span>
+<span class="c1">#             directory = os.path.join(FACE_UPLOAD_FOLDER_URL, username)</span>
+<span class="c1">#             if not os.path.exists(directory):</span>
+<span class="c1">#                 os.makedirs(directory)</span>
+<span class="c1">#             for f in request.files.getlist(&#39;images&#39;):</span>
+<span class="c1">#                 filename = secure_filename(f.filename)</span>
+<span class="c1">#                 f.save(os.path.join(directory, filename))</span>
+<span class="c1">#             thread = Process(target=encode)</span>
+<span class="c1">#             thread.run()</span>
+<span class="c1">#             return render_template(&quot;users/photos-upload.html&quot;, form=form, uploaded=True)</span>
+<span class="c1">#     return render_template(&quot;users/photos-upload.html&quot;, form=form, uploaded=False)</span>
+
+
+<span class="c1">################################ Engineer unlock car ######################################</span>
+<div class="viewcode-block" id="api_engineer_unlock_car_by_QR"><a class="viewcode-back" href="../../../users.html#app.users.views.api_engineer_unlock_car_by_QR">[docs]</a><span class="nd">@api_mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/engineer_unlock_car_QR/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">api_engineer_unlock_car_by_QR</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function allow user to unlock car by using QR code</span>
+
+<span class="sd">    :status 200: login success</span>
+<span class="sd">    :status 401: login failed</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">engineer</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">engineer</span> <span class="ow">and</span> <span class="n">engineer</span><span class="o">.</span><span class="n">isEngineer</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">engineer</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="mi">200</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">401</span></div>
+
+<div class="viewcode-block" id="api_engineer_unlock_car_by_bluetooth"><a class="viewcode-back" href="../../../users.html#app.users.views.api_engineer_unlock_car_by_bluetooth">[docs]</a><span class="nd">@api_mod</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/engineer_unlock_car_bluetooth/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">api_engineer_unlock_car_by_bluetooth</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This function allow user to unlock car by bluetooth</span>
+
+<span class="sd">    :status 200: login success</span>
+<span class="sd">    :status 401: login failed</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">engineer</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">bluetooth_MAC</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;bluetooth_MAC&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">engineer</span> <span class="ow">and</span> <span class="n">engineer</span><span class="o">.</span><span class="n">isEngineer</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">engineer</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="mi">200</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">401</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Car Share Iot</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../users.html">Users API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cars.html">Cars API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../bookings.html">Bookings API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tran Minh Quang, Ngo Quang Trung, Bui Thanh Long, Ha Hoang Phuc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

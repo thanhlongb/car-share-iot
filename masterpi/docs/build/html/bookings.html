@@ -1,0 +1,344 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookings API &#8212; Car Share Iot 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="bookings-api">
+<h1>Bookings API<a class="headerlink" href="#bookings-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-app.bookings.models">
+<span id="models"></span><h2>Models<a class="headerlink" href="#module-app.bookings.models" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="app.bookings.models.Booking">
+<em class="property">class </em><code class="sig-prename descclassname">app.bookings.models.</code><code class="sig-name descname">Booking</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em>, <em class="sig-param"><span class="n">car_id</span></em>, <em class="sig-param"><span class="n">duration</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">calendar_id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/models.html#Booking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.models.Booking" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is the model of Booking record</p>
+<dl class="py attribute">
+<dt id="app.bookings.models.Booking.actions">
+<code class="sig-name descname">actions</code><a class="headerlink" href="#app.bookings.models.Booking.actions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.bookings.models.Booking.booked">
+<em class="property">property </em><code class="sig-name descname">booked</code><a class="headerlink" href="#app.bookings.models.Booking.booked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.bookings.models.Booking.calendar_id">
+<code class="sig-name descname">calendar_id</code><a class="headerlink" href="#app.bookings.models.Booking.calendar_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.bookings.models.Booking.car">
+<code class="sig-name descname">car</code><a class="headerlink" href="#app.bookings.models.Booking.car" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.bookings.models.Booking.car_id">
+<code class="sig-name descname">car_id</code><a class="headerlink" href="#app.bookings.models.Booking.car_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.bookings.models.Booking.duration">
+<code class="sig-name descname">duration</code><a class="headerlink" href="#app.bookings.models.Booking.duration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.bookings.models.Booking.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#app.bookings.models.Booking.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.bookings.models.Booking.unlocked">
+<em class="property">property </em><code class="sig-name descname">unlocked</code><a class="headerlink" href="#app.bookings.models.Booking.unlocked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.bookings.models.Booking.user">
+<code class="sig-name descname">user</code><a class="headerlink" href="#app.bookings.models.Booking.user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.bookings.models.Booking.user_id">
+<code class="sig-name descname">user_id</code><a class="headerlink" href="#app.bookings.models.Booking.user_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="app.bookings.models.BookingAction">
+<em class="property">class </em><code class="sig-prename descclassname">app.bookings.models.</code><code class="sig-name descname">BookingAction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">booking_id</span></em>, <em class="sig-param"><span class="n">action</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/models.html#BookingAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.models.BookingAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is the model of BookingAction record</p>
+<dl class="py attribute">
+<dt id="app.bookings.models.BookingAction.action">
+<code class="sig-name descname">action</code><a class="headerlink" href="#app.bookings.models.BookingAction.action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.bookings.models.BookingAction.booking_id">
+<code class="sig-name descname">booking_id</code><a class="headerlink" href="#app.bookings.models.BookingAction.booking_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.bookings.models.BookingAction.creation_time">
+<code class="sig-name descname">creation_time</code><a class="headerlink" href="#app.bookings.models.BookingAction.creation_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.bookings.models.BookingAction.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#app.bookings.models.BookingAction.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-app.bookings.views">
+<span id="views"></span><h2>Views<a class="headerlink" href="#module-app.bookings.views" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="app.bookings.views.add_event_for_calendar">
+<code class="sig-prename descclassname">app.bookings.views.</code><code class="sig-name descname">add_event_for_calendar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">booking</span></em>, <em class="sig-param"><span class="n">bookingAction</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/views.html#add_event_for_calendar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.views.add_event_for_calendar" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will sent a calendar event to user who book the car</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>booking</strong> – booking of the car</p></li>
+<li><p><strong>bookingAction</strong> – the booking action record of the car</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.bookings.views.book">
+<code class="sig-prename descclassname">app.bookings.views.</code><code class="sig-name descname">book</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/views.html#book"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.views.book" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow user to book (POST) a car</p>
+<p>When user book a car, a booking record and booking action is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">&lt;json int car_id</dt>
+<dd class="field-odd"><p>id of a existing car</p>
+</dd>
+<dt class="field-even">&lt;json int duration</dt>
+<dd class="field-even"><p>book duration (hours)</p>
+</dd>
+<dt class="field-odd">Status 200</dt>
+<dd class="field-odd"><p>book created</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.bookings.views.cancel">
+<code class="sig-prename descclassname">app.bookings.views.</code><code class="sig-name descname">cancel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/views.html#cancel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.views.cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow user to cancel (POST) a booking</p>
+<p>a booking action record for cancel booking is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">&lt;json int booking_id</dt>
+<dd class="field-odd"><p>id of a booking record</p>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>book canceled</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.bookings.views.delete_event_calendar">
+<code class="sig-prename descclassname">app.bookings.views.</code><code class="sig-name descname">delete_event_calendar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">event_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/views.html#delete_event_calendar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.views.delete_event_calendar" title="Permalink to this definition">¶</a></dt>
+<dd><p>this function delete event on the calendar</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>event_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – calender event id</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.bookings.views.return_">
+<code class="sig-prename descclassname">app.bookings.views.</code><code class="sig-name descname">return_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/views.html#return_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.views.return_" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow user to return (POST) a car</p>
+<p>a booking action record is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">&lt;json int booking_id</dt>
+<dd class="field-odd"><p>id of a booking record</p>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>return succeed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.bookings.views.unlock">
+<code class="sig-prename descclassname">app.bookings.views.</code><code class="sig-name descname">unlock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/views.html#unlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.views.unlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow user to unlock (POST) a car</p>
+<p>a booking action record for unlock is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">&lt;json int booking_id</dt>
+<dd class="field-odd"><p>id of a booking record</p>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>car unlocked</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-app.bookings.api">
+<span id="rest-api"></span><h2>REST API<a class="headerlink" href="#module-app.bookings.api" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="app.bookings.api.add_event_for_calendar">
+<code class="sig-prename descclassname">app.bookings.api.</code><code class="sig-name descname">add_event_for_calendar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">booking</span></em>, <em class="sig-param"><span class="n">bookingAction</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/api.html#add_event_for_calendar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.api.add_event_for_calendar" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will sent a calendar event to user who book the car</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>booking</strong> – booking of the car</p></li>
+<li><p><strong>bookingAction</strong> – the booking action record of the car</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.bookings.api.book">
+<code class="sig-prename descclassname">app.bookings.api.</code><code class="sig-name descname">book</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/api.html#book"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.api.book" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="app.bookings.api.cancel">
+<code class="sig-prename descclassname">app.bookings.api.</code><code class="sig-name descname">cancel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/api.html#cancel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.api.cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>API for cancelling (POST) a booking</p>
+<p>a booking action record is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>booking_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – id of a booking record</p>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>book canceled</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.bookings.api.return_">
+<code class="sig-prename descclassname">app.bookings.api.</code><code class="sig-name descname">return_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/api.html#return_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.api.return_" title="Permalink to this definition">¶</a></dt>
+<dd><p>API for user to return (POST) a car</p>
+<p>a booking action record is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>booking_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – id of a booking record</p>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>return succeed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.bookings.api.unlock">
+<code class="sig-prename descclassname">app.bookings.api.</code><code class="sig-name descname">unlock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/bookings/api.html#unlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.bookings.api.unlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>API for unlocking (POST) a car</p>
+<p>a booking action record is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>booking_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – id of a booking record</p>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>book created</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Car Share Iot</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tran Minh Quang, Ngo Quang Trung, Bui Thanh Long, Ha Hoang Phuc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/bookings.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
