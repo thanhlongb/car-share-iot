@@ -1,0 +1,673 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users API &#8212; Car Share Iot 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="users-api">
+<h1>Users API<a class="headerlink" href="#users-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-app.users.models">
+<span id="models"></span><h2>Models<a class="headerlink" href="#module-app.users.models" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="app.users.models.User">
+<em class="property">class </em><code class="sig-prename descclassname">app.users.models.</code><code class="sig-name descname">User</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email</span></em>, <em class="sig-param"><span class="n">username</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">password</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">role</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">first_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">last_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bluetooth_MAC</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/models.html#User"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.models.User" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="app.users.models.User.bluetooth_MAC">
+<code class="sig-name descname">bluetooth_MAC</code><a class="headerlink" href="#app.users.models.User.bluetooth_MAC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.users.models.User.date">
+<code class="sig-name descname">date</code><a class="headerlink" href="#app.users.models.User.date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.users.models.User.email">
+<code class="sig-name descname">email</code><a class="headerlink" href="#app.users.models.User.email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.users.models.User.facial_recognition">
+<code class="sig-name descname">facial_recognition</code><a class="headerlink" href="#app.users.models.User.facial_recognition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.users.models.User.first_name">
+<code class="sig-name descname">first_name</code><a class="headerlink" href="#app.users.models.User.first_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.users.models.User.getRole">
+<code class="sig-name descname">getRole</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/models.html#User.getRole"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.models.User.getRole" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.users.models.User.google_login">
+<code class="sig-name descname">google_login</code><a class="headerlink" href="#app.users.models.User.google_login" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.users.models.User.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#app.users.models.User.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.users.models.User.isAdmin">
+<code class="sig-name descname">isAdmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/models.html#User.isAdmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.models.User.isAdmin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.users.models.User.isCustomer">
+<code class="sig-name descname">isCustomer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/models.html#User.isCustomer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.models.User.isCustomer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.users.models.User.isEngineer">
+<code class="sig-name descname">isEngineer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/models.html#User.isEngineer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.models.User.isEngineer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.users.models.User.isManager">
+<code class="sig-name descname">isManager</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/models.html#User.isManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.models.User.isManager" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.users.models.User.last_name">
+<code class="sig-name descname">last_name</code><a class="headerlink" href="#app.users.models.User.last_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.users.models.User.password">
+<code class="sig-name descname">password</code><a class="headerlink" href="#app.users.models.User.password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.users.models.User.role">
+<code class="sig-name descname">role</code><a class="headerlink" href="#app.users.models.User.role" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.users.models.User.serialize">
+<code class="sig-name descname">serialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/models.html#User.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.models.User.serialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.users.models.User.serialize_with_cols">
+<code class="sig-name descname">serialize_with_cols</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cols</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/models.html#User.serialize_with_cols"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.models.User.serialize_with_cols" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.users.models.User.username">
+<code class="sig-name descname">username</code><a class="headerlink" href="#app.users.models.User.username" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-app.users.views">
+<span id="views"></span><h2>Views<a class="headerlink" href="#module-app.users.views" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="app.users.views.NumpyArrayEncoder">
+<em class="property">class </em><code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">NumpyArrayEncoder</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">skipkeys</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ensure_ascii</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">check_circular</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">allow_nan</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">sort_keys</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">indent</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">separators</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#NumpyArrayEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.NumpyArrayEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="app.users.views.NumpyArrayEncoder.default">
+<code class="sig-name descname">default</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#NumpyArrayEncoder.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.NumpyArrayEncoder.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement this method in a subclass such that it returns
+a serializable object for <code class="docutils literal notranslate"><span class="pre">o</span></code>, or calls the base implementation
+(to raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>).</p>
+<p>For example, to support arbitrary iterators, you could
+implement default like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">iterable</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="c1"># Let the base class default method raise the TypeError</span>
+    <span class="k">return</span> <span class="n">JSONEncoder</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.admin_bookings">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">admin_bookings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#admin_bookings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.admin_bookings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redirect the admin to booking page which show the list of bookings</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.admin_cars">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">admin_cars</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#admin_cars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.admin_cars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redirect the admin to car page which show the list of cars</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.admin_cars_create">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">admin_cars_create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#admin_cars_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.admin_cars_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow admin to create a car record in the database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Reqheader Accept</dt>
+<dd class="field-odd"><p>application/json</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>make</strong> (<em>string</em>) – car brand</p></li>
+<li><p><strong>color</strong> (<em>string</em>) – car color</p></li>
+<li><p><strong>body_type</strong> (<em>string</em>) – car body type</p></li>
+<li><p><strong>seats</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of seats</p></li>
+<li><p><strong>cost_per_hour</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – cost per hour</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Status 200</dt>
+<dd class="field-odd"><p>car created</p>
+</dd>
+<dt class="field-even">Status 400</dt>
+<dd class="field-even"><p>bad request</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.admin_cars_delete">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">admin_cars_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#admin_cars_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.admin_cars_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow admin to delete a car record in the database</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param car_id</dt>
+<dd class="field-odd"><p>id of the car</p>
+</dd>
+<dt class="field-even">status 201</dt>
+<dd class="field-even"><p>car deleted</p>
+</dd>
+<dt class="field-odd">status 404</dt>
+<dd class="field-odd"><p>car not exist</p>
+</dd>
+<dt class="field-even">status 503</dt>
+<dd class="field-even"><p>Not sufficent permission</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.admin_cars_edit">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">admin_cars_edit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">car_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#admin_cars_edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.admin_cars_edit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update car’s properties</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>car_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – id of an existing car</p>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>car report updated</p>
+</dd>
+<dt class="field-odd">Status 400</dt>
+<dd class="field-odd"><p>car not exist</p>
+</dd>
+<dt class="field-even">Status 503</dt>
+<dd class="field-even"><p>Not sufficent permission</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.admin_cars_report">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">admin_cars_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#admin_cars_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.admin_cars_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow admin to create a car report from the database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Reqheader Accept</dt>
+<dd class="field-odd"><p>application/json</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>car_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – id of the car</p>
+</dd>
+<dt class="field-odd">Status 200</dt>
+<dd class="field-odd"><p>car report created</p>
+</dd>
+<dt class="field-even">Status 400</dt>
+<dd class="field-even"><p>car not exist</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.admin_pages">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">admin_pages</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#admin_pages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.admin_pages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.admin_users">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">admin_users</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#admin_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.admin_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redirect admin to user management page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.admin_users_create">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">admin_users_create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#admin_users_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.admin_users_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow admin to create a car report in the database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Reqheader Accept</dt>
+<dd class="field-odd"><p>application/json</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>email</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – email of the user</p></li>
+<li><p><strong>username</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – username of the user</p></li>
+<li><p><strong>password</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – password of the user</p></li>
+<li><p><strong>first_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – first name</p></li>
+<li><p><strong>last_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – last name</p></li>
+<li><p><strong>role</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – role of user</p></li>
+<li><p><strong>bluetooth_MAC</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – mac address of user’s bluetooth device</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Status 200</dt>
+<dd class="field-odd"><p>car report created</p>
+</dd>
+<dt class="field-even">Status 400</dt>
+<dd class="field-even"><p>car not exist</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.admin_users_delete">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">admin_users_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#admin_users_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.admin_users_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow admin to delete an user record in the database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – id of the user</p>
+</dd>
+<dt class="field-even">Status 201</dt>
+<dd class="field-even"><p>user deleted</p>
+</dd>
+<dt class="field-odd">Status 404</dt>
+<dd class="field-odd"><p>user not exist</p>
+</dd>
+<dt class="field-even">Status 503</dt>
+<dd class="field-even"><p>Not sufficent permission</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.admin_users_edit">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">admin_users_edit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#admin_users_edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.admin_users_edit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit an existing user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – id of an existing user</p>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>User report updated</p>
+</dd>
+<dt class="field-odd">Status 400</dt>
+<dd class="field-odd"><p>user not exist</p>
+</dd>
+<dt class="field-even">Status 503</dt>
+<dd class="field-even"><p>Not sufficent permission</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.api_engineer_unlock_car_by_QR">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">api_engineer_unlock_car_by_QR</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#api_engineer_unlock_car_by_QR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.api_engineer_unlock_car_by_QR" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow user to unlock car by using QR code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Status 200</dt>
+<dd class="field-odd"><p>login success</p>
+</dd>
+<dt class="field-even">Status 401</dt>
+<dd class="field-even"><p>login failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.api_engineer_unlock_car_by_bluetooth">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">api_engineer_unlock_car_by_bluetooth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#api_engineer_unlock_car_by_bluetooth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.api_engineer_unlock_car_by_bluetooth" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow user to unlock car by bluetooth</p>
+<dl class="field-list simple">
+<dt class="field-odd">Status 200</dt>
+<dd class="field-odd"><p>login success</p>
+</dd>
+<dt class="field-even">Status 401</dt>
+<dd class="field-even"><p>login failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.api_login_by_credentials">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">api_login_by_credentials</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#api_login_by_credentials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.api_login_by_credentials" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow user to unlock car by using their account</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – user name of the user</p></li>
+<li><p><strong>password</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – password of the user</p></li>
+</ul>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>login success</p>
+</dd>
+<dt class="field-odd">Status 401</dt>
+<dd class="field-odd"><p>login failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.api_login_by_facial_recognition">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">api_login_by_facial_recognition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#api_login_by_facial_recognition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.api_login_by_facial_recognition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.api_logout">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">api_logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#api_logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.api_logout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.dashboard">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">dashboard</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#dashboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.dashboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redirect to dashboard</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.engineer">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">engineer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#engineer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.engineer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redirect to engineering page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.engineer_reports">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">engineer_reports</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#engineer_reports"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.engineer_reports" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generate the report page of the user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Status 200</dt>
+<dd class="field-odd"><p>OK</p>
+</dd>
+<dt class="field-even">Status 404</dt>
+<dd class="field-even"><p>bad request</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.engineer_reports_fixed">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">engineer_reports_fixed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#engineer_reports_fixed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.engineer_reports_fixed" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will let manager assign task for engineer by sending HTTP POST methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>report_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – id of an existing engineering</p>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>OK</p>
+</dd>
+<dt class="field-odd">Status 404</dt>
+<dd class="field-odd"><p>report not exist</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.face_encodings">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">face_encodings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#face_encodings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.face_encodings" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow user to unlock car by using facial recognition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Status 200</dt>
+<dd class="field-odd"><p>login success</p>
+</dd>
+<dt class="field-even">Status 401</dt>
+<dd class="field-even"><p>login failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.generate_qr_code">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">generate_qr_code</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">old_engineer_name</span></em>, <em class="sig-param"><span class="n">new_engineer_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#generate_qr_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.generate_qr_code" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.google_callback">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">google_callback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#google_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.google_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>retrieve user information in Google account</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.google_login">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">google_login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#google_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.google_login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login form using Google account</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.home">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">home</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#home"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.home" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redirect the user to home page which have booking history</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.load_user">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">load_user</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#load_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.load_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the user on the database using user id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – the id of user</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return user object with corresponding user id</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#app.users.models.User" title="app.users.models.User">User</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.login">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function login using register account</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.login_redirect">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">login_redirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#login_redirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.login_redirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redirect to page based on user role</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.logout">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>User logout</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.manager_reports">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">manager_reports</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#manager_reports"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.manager_reports" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generate the report page of the user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Status 200</dt>
+<dd class="field-odd"><p>OK</p>
+</dd>
+<dt class="field-even">Status 404</dt>
+<dd class="field-even"><p>bad request</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.manager_reports_assign">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">manager_reports_assign</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#manager_reports_assign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.manager_reports_assign" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will let manager assign task for engineer by sending HTTP POST methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>engineer_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – id of an existing engineering</p>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>OK</p>
+</dd>
+<dt class="field-odd">Status 404</dt>
+<dd class="field-odd"><p>bad request</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.register">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registration Form for register new account</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.views.unauthorized">
+<code class="sig-prename descclassname">app.users.views.</code><code class="sig-name descname">unauthorized</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/views.html#unauthorized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.views.unauthorized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redirect the user to login page if the user type is invalid</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-app.users.api">
+<span id="rest-api"></span><h2>REST API<a class="headerlink" href="#module-app.users.api" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="app.users.api.get_users">
+<code class="sig-prename descclassname">app.users.api.</code><code class="sig-name descname">get_users</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/api.html#get_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.api.get_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all users record</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a list of users in json format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.api.users_create">
+<code class="sig-prename descclassname">app.users.api.</code><code class="sig-name descname">users_create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/api.html#users_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.api.users_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new user using HTTP post methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>user in json format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.api.users_delete">
+<code class="sig-prename descclassname">app.users.api.</code><code class="sig-name descname">users_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/api.html#users_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.api.users_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete user record using HTTP DELETE methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user_id</strong> – id of existing user</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.users.api.users_update">
+<code class="sig-prename descclassname">app.users.api.</code><code class="sig-name descname">users_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/users/api.html#users_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.users.api.users_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update user information using HTTP POST methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user_id</strong> – id of existing user</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>user in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Car Share Iot</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tran Minh Quang, Ngo Quang Trung, Bui Thanh Long, Ha Hoang Phuc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/users.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -27,12 +27,12 @@ from app.cars.models import Car, CarReport
 from app.cars.maps import StaticMap
 from app.cars.forms import CarForm
 from app.bookings.models import Booking, BookingAction
-from ..facial_recognition.encode_faces import encode
+# from ..facial_recognition.encode_faces import encode
 from ..charting.prepare_chart_data import get_line_chart_data, get_pie_chart_data, get_bar_chart_data
 
 mod = Blueprint('users', __name__, url_prefix='/')
 api_mod = Blueprint('users_api', __name__, url_prefix='/api')
-FACE_UPLOAD_FOLDER_URL = 'app/facial_recognition/dataset'
+# FACE_UPLOAD_FOLDER_URL = 'app/facial_recognition/dataset'
 QR_UPLOAD_FOLDER_URL = 'app/qr_code'
 
 class NumpyArrayEncoder(json.JSONEncoder):
@@ -61,7 +61,7 @@ def generate_qr_code(old_engineer_name, new_engineer_name):
     
 @login_manager.user_loader
 def load_user(user_id):
-    """ retrieve the user on the database using user id 
+    """ Retrieve the user on the database using user id 
 
     :param int id: the id of user
     
@@ -320,7 +320,7 @@ def admin_cars_delete():
     """ 
     This function allow admin to delete a car record in the database
 
-        :param int car_id: id of the car
+        :param car_id: id of the car
 
         :status 201: car deleted
         :status 404: car not exist
@@ -614,27 +614,27 @@ def face_encodings():
     encodings_json = json.dumps(encodings, cls=NumpyArrayEncoder)
     return encodings_json
 
-@mod.route('/photos-upload/', methods=['GET', 'POST'])
-@login_required
-def photos_upload():
-    """
-    Upload photos
-    """
-    form = PhotosForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            user = User.query.filter_by(id=current_user.id).first()
-            username = user.username
-            directory = os.path.join(FACE_UPLOAD_FOLDER_URL, username)
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-            for f in request.files.getlist('images'):
-                filename = secure_filename(f.filename)
-                f.save(os.path.join(directory, filename))
-            thread = Process(target=encode)
-            thread.run()
-            return render_template("users/photos-upload.html", form=form, uploaded=True)
-    return render_template("users/photos-upload.html", form=form, uploaded=False)
+# @mod.route('/photos-upload/', methods=['GET', 'POST'])
+# @login_required
+# def photos_upload():
+#     """
+#     Upload photos
+#     """
+#     form = PhotosForm()
+#     if request.method == 'POST':
+#         if form.validate_on_submit():
+#             user = User.query.filter_by(id=current_user.id).first()
+#             username = user.username
+#             directory = os.path.join(FACE_UPLOAD_FOLDER_URL, username)
+#             if not os.path.exists(directory):
+#                 os.makedirs(directory)
+#             for f in request.files.getlist('images'):
+#                 filename = secure_filename(f.filename)
+#                 f.save(os.path.join(directory, filename))
+#             thread = Process(target=encode)
+#             thread.run()
+#             return render_template("users/photos-upload.html", form=form, uploaded=True)
+#     return render_template("users/photos-upload.html", form=form, uploaded=False)
 
 
 ################################ Engineer unlock car ######################################

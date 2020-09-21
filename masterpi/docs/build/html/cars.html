@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cars API &#8212; Car Share Iot 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cars-api">
+<h1>Cars API<a class="headerlink" href="#cars-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-app.cars.models">
+<span id="models"></span><h2>Models<a class="headerlink" href="#module-app.cars.models" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="app.cars.models.Car">
+<em class="property">class </em><code class="sig-prename descclassname">app.cars.models.</code><code class="sig-name descname">Car</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">make</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">body_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">seats</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cost_per_hour</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/models.html#Car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.models.Car" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declare Car table and its attribute</p>
+<dl class="py method">
+<dt id="app.cars.models.Car.available">
+<em class="property">property </em><code class="sig-name descname">available</code><a class="headerlink" href="#app.cars.models.Car.available" title="Permalink to this definition">¶</a></dt>
+<dd><p>check car avalability</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.Car.body_type">
+<code class="sig-name descname">body_type</code><a class="headerlink" href="#app.cars.models.Car.body_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.cars.models.Car.booked">
+<em class="property">property </em><code class="sig-name descname">booked</code><a class="headerlink" href="#app.cars.models.Car.booked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the booking status of car</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.Car.bookings">
+<code class="sig-name descname">bookings</code><a class="headerlink" href="#app.cars.models.Car.bookings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.Car.color">
+<code class="sig-name descname">color</code><a class="headerlink" href="#app.cars.models.Car.color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.Car.cost_per_hour">
+<code class="sig-name descname">cost_per_hour</code><a class="headerlink" href="#app.cars.models.Car.cost_per_hour" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.cars.models.Car.current_coordinate">
+<em class="property">property </em><code class="sig-name descname">current_coordinate</code><a class="headerlink" href="#app.cars.models.Car.current_coordinate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.cars.models.Car.current_location">
+<em class="property">property </em><code class="sig-name descname">current_location</code><a class="headerlink" href="#app.cars.models.Car.current_location" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.cars.models.Car.fixing">
+<em class="property">property </em><code class="sig-name descname">fixing</code><a class="headerlink" href="#app.cars.models.Car.fixing" title="Permalink to this definition">¶</a></dt>
+<dd><p>check fixing status of car</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.Car.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#app.cars.models.Car.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.Car.locations">
+<code class="sig-name descname">locations</code><a class="headerlink" href="#app.cars.models.Car.locations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.Car.make">
+<code class="sig-name descname">make</code><a class="headerlink" href="#app.cars.models.Car.make" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.Car.reports">
+<code class="sig-name descname">reports</code><a class="headerlink" href="#app.cars.models.Car.reports" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.Car.seats">
+<code class="sig-name descname">seats</code><a class="headerlink" href="#app.cars.models.Car.seats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.cars.models.Car.serialize">
+<code class="sig-name descname">serialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/models.html#Car.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.models.Car.serialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.cars.models.Car.serialize_with_cols">
+<code class="sig-name descname">serialize_with_cols</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cols</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/models.html#Car.serialize_with_cols"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.models.Car.serialize_with_cols" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="app.cars.models.CarLocation">
+<em class="property">class </em><code class="sig-prename descclassname">app.cars.models.</code><code class="sig-name descname">CarLocation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">car_id</span></em>, <em class="sig-param"><span class="n">location</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">long</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lat</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/models.html#CarLocation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.models.CarLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declare Carlocation table and its attributes</p>
+<dl class="py attribute">
+<dt id="app.cars.models.CarLocation.car_id">
+<code class="sig-name descname">car_id</code><a class="headerlink" href="#app.cars.models.CarLocation.car_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarLocation.creation_time">
+<code class="sig-name descname">creation_time</code><a class="headerlink" href="#app.cars.models.CarLocation.creation_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarLocation.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#app.cars.models.CarLocation.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarLocation.lat">
+<code class="sig-name descname">lat</code><a class="headerlink" href="#app.cars.models.CarLocation.lat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarLocation.location">
+<code class="sig-name descname">location</code><a class="headerlink" href="#app.cars.models.CarLocation.location" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarLocation.long">
+<code class="sig-name descname">long</code><a class="headerlink" href="#app.cars.models.CarLocation.long" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="app.cars.models.CarReport">
+<em class="property">class </em><code class="sig-prename descclassname">app.cars.models.</code><code class="sig-name descname">CarReport</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">car_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/models.html#CarReport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.models.CarReport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declare CarReport table and its attribute</p>
+<dl class="py attribute">
+<dt id="app.cars.models.CarReport.car">
+<code class="sig-name descname">car</code><a class="headerlink" href="#app.cars.models.CarReport.car" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarReport.car_id">
+<code class="sig-name descname">car_id</code><a class="headerlink" href="#app.cars.models.CarReport.car_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarReport.creation_time">
+<code class="sig-name descname">creation_time</code><a class="headerlink" href="#app.cars.models.CarReport.creation_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarReport.fixed">
+<code class="sig-name descname">fixed</code><a class="headerlink" href="#app.cars.models.CarReport.fixed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarReport.fixer">
+<code class="sig-name descname">fixer</code><a class="headerlink" href="#app.cars.models.CarReport.fixer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarReport.fixer_id">
+<code class="sig-name descname">fixer_id</code><a class="headerlink" href="#app.cars.models.CarReport.fixer_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarReport.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#app.cars.models.CarReport.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.cars.models.CarReport.serialize">
+<code class="sig-name descname">serialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/models.html#CarReport.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.models.CarReport.serialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="app.cars.models.CarReport.setFixed">
+<code class="sig-name descname">setFixed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fixed</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/models.html#CarReport.setFixed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.models.CarReport.setFixed" title="Permalink to this definition">¶</a></dt>
+<dd><p>set fixed id</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="app.cars.models.CarReport.setFixer">
+<code class="sig-name descname">setFixer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fixer_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/models.html#CarReport.setFixer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.models.CarReport.setFixer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set fixer id</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="app.cars.models.CarReport.update_time">
+<code class="sig-name descname">update_time</code><a class="headerlink" href="#app.cars.models.CarReport.update_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-app.cars.views">
+<span id="views"></span><h2>Views<a class="headerlink" href="#module-app.cars.views" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="app.cars.views.details">
+<code class="sig-prename descclassname">app.cars.views.</code><code class="sig-name descname">details</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/views.html#details"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.views.details" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Get detail information about the car</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – id of the car</p>
+</dd>
+<dt class="field-even">Status 200</dt>
+<dd class="field-even"><p>success</p>
+</dd>
+<dt class="field-odd">Status 404</dt>
+<dd class="field-odd"><p>failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.cars.views.index">
+<code class="sig-prename descclassname">app.cars.views.</code><code class="sig-name descname">index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/views.html#index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.views.index" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Get list of available car</strong></p>
+<p>This function allow user to get list of cars and its detail information</p>
+<dl class="field-list simple">
+<dt class="field-odd">Status 200</dt>
+<dd class="field-odd"><p>success</p>
+</dd>
+<dt class="field-even">Status 404</dt>
+<dd class="field-even"><p>failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-app.cars.api">
+<span id="rest-api"></span><h2>REST API<a class="headerlink" href="#module-app.cars.api" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="app.cars.api.cars_create">
+<code class="sig-prename descclassname">app.cars.api.</code><code class="sig-name descname">cars_create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/api.html#cars_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.api.cars_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a car record</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>make</strong> (<em>string</em>) – car brand</p></li>
+<li><p><strong>color</strong> (<em>string</em>) – car color</p></li>
+<li><p><strong>body_type</strong> (<em>string</em>) – car body type</p></li>
+<li><p><strong>seats</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of seats</p></li>
+<li><p><strong>cost_per_hour</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – cost per hour</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Car in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.cars.api.cars_report">
+<code class="sig-prename descclassname">app.cars.api.</code><code class="sig-name descname">cars_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/api.html#cars_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.api.cars_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all report of the car</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.cars.api.cars_update">
+<code class="sig-prename descclassname">app.cars.api.</code><code class="sig-name descname">cars_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">car_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/api.html#cars_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.api.cars_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update car record</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>car_id</strong> – id of existing car</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.cars.api.get_cars">
+<code class="sig-prename descclassname">app.cars.api.</code><code class="sig-name descname">get_cars</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/api.html#get_cars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.api.get_cars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all car record</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of cars in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.cars.api.reports_assign">
+<code class="sig-prename descclassname">app.cars.api.</code><code class="sig-name descname">reports_assign</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/api.html#reports_assign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.api.reports_assign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign a task</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.cars.api.reports_fixed">
+<code class="sig-prename descclassname">app.cars.api.</code><code class="sig-name descname">reports_fixed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/api.html#reports_fixed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.api.reports_fixed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a report</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.cars.api.users_delete">
+<code class="sig-prename descclassname">app.cars.api.</code><code class="sig-name descname">users_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/cars/api.html#users_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.cars.api.users_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a car</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>car_id</strong> – id of existing car</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Car Share Iot</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tran Minh Quang, Ngo Quang Trung, Bui Thanh Long, Ha Hoang Phuc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/cars.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
