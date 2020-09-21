@@ -86,7 +86,7 @@ def home():
 
 @mod.route('/login/', methods=['GET', 'POST'])
 def login():
-    """ Login form using register account
+    """ This function login using register account
     """
     if current_user.is_authenticated:
         return redirect(url_for('users.login_redirect'))
@@ -263,12 +263,13 @@ def admin_cars_create():
     """ This function allow admin to create a car record in the database
 
         :reqheader Accept: application/json
-        :<json string make: car brand
-        :<json string color: car color
-        :<json string body_type: car body type
-        :<json int seats: number of seats
-        :<json int cost_per_hour: cost per hour
-        :status 201: car created
+        :param string make: car brand
+        :param string color: car color
+        :param string body_type: car body type
+        :param int seats: number of seats
+        :param int cost_per_hour: cost per hour
+        
+        :status 200: car created
         :status 400: bad request
     """
     if not current_user.isAdmin():
@@ -292,11 +293,13 @@ def admin_cars_create():
 @login_required
 def admin_cars_edit(car_id):
     """ Update car's properties
+
     :param int car_id: id of an existing car
 
     :status 200: car report updated
     :status 400: car not exist
     :status 503: Not sufficent permission
+
     """
     if not current_user.isAdmin():
         return "503 Not sufficent permission"
@@ -313,10 +316,11 @@ def admin_cars_edit(car_id):
 @mod.route('/admin/cars/delete', methods=['POST'])
 @login_required
 def admin_cars_delete():
-    """ This function allow admin to delete a car record in the database
+    """ 
+    This function allow admin to delete a car record in the database
 
-        :reqheader Accept: application/json
-        :<json int car_id: id of the car
+        :param int car_id: id of the car
+
         :status 201: car deleted
         :status 404: car not exist
         :status 503: Not sufficent permission
@@ -334,10 +338,11 @@ def admin_cars_delete():
 @mod.route('/admin/cars/report', methods=['POST'])
 @login_required
 def admin_cars_report():
-    """ This function allow admin to create a car report in the database
+    """ This function allow admin to create a car report from the database
 
         :reqheader Accept: application/json
-        :<json int car_id: id of the car
+        :param int car_id: id of the car
+
         :status 200: car report created
         :status 400: car not exist
     """
@@ -354,6 +359,11 @@ def admin_cars_report():
 @mod.route('/manager/reports', methods=['GET'])
 @login_required
 def manager_reports():
+    """ This function generate the report page of the user
+
+        :status 200: OK
+        :status 404: bad request
+    """
     if not current_user.isManager():
         return "503 Not sufficent permission"
     reports = CarReport.query.filter_by(fixed=False).all()
@@ -363,6 +373,13 @@ def manager_reports():
 @mod.route('/manager/reports/assign', methods=['POST'])
 @login_required
 def manager_reports_assign():
+    """ This function will let manager assign task for engineer by sending HTTP POST methods
+
+        :param str engineer_id: id of an existing engineering
+
+        :status 200: OK
+        :status 404: bad request
+    """
     if not current_user.isManager():
         return "503 Not sufficent permission", 503
     report = CarReport.query.filter_by(id=request.form['report_id']).first()
@@ -380,6 +397,11 @@ def manager_reports_assign():
 @mod.route('/engineer/reports', methods=['GET'])
 @login_required
 def engineer_reports():
+    """ This function generate the report page of the user
+
+        :status 200: OK
+        :status 404: bad request
+    """
     if not current_user.isEngineer():
         return "503 Not sufficent permission"
     reports = CarReport.query.filter(and_(CarReport.fixed == False,
@@ -391,6 +413,13 @@ def engineer_reports():
 @mod.route('/engineer/reports/fixed', methods=['POST'])
 @login_required
 def engineer_reports_fixed():
+    """ This function will let manager assign task for engineer by sending HTTP POST methods
+
+        :param str report_id: id of an existing engineering
+
+        :status 200: OK
+        :status 404: report not exist
+    """
     if not current_user.isEngineer():
         return "503 Not sufficent permission", 503
     report = CarReport.query.filter_by(id=request.form['report_id']).first()
@@ -424,12 +453,13 @@ def admin_users_create():
     """ This function allow admin to create a car report in the database
 
         :reqheader Accept: application/json
-        :<json str email: email of the user
-        :<json str username: username of the user
-        :<json str password: password of the user
-        :<json str first_name: first name
-        :<json str last_name: last name
-        :<json int role: role of user
+        :param str email: email of the user
+        :param str username: username of the user
+        :param str password: password of the user
+        :param str first_name: first name
+        :param str last_name: last name
+        :param int role: role of user
+        :param str bluetooth_MAC: mac address of user's bluetooth device
 
         :status 200: car report created
         :status 400: car not exist
@@ -491,8 +521,8 @@ def admin_users_edit(user_id):
 def admin_users_delete():
     """ This function allow admin to delete an user record in the database
 
-    :reqheader Accept: application/json
-    :<json int user_id: id of the user
+    :param int user_id: id of the user
+
     :status 201: user deleted
     :status 404: user not exist
     :status 503: Not sufficent permission
@@ -520,9 +550,9 @@ def admin_users_delete():
 def api_login_by_credentials():
     """ This function allow user to unlock car by using their account
 
-    :reqheader Accept: application/json
-    :<json str username: user name of the user
-    :<json str password: password of the user
+    :param str username: user name of the user
+    :param str password: password of the user
+
     :status 200: login success
     :status 401: login failed
     """
