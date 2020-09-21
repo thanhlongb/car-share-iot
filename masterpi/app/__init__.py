@@ -30,3 +30,11 @@ app.register_blueprint(usersModule)
 app.register_blueprint(usersAPIModule)
 app.register_blueprint(carsModule)
 app.register_blueprint(bookingsModule)
+
+#api
+from app.users.api import api_mod as usersAPI
+from app.cars.api import api_mod as carsAPI
+from app.bookings.api import api_mod as bookingsAPI
+app.register_blueprint(usersAPI)
+app.register_blueprint(carsAPI)
+app.register_blueprint(bookingsAPI)
