@@ -23,7 +23,8 @@ from flask_mail import Message
 from app import db, login_manager, client, mail
 from app.users.forms import RegisterForm, LoginForm, UserForm, UserEditForm, PhotosForm
 from app.users.models import User
-from app.cars.models import Car, CarReport
+from app.cars.models import Car, CarReport, CarLocation
+from app.cars.utils import get_current_location_coordinate, get_current_location_name
 from app.cars.maps import StaticMap
 from app.cars.forms import CarForm
 from app.bookings.models import Booking, BookingAction
@@ -599,6 +600,14 @@ def api_logout():
     car = Car.query.filter_by(id = request.form['car_id']).first()
     bookingAction = BookingAction(car.bookings[-1].id, "returned")
     db.session.add(bookingAction)
+    booking = Booking.query.get(car.bookings[-1].id)
+    current_location_coordinate = get_current_location_coordinate()
+    current_location_name = get_current_location_name(**current_location_coordinate)
+    carLocation = CarLocation(booking.car_id,
+                              long=current_location_coordinate['lng'],
+                              lat=current_location_coordinate['lat'],
+                              location=current_location_name)
+    db.session.add(carLocation)
     db.session.commit()
     return '{}', 200
 

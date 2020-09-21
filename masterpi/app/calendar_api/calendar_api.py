@@ -80,7 +80,7 @@ class CalendarApi:
         end = start + timedelta(hours=duration)
         event = {"summary": title,
                  "start": {"dateTime": start.isoformat(), "timeZone": str(get_localzone())},
-                 "end": {"dateTime": end.isoformat(), "timeZone": str(get_localzone())},
+                 "end": {"dateTime": end.isoformat(), "timeZone":str(get_localzone())},
                  "description": description,
                  "attendees": [{"email": attendee}],
                  "reminders": {"useDefault": True}

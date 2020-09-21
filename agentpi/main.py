@@ -17,13 +17,13 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 from pisocket import client
 from detect_nearby_device import detect
 
-GET_FACE_ENCODINGS_API = "https://127.0.0.1:5000/api/face_encodings/"
-ENGINEER_LOGIN_BY_QR_CODE_API = "https://127.0.0.1:5000/api/engineer_unlock_car_QR/"
-LOGOUT_API = "https://127.0.0.1:5000/api/logout/"
+GET_FACE_ENCODINGS_API = "https://0.0.0.0:5000/api/face_encodings/"
+ENGINEER_LOGIN_BY_QR_CODE_API = "https://0.0.0.0:5000/api/engineer_unlock_car_QR/"
+LOGOUT_API = "https://0.0.0.0:5000/api/logout/"
 warnings.simplefilter('ignore',InsecureRequestWarning)
 CAR_LOCKED = True
 PROGRAM_EXIT = False
-CAR_ID = 1
+CAR_ID = 4
 
 #--------------------------------- Menu ---------------------------------#
 FORMAT = MenuFormatBuilder() \
@@ -38,7 +38,7 @@ FORMAT = MenuFormatBuilder() \
 #----- User menu -----#
 def create_user_menu():
     """
-	Create customer menu
+    Create customer menu
 
     :return: usermenu as a ConoleMenu object
     """
@@ -56,7 +56,7 @@ def create_user_menu():
 #----- Engineer menu -----#
 def create_engineer_menu():
     """
-	Create engineer menu
+    Create engineer menu
 
     :return: engineermenu as a ConoleMenu object
     """
@@ -75,7 +75,7 @@ def create_engineer_menu():
 #----- Main menu -----#
 def create_main_menu(user_menu, engineer_menu):
     """
-	Create engineer menu
+    Create engineer menu
 
     :args:   - user_menu : customer menu object
              - engineer_menu : engineer menu object
@@ -143,7 +143,7 @@ def create_main_menu(user_menu, engineer_menu):
 #---- User logout ----#
 def user_logout():
     """
-	Customer logout, create return action and save to database
+    Customer logout, create return action and save to database
     through MP API
     """
     global CAR_LOCKED
@@ -155,14 +155,14 @@ def user_logout():
 
 def engineer_logout():
     """
-	Engineer logout
+    Engineer logout
     """
     global CAR_LOCKED
     CAR_LOCKED = True
 
 def shutdown():
     """
-	Console application shutdown
+    Console application shutdown
     """
     global PROGRAM_EXIT
     PROGRAM_EXIT = True
@@ -170,7 +170,7 @@ def shutdown():
 #---- User login with credentials ----#
 def handle_fail_user_login(use_credentials, main_menu):
     """
-	Handle when customer's login information is wrong
+    Handle when customer's login information is wrong
 
     :args:
         -   user_credentials: Customer's login credentials
@@ -187,7 +187,7 @@ def handle_fail_user_login(use_credentials, main_menu):
 
 def handle_success_user_login(username, user_menu):
     """
-	Handle when customer's login information is right
+    Handle when customer's login information is right
     :args:
         -   user_credentials: Customer's login credentials
         -   main_menu: Main menu object
@@ -199,7 +199,7 @@ def handle_success_user_login(username, user_menu):
 
 def user_login_with_credentials(main_menu, user_menu):
     """
-	Handle customer login by credentials option
+    Handle customer login by credentials option
     :args:
         -   main_menu: Main menu object
         -   user_menu: User menu object
@@ -218,7 +218,7 @@ def user_login_with_credentials(main_menu, user_menu):
 #---- User login with facial recognition 3----#
 def update_facial_encodings():
     """
-	Call MP API to update encodings.pickle
+    Call MP API to update encodings.pickle
     :return:
         -   response_pickle: face encodings as dict
     """
@@ -229,7 +229,7 @@ def update_facial_encodings():
 
 def handle_facial_recognition_result(username, main_menu, user_menu):
     """
-	Handle the result of facial recognition
+    Handle the result of facial recognition
     :args:
         -   username:   username of recognized user
         -   main_menu:  Main menu object
@@ -246,7 +246,7 @@ def handle_facial_recognition_result(username, main_menu, user_menu):
 
 def user_login_with_facial_recognition(main_menu, user_menu):
     """
-	Process of user login by facial recognition
+    Process of user login by facial recognition
     :args:
         -   main_menu:  Main menu object
         -   user_menu:  User menu object
@@ -264,7 +264,7 @@ def user_login_with_facial_recognition(main_menu, user_menu):
 #---- Engineer login with QR code ----#
 def handle_fail_engineer_login(main_menu):
     """
-	Handle fail engineer login
+    Handle fail engineer login
     :args:
         -   main_menu: Main menu object
     """
@@ -276,7 +276,7 @@ def handle_fail_engineer_login(main_menu):
 
 def handle_success_engineer_login(engineer_username, engineer_menu):
     """
-	Handle successful engineer login
+    Handle successful engineer login
     :args:
         -   engineer_username: engineer's username
         -   engineer_menu: Engineer menu object
@@ -295,7 +295,7 @@ def handle_success_engineer_login(engineer_username, engineer_menu):
 
 def engineer_login_with_QR_code(main_menu, engineer_menu):
     """
-	Process of engineer login by scanning QR code
+    Process of engineer login by scanning QR code
     :args:
         -   main_menu: Main menu object
         -   engineer_menu: Engineer menu object
@@ -307,13 +307,13 @@ def engineer_login_with_QR_code(main_menu, engineer_menu):
     response = requests.post(ENGINEER_LOGIN_BY_QR_CODE_API, Params, verify=False)
     response_json = response.json()
     if len(response_json) != 0:
-        handle_success_engineer_login(response_json['username'], main_menu, engineer_menu)
+        handle_success_engineer_login(response_json['username'], engineer_menu)
     else:
         handle_fail_engineer_login(main_menu)
 
 def detect_bluetooth_device(main_menu, engineer_menu):
     """
-	Automatically detect nearby Bluetooth devices and check
+    Automatically detect nearby Bluetooth devices and check
     if it belongs to an engineer.
     :args:
         -   main_menu: Main menu object
@@ -332,7 +332,7 @@ def detect_bluetooth_device(main_menu, engineer_menu):
 
 if __name__ == '__main__':
     """
-	Main program
+    Main program
     """
     user_menu = create_user_menu()
     engineer_menu = create_engineer_menu()

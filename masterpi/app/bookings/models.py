@@ -40,6 +40,10 @@ class Booking(db.Model):
     def unlocked(self):
         return self.actions and self.actions[-1].action == "unlocked"
 
+    def serialize_with_cols(self, cols):
+        data = {c: getattr(self, c) for c in cols}
+        return data
+
     def __repr__(self):
         return '<Booking %r>' % (self.id)
 
@@ -62,6 +66,10 @@ class BookingAction(db.Model):
         """
         self.booking_id = booking_id
         self.action = action
+
+    def serialize_with_cols(self, cols):
+        data = {c: getattr(self, c) for c in cols}
+        return data
 
     def __repr__(self):
         return '<BookingAction %r>' % (self.id)
